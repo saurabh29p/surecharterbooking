@@ -2,11 +2,13 @@ import { Controller, Get, ServiceUnavailableException } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { formatDateTime } from '@shubhjets/shared';
 import type { DataSource } from 'typeorm';
+import { Public } from './auth/public.decorator.js';
 
 @Controller('health')
 export class HealthController {
   constructor(@InjectDataSource() private readonly ds: DataSource) {}
 
+  @Public()
   @Get()
   async check() {
     try {

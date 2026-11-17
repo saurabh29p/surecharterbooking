@@ -39,6 +39,9 @@ const EnvSchema = z.object({
   COOKIE_SECURE: bool.optional(),
   /** Behind Railway/Vercel proxies, so the real client IP is used for rate limits. */
   TRUST_PROXY: bool.default(false),
+  /** Creates the owner account on a fresh database. Ignored once any user exists. */
+  ADMIN_EMAIL: z.preprocess((v) => (v === '' ? undefined : v), z.string().email().optional()),
+  ADMIN_PASSWORD: z.preprocess((v) => (v === '' ? undefined : v), z.string().optional()),
 });
 
 export type AppConfig = Omit<z.infer<typeof EnvSchema>, 'COOKIE_SECURE'> & {
