@@ -1,6 +1,6 @@
 # Sure Charter Booking — Charter Desk
 
-Internal AI-assisted system for a private jet charter brokerage in India (Indicgems Exim LLP).
+Wedding Charter Desk: internal tool for private jet flights for Indian destination weddings, sold through wedding planners (Indicgems Exim LLP).
 
 The full build brief is in [BRIEF.md](BRIEF.md).
 
