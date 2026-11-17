@@ -25,6 +25,11 @@ export class AuthModule implements OnApplicationBootstrap {
 
   /** On a fresh database (e.g. first Railway deploy) create the owner from ADMIN_EMAIL / ADMIN_PASSWORD. */
   async onApplicationBootstrap() {
+    if (this.config.NODE_ENV === 'production') {
+      const disabled = await this.auth.disableDemoAccounts();
+      if (disabled.length)
+        this.log.error(`Demo accounts found in production and disabled: ${disabled.join(', ')}`);
+    }
     const { ADMIN_EMAIL, ADMIN_PASSWORD } = this.config;
     if (!ADMIN_EMAIL || !ADMIN_PASSWORD || this.config.NODE_ENV === 'test') return;
     const result = await this.auth.bootstrapAdmin(ADMIN_EMAIL, ADMIN_PASSWORD);

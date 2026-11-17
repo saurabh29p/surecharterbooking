@@ -47,3 +47,8 @@ Answers to the build questions (17 Nov 2026) and other choices made during the b
 - **Reference data (airports, default settings) ships in a migration**, so production has it without running the fake seed.
 - **Logo upload** waits for file storage (step 4); until then documents use the ShubhJets wordmark.
 - **Seed data skips documents and shares** until PDFs and sharing exist (steps 8–11).
+
+## Deploy reminders (raise these when we deploy)
+- Store `DATA_ENCRYPTION_KEYS` in a safe backup (password manager), separate from database backups. Losing it makes encrypted bank details and guest ID files unrecoverable.
+- Set real `ADMIN_EMAIL` / `ADMIN_PASSWORD` (not a `.test` address) and a fresh random `JWT_SECRET`.
+- Never run `pnpm seed` against production. It refuses, but don't try.

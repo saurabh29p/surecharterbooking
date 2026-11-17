@@ -49,7 +49,13 @@ To try the first-login setup wizard instead, skip `pnpm seed` and set `ADMIN_EMA
 `pnpm seed` replaces all data with fake records only: Planner P1–P4, Hotel H1, Operator A–D
 (A and B verified, C's insurance expiring in 9 days, D not yet verified), clients C1–C6 and weddings
 W-101 to W-106, one in each status from enquiry to done, with legs, rate requests and replies, quotes,
-payments and guests. Dates are relative to today. It refuses to run when `NODE_ENV=production`.
+payments and guests. Dates are relative to today.
+
+**Seed data never reaches production.** Three guards make sure of it:
+
+1. `pnpm seed` refuses to run when `NODE_ENV=production`, even with `--force`.
+2. It also refuses on any database that has real (non-demo) accounts. Pass `--force` only for a throwaway development database.
+3. Demo accounts all use the reserved `.test` email domain. In production the API rejects their logins, disables any it finds at startup and won't accept a `.test` `ADMIN_EMAIL`.
 
 ## Checks
 
@@ -71,5 +77,12 @@ CI (GitHub Actions) runs everything on every push.
 | `pnpm db:migrate` | Apply pending database migrations |
 | `pnpm --filter @shubhjets/api db:revert` | Undo the last migration (development only) |
 | `pnpm --filter @shubhjets/api gen:key` | Make a new `DATA_ENCRYPTION_KEYS` value |
+
+## Keys you must back up
+
+> **Back up `DATA_ENCRYPTION_KEYS` somewhere safe (for example a password manager), separately from the database backups.**
+> Bank details and guest ID files are encrypted with it. If the key is lost, that data **cannot be recovered**, not even
+> from a database backup. When rotating, put the new key first and keep the old ones in the list until everything has
+> been re-encrypted.
 
 Eval and deploy steps are added to this README as those steps are built.

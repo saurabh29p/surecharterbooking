@@ -10,6 +10,7 @@ import {
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { DataSource, IsNull, MoreThan, type EntityManager, type Repository } from 'typeorm';
 import { AuditService } from '../audit/audit.service.js';
+import { isDemoEmail } from '../db/seed-data.js';
 import { APP_CONFIG, type AppConfig } from '../config.js';
 import { LoginLimiter } from './login-limiter.js';
 import { dummyPasswordHash, hashPassword, passwordProblem, verifyPassword } from './password.js';
@@ -85,7 +86,9 @@ export class AuthService {
         HttpStatus.TOO_MANY_REQUESTS,
       );
     }
-    const user = await this.findByEmail(email, true);
+    // Demo accounts (seed data) never work in production, whatever their password.
+    const demoBlocked = this.config.NODE_ENV === 'production' && isDemoEmail(email);
+    const user = demoBlocked ? null : await this.findByEmail(email, true);
     const ok =
       user && !user.disabledAt
         ? await verifyPassword(user.passwordHash, password)
@@ -335,12 +338,39 @@ export class AuthService {
   }
 
   /**
+   * Production safety net: if demo accounts from the seed ever reach a production database,
+   * disable them at boot. Returns the emails that were disabled.
+   */
+  async disableDemoAccounts(): Promise<string[]> {
+    const demo = (await this.users.find({ where: { disabledAt: IsNull() } })).filter((u) =>
+      isDemoEmail(u.email),
+    );
+    for (const u of demo) {
+      await this.users.update(u.id, { disabledAt: this.now(), tokenVersion: u.tokenVersion + 1 });
+      await this.tokens.update(
+        { userId: u.id, revokedAt: IsNull() },
+        { revokedAt: this.now(), revokedReason: 'DEMO_IN_PRODUCTION' },
+      );
+      await this.audit.record({
+        actorType: 'SYSTEM',
+        entity: 'user',
+        entityId: u.id,
+        action: 'DEMO_ACCOUNT_DISABLED',
+      });
+    }
+    return demo.map((u) => u.email);
+  }
+
+  /**
    * Create the owner account from ADMIN_EMAIL / ADMIN_PASSWORD if no user exists yet.
    * Returns what happened, for the seed script's output.
    */
   async bootstrapAdmin(email: string, password: string): Promise<'created' | 'exists'> {
     const problem = passwordProblem(password, email);
     if (problem) throw new Error(`ADMIN_PASSWORD is not acceptable: ${problem}`);
+    if (this.config.NODE_ENV === 'production' && isDemoEmail(email)) {
+      throw new Error('ADMIN_EMAIL uses a .test demo domain; use your real email in production');
+    }
     if ((await this.users.count()) > 0) return 'exists';
     const user = await this.users.save(
       this.users.create({

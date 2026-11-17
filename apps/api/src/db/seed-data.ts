@@ -18,6 +18,33 @@ import type { EncryptionService } from '../crypto/encryption.service.js';
 
 export const SEED_OWNER = { email: 'owner@shubhjets.test', password: 'shubhjets dev passphrase' };
 
+/** Demo and test accounts all use the reserved .test domain, which can never receive real email. */
+export const isDemoEmail = (email: string) => /@[^@]+\.test$/i.test(email.trim());
+
+/**
+ * Seeding wipes everything, so it refuses unless this is clearly a development database:
+ * never in production, and never when real (non-demo) accounts exist unless `force` is given.
+ */
+export async function assertSeedAllowed(
+  ds: DataSource,
+  env: { NODE_ENV: string },
+  opts: { force?: boolean } = {},
+): Promise<void> {
+  if (env.NODE_ENV === 'production') {
+    throw new Error(
+      'Refusing to seed: NODE_ENV is production. Seed data is fake and would replace all real data.',
+    );
+  }
+  const users: { email: string }[] = await ds.query(`SELECT email FROM app_user`);
+  const real = users.filter((u) => !isDemoEmail(u.email));
+  if (real.length > 0 && !opts.force) {
+    throw new Error(
+      `Refusing to seed: this database has real accounts (${real.map((u) => u.email).join(', ')}). ` +
+        'Seeding would erase everything. If this really is a throwaway development database, run: pnpm seed --force',
+    );
+  }
+}
+
 const L = 1_00_000_00; // ₹1 lakh in paise
 
 type Row = Record<string, unknown>;
