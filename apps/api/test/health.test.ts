@@ -27,11 +27,34 @@ describe('API skeleton', () => {
 });
 
 describe('config', () => {
+  const base = {
+    DATABASE_URL: 'postgres://u:p@localhost:5432/db',
+    JWT_SECRET: 'x'.repeat(32),
+    DATA_ENCRYPTION_KEYS: `k1:${Buffer.alloc(32, 1).toString('base64')}`,
+  };
+
   it('applies defaults', () => {
-    expect(loadConfig({}).API_PORT).toBe(3000);
+    const config = loadConfig(base);
+    expect(config.API_PORT).toBe(3000);
+    expect(config.COOKIE_SECURE).toBe(false);
+    expect(loadConfig({ ...base, NODE_ENV: 'production' }).COOKIE_SECURE).toBe(true);
+  });
+
+  it('parses rotation keys, newest first', () => {
+    const old = Buffer.alloc(32, 2).toString('base64');
+    const config = loadConfig({
+      ...base,
+      DATA_ENCRYPTION_KEYS: `${base.DATA_ENCRYPTION_KEYS},k0:${old}`,
+    });
+    expect(config.DATA_ENCRYPTION_KEYS.map((k) => k.id)).toEqual(['k1', 'k0']);
   });
 
   it('explains invalid values', () => {
-    expect(() => loadConfig({ API_PORT: 'abc' })).toThrow(/API_PORT/);
+    expect(() => loadConfig({ ...base, API_PORT: 'abc' })).toThrow(/API_PORT/);
+    expect(() => loadConfig({ ...base, JWT_SECRET: 'short' })).toThrow(/JWT_SECRET/);
+    expect(() => loadConfig({ ...base, DATA_ENCRYPTION_KEYS: 'k1:dG9vc2hvcnQ=' })).toThrow(
+      /DATA_ENCRYPTION_KEYS/,
+    );
+    expect(() => loadConfig({ JWT_SECRET: 'x'.repeat(32) })).toThrow(/DATABASE_URL/);
   });
 });
