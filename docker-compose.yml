@@ -1,0 +1,23 @@
+# Local development services. Production uses Railway Postgres.
+# Storage (S3-compatible stand-in for Cloudflare R2) and an email catcher are added in the steps that use them.
+name: shubhjets
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: shubhjets
+      POSTGRES_PASSWORD: shubhjets
+      POSTGRES_DB: shubhjets
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U shubhjets']
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+volumes:
+  pgdata:

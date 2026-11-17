@@ -1,0 +1,26 @@
+/* Brand tokens shared with PDFs and the website ("night wedding" palette, WEBSITE.md §3). */
+:root {
+  --sj-midnight: #0b1020;
+  --sj-gold: #d4b26a;
+  --sj-gold-dark: #7a5a1e;
+  --sj-ivory: #f6f1e7;
+  --tblr-font-sans-serif: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --tblr-primary: #0b1020;
+  --tblr-primary-rgb: 11, 16, 32;
+}
+
+.sj-wordmark {
+  font-family: 'Bodoni Moda', Georgia, serif;
+  font-weight: 600;
+  color: var(--sj-gold);
+  letter-spacing: 0.02em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
