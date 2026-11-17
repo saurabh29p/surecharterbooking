@@ -38,3 +38,12 @@ Answers to the build questions (17 Nov 2026) and other choices made during the b
 - **NestJS 12 is ESM-only**, so the API is an ES module compiled with `tsc` (NodeNext). `packages/shared` is compiled to `dist/` for the API at runtime; the desk and all tests read its TypeScript source directly through the `@shubhjets/source` export condition.
 - **Vitest for every package**, including the API (with SWC for decorator metadata), instead of Jest — one test runner for the whole repo.
 - Money is integer paise and percentages are integer basis points (10000 = 100%); all maths uses BigInt intermediates and rounds half away from zero.
+
+## Build choices (step 2)
+- **All API routes live under `/api`, and the desk calls them on its own site** (a Vite proxy in development, a Vercel rewrite in production). The refresh cookie is then first-party, so Safari and other browsers that block third-party cookies keep you logged in.
+- **Sessions:** a 15-minute access token kept only in memory, plus a refresh token in an httpOnly, SameSite=Strict cookie (`/api/auth` only). Every refresh rotates the token and pushes expiry 30 days out. A token replayed after rotation ends that device's session (theft protection); a 30-second grace covers two tabs refreshing at once. "Log out all devices" also bumps a per-user version, so access tokens die immediately.
+- **Login limits:** 10 attempts per 15 minutes per network, and an email is locked for 15 minutes after 8 wrong passwords. Both are in memory, which is fine for one API instance.
+- **Business profiles are archived, never deleted**, because weddings, quotes and invoices keep pointing at the profile they used.
+- **Reference data (airports, default settings) ships in a migration**, so production has it without running the fake seed.
+- **Logo upload** waits for file storage (step 4); until then documents use the ShubhJets wordmark.
+- **Seed data skips documents and shares** until PDFs and sharing exist (steps 8–11).

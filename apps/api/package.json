@@ -11,7 +11,8 @@
     "test": "vitest run",
     "db:migrate": "pnpm build && node --env-file-if-exists=../../.env dist/db/migrate.js",
     "db:revert": "pnpm build && node --env-file-if-exists=../../.env dist/db/migrate.js --revert",
-    "gen:key": "pnpm build && node dist/scripts/gen-key.js"
+    "gen:key": "pnpm build && node dist/scripts/gen-key.js",
+    "seed": "pnpm build && node --env-file-if-exists=../../.env dist/db/seed.js"
   },
   "dependencies": {
     "@nestjs/common": "^12.5.1",

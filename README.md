@@ -28,24 +28,48 @@ Read BRIEF.md, UX.md and WEBSITE.md fully. Follow BRIEF.md: give me your plan, t
 
 ## Run it locally
 
-Needs Node 22, pnpm 10 (`corepack enable`) and Docker.
+Needs Node 22, pnpm 10 (`corepack enable`) and Docker (or your own PostgreSQL 16).
 
 ```bash
 cp .env.example .env
 pnpm install
-pnpm dev            # starts Postgres (Docker), the API on :3000 and the desk on :5173
+pnpm infra:up       # PostgreSQL in Docker (skip if you run your own)
+pnpm db:migrate     # create the tables, airports and default settings
+pnpm seed           # fake demo data (wipes the development database)
+pnpm dev            # API on :3000, desk on http://localhost:5173
 ```
+
+Log in with the demo owner printed by `pnpm seed`: `owner@shubhjets.test` / `shubhjets dev passphrase`.
+
+To try the first-login setup wizard instead, skip `pnpm seed` and set `ADMIN_EMAIL` and `ADMIN_PASSWORD`
+(at least 12 characters) in `.env`; the API creates that owner on a fresh database.
+
+### Seed data
+
+`pnpm seed` replaces all data with fake records only: Planner P1–P4, Hotel H1, Operator A–D
+(A and B verified, C's insurance expiring in 9 days, D not yet verified), clients C1–C6 and weddings
+W-101 to W-106, one in each status from enquiry to done, with legs, rate requests and replies, quotes,
+payments and guests. Dates are relative to today. It refuses to run when `NODE_ENV=production`.
 
 ## Checks
 
 ```bash
-pnpm test           # all unit tests (Vitest)
-pnpm typecheck
-pnpm lint
-pnpm format:check
+pnpm check          # lint + format + typecheck + all tests (what CI runs, plus build)
+pnpm test           # all tests
 pnpm build
 ```
 
-CI (GitHub Actions) runs all of these on every push.
+API tests run against a real PostgreSQL database named `shubhjets_test` (set `TEST_DATABASE_URL` to change it;
+the name must end in `_test` because tests wipe it). With Docker: `docker compose exec postgres createdb -U shubhjets shubhjets_test`.
 
-Seed, eval and deploy steps are added to this README as those steps are built.
+CI (GitHub Actions) runs everything on every push.
+
+## Useful commands
+
+| Command | What it does |
+|---|---|
+| `pnpm db:migrate` | Apply pending database migrations |
+| `pnpm --filter @shubhjets/api db:revert` | Undo the last migration (development only) |
+| `pnpm --filter @shubhjets/api gen:key` | Make a new `DATA_ENCRYPTION_KEYS` value |
+
+Eval and deploy steps are added to this README as those steps are built.

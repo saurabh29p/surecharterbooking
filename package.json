@@ -16,7 +16,9 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check": "pnpm lint && pnpm format:check && pnpm typecheck && pnpm test"
+    "check": "pnpm lint && pnpm format:check && pnpm typecheck && pnpm test",
+    "seed": "pnpm --filter @shubhjets/api seed",
+    "db:migrate": "pnpm --filter @shubhjets/api db:migrate"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
