@@ -3,6 +3,7 @@
 Prompt for Claude Code. Build only when I say so (after Phase A of `BRIEF.md`).
 A fast, elegant, mobile-first marketing site for ONE niche: **private jets for Indian destination weddings.**
 The brand name is broad (ShubhJets) so we can add other services later; the content is wedding-only for now.
+**UI/UX quality is a hard requirement:** follow `UX.md` (especially §6 for the website).
 
 ---
 
@@ -64,4 +65,5 @@ WhatsApp number, phone, email, GSTIN, registered address, domain (shubhjets.com 
 - [ ] Enquiry form and WhatsApp taps reach the desk API with lead source + UTM.
 - [ ] Lighthouse targets in §2 met on mobile.
 - [ ] Honesty rules in §7 met; no invented content.
+- [ ] Every page passes the `UX.md` quality checklist (buttons feel clickable, hover/press effects, smooth motion, no layout shift).
 - [ ] Deployed on Vercel with the domain connected.

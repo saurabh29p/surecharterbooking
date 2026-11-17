@@ -5,11 +5,12 @@ Prompt for Claude Code. Build a small, fast, mobile-first internal tool for ONE 
 If a feature does not help close a wedding deal, do not build it.
 
 The public website is a separate app in the same repo: see `WEBSITE.md`.
+**UI/UX quality is a hard requirement:** follow `UX.md` for every screen and component.
 
 ---
 
 ## 0. How you must work
-1. Read this file and `WEBSITE.md` fully.
+1. Read this file, `UX.md` and `WEBSITE.md` fully.
 2. Reply with: (a) a short build plan, (b) the data model, (c) ALL your questions in ONE batch. Then STOP and wait for my answers.
 3. Build in two phases, small working commits, tests passing at every step:
    - **Phase A (first 2 weeks):** login, data model, imports, weddings + legs, rate comparison, quote PDF, agreements, payments, hard rules, sharing, Today screen.
@@ -173,6 +174,7 @@ Corporate / family-office clients, international trips, empty-legs board, client
 - [ ] All 3 agreements generate as PDF with data filled in, watermarked until lawyer-approved.
 - [ ] (Phase B) Paste a planner's WhatsApp message → wedding with legs, missing details and a draft reply; one tap drafts rate requests; pasted replies fill the comparison.
 - [ ] (Phase B) AI cost page and ₹2,000 cap work.
+- [ ] Every screen passes the `UX.md` quality checklist (alive buttons, instant feedback, skeletons, toasts with undo, mobile-first).
 - [ ] All tests pass; deploys to Railway + Vercel following the README.
 
 Start now: plan, data model and all your questions in one batch.
