@@ -18,13 +18,30 @@ describe('schema', () => {
   });
 
   it('reverts and re-applies cleanly', async () => {
-    await ds.undoLastMigration({ transaction: 'each' });
+    const count = ds.migrations.length;
+    for (let i = 0; i < count; i++) await ds.undoLastMigration({ transaction: 'each' });
     const after: { n: number }[] = await ds.query(
       `SELECT count(*)::int AS n FROM pg_tables WHERE schemaname = 'public' AND tablename <> 'schema_migration'`,
     );
     expect(after[0]!.n).toBe(0);
     await ds.runMigrations({ transaction: 'each' });
     expect(await ds.showMigrations()).toBe(false);
+    await resetDb(ds);
+  });
+
+  it('ships the airports and default settings', async () => {
+    const airports: { iata: string }[] = await ds.query(`SELECT iata FROM airport`);
+    expect(airports.map((a) => a.iata)).toEqual(
+      expect.arrayContaining(['DEL', 'UDR', 'JSA', 'DED', 'COK', 'IXC', 'PGH']),
+    );
+    const [chase] = await ds.query(
+      `SELECT value FROM setting WHERE key = 'today.chase_operator_hours'`,
+    );
+    expect(chase.value).toBe(2);
+    const gst: { confirmed: boolean }[] = await ds.query(
+      `SELECT confirmed FROM setting WHERE key LIKE 'gst.%'`,
+    );
+    expect(gst.every((g) => g.confirmed === false)).toBe(true);
   });
 
   it('gives weddings W-101 style codes', async () => {

@@ -309,12 +309,10 @@ export class AuthService {
         (await this.tokens.findOne({ where: { tokenHash: hashToken(currentToken) } }))?.familyId) ||
       randomUUID();
     return this.ds.transaction(async (m) => {
-      await m
-        .getRepository(User)
-        .update(userId, {
-          passwordHash: await hashPassword(next),
-          tokenVersion: user.tokenVersion + 1,
-        });
+      await m.getRepository(User).update(userId, {
+        passwordHash: await hashPassword(next),
+        tokenVersion: user.tokenVersion + 1,
+      });
       await m
         .getRepository(RefreshToken)
         .update(
