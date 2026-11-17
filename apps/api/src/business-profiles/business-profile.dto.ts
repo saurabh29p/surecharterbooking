@@ -90,10 +90,11 @@ function crossChecks(
 }
 
 export const CreateProfileBody = ProfileFields.superRefine((v, ctx) => crossChecks(v, ctx));
-export type CreateProfileInput = z.infer<typeof CreateProfileBody>;
+/** Every field is optional (the setup wizard can skip anything). */
+export type CreateProfileInput = Partial<z.infer<typeof CreateProfileBody>>;
 
 /** Updates are cross-checked against the stored state in the service (the body may omit stateCode). */
 export const UpdateProfileBody = ProfileFields;
-export type UpdateProfileInput = z.infer<typeof UpdateProfileBody>;
+export type UpdateProfileInput = Partial<z.infer<typeof UpdateProfileBody>>;
 export const validateUpdate = (input: UpdateProfileInput, existingState: string) =>
   ProfileFields.superRefine((v, ctx) => crossChecks(v, ctx, existingState)).safeParse(input);

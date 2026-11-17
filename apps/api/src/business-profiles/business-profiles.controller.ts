@@ -45,26 +45,25 @@ export class BusinessProfilesController {
   update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body(new ZodPipe(UpdateProfileBody)) body: UpdateProfileInput,
-    @CurrentUser() user: AuthUser,
   ) {
-    return this.profiles.update(id, body, user.id);
+    return this.profiles.update(id, body);
   }
 
   @Post(':id/default')
   @HttpCode(200)
-  setDefault(@Param('id', new ParseUUIDPipe()) id: string, @CurrentUser() user: AuthUser) {
-    return this.profiles.setDefault(id, user.id);
+  setDefault(@Param('id', new ParseUUIDPipe()) id: string) {
+    return this.profiles.setDefault(id);
   }
 
   @Post(':id/archive')
   @HttpCode(200)
-  archive(@Param('id', new ParseUUIDPipe()) id: string, @CurrentUser() user: AuthUser) {
-    return this.profiles.archive(id, user.id);
+  archive(@Param('id', new ParseUUIDPipe()) id: string) {
+    return this.profiles.archive(id);
   }
 
   /** Full bank details for the edit form; audited. */
   @Get(':id/bank-details')
-  async bankDetails(@Param('id', new ParseUUIDPipe()) id: string, @CurrentUser() user: AuthUser) {
-    return { bankDetails: await this.profiles.revealBankDetails(id, user.id) };
+  async bankDetails(@Param('id', new ParseUUIDPipe()) id: string) {
+    return { bankDetails: await this.profiles.revealBankDetails(id) };
   }
 }

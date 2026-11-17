@@ -152,34 +152,13 @@ export class BusinessProfilesService {
         bankHint: null,
         createdBy: userId,
       });
-      const bank = this.applyBank(p, input.bankDetails);
-      const row = await repo.save(p);
-      await this.audit.record(
-        {
-          actorType: 'USER',
-          actorId: userId,
-          entity: 'business_profile',
-          entityId: row.id,
-          action: 'CREATED',
-          diff: {
-            label: row.label,
-            stateCode,
-            isDefault: isFirst,
-            ...(bank ? { bankDetails: bank } : {}),
-          },
-        },
-        m,
-      );
-      return row;
+      this.applyBank(p, input.bankDetails);
+      return repo.save(p);
     });
     return this.toView(saved);
   }
 
-  async update(
-    id: string,
-    input: UpdateProfileInput,
-    userId: string,
-  ): Promise<BusinessProfileView> {
+  async update(id: string, input: UpdateProfileInput): Promise<BusinessProfileView> {
     const saved = await this.ds.transaction(async (m) => {
       const p = await this.find(id, m);
       if (p.archivedAt) throw new BadRequestException('This profile is archived');
@@ -201,80 +180,56 @@ export class BusinessProfilesService {
         });
       }
       await this.assertGstinFree(m, input.gstin, id);
-      const diff: Record<string, unknown> = {};
+      let changed = false;
       for (const field of PLAIN_FIELDS) {
         const value = input[field];
         if (value === undefined || value === p[field]) continue;
-        if (field === 'label' || field === 'stateCode' || field === 'invoicePrefix') {
-          if (value === null) continue; // required columns cannot be cleared
-        }
-        diff[field] = { from: p[field], to: value };
+        if (
+          value === null &&
+          (field === 'label' || field === 'stateCode' || field === 'invoicePrefix')
+        )
+          continue; // required
         (p as unknown as Record<string, unknown>)[field] = value;
+        changed = true;
       }
-      const bank = this.applyBank(p, input.bankDetails);
-      if (bank) diff.bankDetails = bank;
-      if (Object.keys(diff).length === 0) return p;
-      const row = await m.getRepository(BusinessProfile).save(p);
-      await this.audit.record(
-        {
-          actorType: 'USER',
-          actorId: userId,
-          entity: 'business_profile',
-          entityId: id,
-          action: 'UPDATED',
-          diff,
-        },
-        m,
-      );
-      return row;
+      if (this.applyBank(p, input.bankDetails)) changed = true;
+      // The audit subscriber logs the before/after values of whatever save() changes.
+      return changed ? m.getRepository(BusinessProfile).save(p) : p;
     });
     return this.toView(saved);
   }
 
-  async setDefault(id: string, userId: string): Promise<BusinessProfileView> {
+  async setDefault(id: string): Promise<BusinessProfileView> {
     const saved = await this.ds.transaction(async (m) => {
       const p = await this.find(id, m);
       if (p.archivedAt) throw new BadRequestException('Archived profiles cannot be the default');
       if (p.isDefault) return p;
       const repo = m.getRepository(BusinessProfile);
-      await repo.update({ isDefault: true }, { isDefault: false });
+      // Entity saves (not a bulk update) so both changes appear in the audit log.
+      const previous = await repo.findOneBy({ isDefault: true });
+      if (previous) {
+        previous.isDefault = false;
+        await repo.save(previous);
+      }
       p.isDefault = true;
-      const row = await repo.save(p);
-      await this.audit.record(
-        {
-          actorType: 'USER',
-          actorId: userId,
-          entity: 'business_profile',
-          entityId: id,
-          action: 'MADE_DEFAULT',
-        },
-        m,
-      );
-      return row;
+      return repo.save(p);
     });
     return this.toView(saved);
   }
 
   /** Archived profiles stay attached to old weddings and invoices but can't be chosen for new ones. */
-  async archive(id: string, userId: string): Promise<BusinessProfileView> {
+  async archive(id: string): Promise<BusinessProfileView> {
     const p = await this.find(id);
-    if (p.isDefault)
+    if (p.isDefault) {
       throw new ConflictException('Make another profile the default before archiving this one');
+    }
     if (p.archivedAt) return this.toView(p);
     p.archivedAt = new Date();
-    const row = await this.repo.save(p);
-    await this.audit.record({
-      actorType: 'USER',
-      actorId: userId,
-      entity: 'business_profile',
-      entityId: id,
-      action: 'ARCHIVED',
-    });
-    return this.toView(row);
+    return this.toView(await this.repo.save(p));
   }
 
   /** Full bank details, for the edit form only. Every view is audited. */
-  async revealBankDetails(id: string, userId: string): Promise<BankDetails | null> {
+  async revealBankDetails(id: string): Promise<BankDetails | null> {
     const p = await this.repo
       .createQueryBuilder('p')
       .addSelect('p.bankDetailsEnc')
@@ -283,8 +238,6 @@ export class BusinessProfilesService {
     if (!p) throw new NotFoundException('Business profile not found');
     if (!p.bankDetailsEnc) return null;
     await this.audit.record({
-      actorType: 'USER',
-      actorId: userId,
       entity: 'business_profile',
       entityId: id,
       action: 'BANK_DETAILS_VIEWED',

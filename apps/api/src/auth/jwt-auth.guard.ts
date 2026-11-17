@@ -10,6 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import type { Request } from 'express';
 import { IsNull, type Repository } from 'typeorm';
 import { APP_CONFIG, type AppConfig } from '../config.js';
+import { setRequestUser } from '../audit/request-context.js';
 import { IS_PUBLIC, type AuthUser } from './public.decorator.js';
 import { verifyAccessToken } from './tokens.js';
 import { User } from './user.entity.js';
@@ -46,6 +47,7 @@ export class JwtAuthGuard implements CanActivate {
     if (!user || user.tokenVersion !== claims.ver)
       throw new UnauthorizedException('Your session has ended');
     req.user = { id: user.id, role: user.role };
+    setRequestUser(user.id);
     return true;
   }
 }

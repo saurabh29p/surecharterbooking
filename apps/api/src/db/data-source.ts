@@ -1,4 +1,5 @@
 import { DataSource, type DataSourceOptions } from 'typeorm';
+import { AuditSubscriber } from '../audit/audit.subscriber.js';
 import { ENTITIES } from './entities.js';
 import { InitialSchema1763400000000 } from './migrations/1763400000000-InitialSchema.js';
 import { ReferenceData1763400000001 } from './migrations/1763400000001-ReferenceData.js';
@@ -13,6 +14,7 @@ export function dataSourceOptions(url: string, ssl = false): DataSourceOptions {
     ssl: ssl ? { rejectUnauthorized: false } : false,
     entities: ENTITIES,
     migrations: MIGRATIONS,
+    subscribers: [AuditSubscriber],
     migrationsTableName: 'schema_migration',
     migrationsTransactionMode: 'each',
     synchronize: false,

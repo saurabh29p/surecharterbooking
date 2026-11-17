@@ -5,8 +5,10 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Audited } from '../audit/audited.js';
 
 /** Who we invoice and sign as. Several are allowed; exactly one is the default. */
+@Audited('business_profile', { ignore: ['createdBy'] })
 @Entity('business_profile')
 export class BusinessProfile {
   @PrimaryGeneratedColumn('uuid') id!: string;
