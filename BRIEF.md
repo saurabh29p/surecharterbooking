@@ -127,7 +127,7 @@ Every document and draft has one **Share** button, for planners, clients and ope
 - Check per provider that strict structured outputs are supported; route only to those providers.
 - Use prompt caching for long, repeated instructions.
 - Log every call in `AiCall`: job, model, tokens, cost, latency, linked record, output. Cost page in Settings.
-- **Monthly cap: ₹5,000** (setting). At 80% warn me; at 100% stop AI jobs (core app keeps working).
+- **Monthly cap: ₹2,000** (setting). At 80% warn me; at 100% stop AI jobs (core app keeps working).
 - **Evaluation harness:** per job, a "golden set" of 30 examples (input + correct output) and a command that scores any model on field-level accuracy, cost and speed. Seed starter sets from fake data; I will add real ones. Switch models only when the harness shows a better score.
 
 ### 5.2 Job 1 — Paste-to-wedding
@@ -154,17 +154,22 @@ I research planners and operators separately (in Claude chat) and import them as
 - **Assistant panel** on every screen: runs jobs 1–3 and answers questions about my data using read-only tools (search weddings, legs, operators, planners, payments). It must cite linked records, say "not found" instead of guessing, never invent prices, permit numbers or availability, and open pre-filled forms instead of saving anything itself.
 
 ### 5.7 Default models (via OpenRouter, editable in Settings)
-| Job | Model | Fallback |
-|---|---|---|
-| Jobs 1–3 + assistant | Claude Sonnet 5.5 | GPT-6.1 Sol |
-Verify exact OpenRouter model IDs at build time. Expected running cost: about ₹1,500–3,000/month in season.
+These jobs are simple (read a message, fill fields, write a short draft), so use small, cheap models.
+| Job | Default model | Fallback (different lab) | Escalation |
+|---|---|---|---|
+| Jobs 1–3 + assistant | Claude Haiku 5.5 | GPT-6 Luna | Claude Sonnet 5.5, only if the output fails schema validation twice |
+- Keep every prompt well under 100,000 tokens (Haiku 5.5 bills 5x above that): send only the current wedding/leg/message, never whole histories.
+- Cache the fixed instructions (prompt caching).
+- Never route client data to a provider whose servers are outside the providers I approve in Settings.
+- Verify exact OpenRouter model IDs and structured-output support at build time; let the eval harness confirm accuracy before switching.
+- Expected running cost: a few hundred rupees per month in season.
 
 ## 6. Not now (design data model so they fit later)
 Corporate / family-office clients, international trips, empty-legs board, client portal, e-sign API, WhatsApp Business API, payment links, charter marketplace APIs, contract-risk analysis, news monitoring.
 
 ## 7. Seed data and tests
 - Seed fake data only: "Planner P1–P5", "Operator A–D", weddings "W-101–W-106", with legs, rates and payments in different statuses. Never real company names or real NSOP numbers.
-- Settings seed: markup 10%, quote validity 24 h, target ₹20,00,000/month, GST placeholders (flagged), ID retention 30 days, AI cap ₹5,000, secure link expiry 14 days.
+- Settings seed: markup 10%, quote validity 24 h, target ₹20,00,000/month, GST placeholders (flagged), ID retention 30 days, AI cap ₹2,000, secure link expiry 14 days.
 - Tests: every hard rule in 4.3; every AI prohibition; money formatting; margin/GST/commission maths; AI gateway schema validation, retry and fallback; redaction; the full flow enquiry → rates → quote → signed & paid → flying → done.
 
 ## 8. Definition of done
@@ -178,7 +183,7 @@ Corporate / family-office clients, international trips, empty-legs board, client
 - [ ] I can import planners and operators from CSV with duplicate checks; imported operators stay `FOUND` until I verify them.
 - [ ] From my phone I can share any quote, agreement, invoice or rate request via WhatsApp, Instagram, Facebook, Telegram or email, and every share is logged.
 - [ ] Nothing shared with a planner or client ever shows operator net rates or my margin.
-- [ ] AI cost page and ₹5,000 cap work.
+- [ ] AI cost page and ₹2,000 cap work.
 - [ ] All tests pass; deploys to Railway + Vercel following the README.
 
 Start now: plan, data model and all your questions in one batch.
