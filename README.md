@@ -1,13 +1,16 @@
-# Sure Charter Booking — Charter Desk
+# ShubhJets — Wedding Charter Desk
 
-Wedding Charter Desk: internal tool for private jet flights for Indian destination weddings, sold through wedding planners (Indicgems Exim LLP).
+Private jets for Indian destination weddings, sold through wedding planners.
+A service of Indicgems Exim LLP.
 
-The full build brief is in [BRIEF.md](BRIEF.md).
+This repo will hold:
+- `apps/desk` + `apps/api`: the internal system (see [BRIEF.md](BRIEF.md))
+- `apps/site`: the public ShubhJets website (see [WEBSITE.md](WEBSITE.md))
 
 ## Start building with Claude Code
 
 Open this repo in Claude Code and send:
 
 ```
-Read BRIEF.md fully. Follow it: give me your plan, the data model and all your questions in one batch, then wait for my answers before writing code.
+Read BRIEF.md and WEBSITE.md fully. Follow BRIEF.md: give me your plan, the data model and all your questions in one batch, then wait for my answers before writing code. Do not build the website until I ask.
 ```
