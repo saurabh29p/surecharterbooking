@@ -1,5 +1,7 @@
 import { Column, Entity, PrimaryColumn, UpdateDateColumn } from 'typeorm';
+import { Audited } from '../audit/audited.js';
 
+@Audited('setting', { ignore: ['updatedBy'] })
 @Entity('setting')
 export class Setting {
   @PrimaryColumn('text') key!: string;
