@@ -8,6 +8,7 @@ import SjConfirm from '../../components/SjConfirm.vue';
 import SjSkeleton from '../../components/SjSkeleton.vue';
 import BankFields from '../../components/profile/BankFields.vue';
 import BusinessFields from '../../components/profile/BusinessFields.vue';
+import LogoField from '../../components/profile/LogoField.vue';
 import SigningFields from '../../components/profile/SigningFields.vue';
 import { bankIsEmpty, fillBank, newProfileForm, toBody } from '../../composables/profileForm';
 import { useToast } from '../../composables/toast';
@@ -233,9 +234,13 @@ async function archive() {
         <div class="card-body">
           <h2 class="h3">Signing and invoices</h2>
           <SigningFields v-model:form="form" :errors="errors" />
-          <p class="text-secondary small mb-0">
-            Logo upload arrives with file storage; until then PDFs use the ShubhJets wordmark.
-          </p>
+        </div>
+      </div>
+
+      <div v-if="profile" class="card mb-3">
+        <div class="card-body">
+          <h2 class="h3">Logo</h2>
+          <LogoField :profile="profile" @updated="(p) => (profile = p)" />
         </div>
       </div>
 

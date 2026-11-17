@@ -26,7 +26,7 @@ Answers to the build questions (17 Nov 2026) and other choices made during the b
 
 ## Accounts and infrastructure
 - Keys are requested only when a step needs them.
-- Storage: Cloudflare R2. Email: Resend. PDFs: Playwright/Chromium HTML→PDF.
+- Storage: ~~Cloudflare R2~~ **Railway Storage Bucket** (S3-compatible; changed 17 Nov 2026), configured only through `S3_*` env variables. Email: Resend. PDFs: Playwright/Chromium HTML→PDF.
 - Preview URLs (Vercel/Railway) until the domain is bought.
 - Brand: a Bodoni Moda wordmark in champagne gold, replaced by the logo from the business profile when one is uploaded.
 - Login lasts 30 days on a device (rotating refresh token), with a "log out all devices" button.
@@ -58,3 +58,9 @@ Answers to the build questions (17 Nov 2026) and other choices made during the b
 - **Who did it** comes from a per-request context: you (after login), Website visitor (before login), System (scheduled jobs) or AI (Phase B jobs, via `runAs`). The AI can never act as you.
 - **GST confirmation:** the GST rate and SAC code show a warning banner on every screen until you tick "My CA has confirmed" (a SAC code is required). Changing either value un-ticks it.
 - **Settings are defined once** in `packages/shared` (labels, units, limits), so the API and the desk validate identically.
+
+## Build choices (step 4)
+- **Storage drivers:** `local` (development and tests) and `s3` (any S3-compatible bucket; Railway in production). Production refuses `local`.
+- **Uploads are checked by their real bytes** (PDF, PNG, JPEG, WebP only; SVG refused because it can carry scripts), with a size limit per purpose. Each file is fingerprinted (SHA-256).
+- **Guest ID files are encrypted by the app before upload**, so even the bucket never holds them in readable form. They are served only through the API, and every opening is logged.
+- **Download links expire after 5 minutes.**

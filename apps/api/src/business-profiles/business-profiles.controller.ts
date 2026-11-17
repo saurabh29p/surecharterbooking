@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   Param,
@@ -8,9 +9,11 @@ import {
   Patch,
   Post,
   Query,
+  UploadedFile,
 } from '@nestjs/common';
 import { CurrentUser, type AuthUser } from '../auth/public.decorator.js';
 import { ZodPipe } from '../common/zod.pipe.js';
+import { AcceptFile, requireFile } from '../files/upload.js';
 import {
   CreateProfileBody,
   UpdateProfileBody,
@@ -65,5 +68,22 @@ export class BusinessProfilesController {
   @Get(':id/bank-details')
   async bankDetails(@Param('id', new ParseUUIDPipe()) id: string) {
     return { bankDetails: await this.profiles.revealBankDetails(id) };
+  }
+
+  /** Upload a logo (PNG, JPG or WebP, up to 2 MB) for PDFs from this profile. */
+  @Post(':id/logo')
+  @HttpCode(200)
+  @AcceptFile()
+  setLogo(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @UploadedFile() file: Express.Multer.File | undefined,
+  ) {
+    const f = requireFile(file);
+    return this.profiles.setLogo(id, { buffer: f.buffer, originalName: f.originalname });
+  }
+
+  @Delete(':id/logo')
+  removeLogo(@Param('id', new ParseUUIDPipe()) id: string) {
+    return this.profiles.removeLogo(id);
   }
 }

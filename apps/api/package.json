@@ -15,6 +15,8 @@
     "seed": "pnpm build && node --env-file-if-exists=../../.env dist/db/seed.js"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1170.0",
+    "@aws-sdk/s3-request-presigner": "^3.1170.0",
     "@nestjs/common": "^12.5.1",
     "@nestjs/core": "^12.5.1",
     "@nestjs/platform-express": "^12.5.1",
@@ -35,8 +37,10 @@
     "@swc/core": "^1.16.22",
     "@types/cookie-parser": "^1.4.10",
     "@types/express": "^5.0.6",
+    "@types/multer": "^2.3.0",
     "@types/pg": "^8.23.1",
     "@types/supertest": "^7.2.1",
+    "aws-sdk-client-mock": "^4.1.0",
     "supertest": "^7.3.2",
     "unplugin-swc": "^2.0.0"
   }

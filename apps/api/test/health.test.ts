@@ -23,11 +23,37 @@ describe('config', () => {
     DATA_ENCRYPTION_KEYS: `k1:${Buffer.alloc(32, 1).toString('base64')}`,
   };
 
+  const s3 = {
+    STORAGE_DRIVER: 's3',
+    S3_ENDPOINT: 'https://t3.storageapi.dev',
+    S3_BUCKET: 'my-bucket',
+    S3_ACCESS_KEY_ID: 'key',
+    S3_SECRET_ACCESS_KEY: 'secret',
+  };
+
   it('applies defaults', () => {
     const config = loadConfig(base);
     expect(config.API_PORT).toBe(3000);
     expect(config.COOKIE_SECURE).toBe(false);
-    expect(loadConfig({ ...base, NODE_ENV: 'production' }).COOKIE_SECURE).toBe(true);
+    expect(loadConfig({ ...base, NODE_ENV: 'production', ...s3 }).COOKIE_SECURE).toBe(true);
+    expect(config.STORAGE_DRIVER).toBe('local');
+  });
+
+  it('needs every S3 setting for the bucket driver, and refuses local disk in production', () => {
+    const c = loadConfig({ ...base, ...s3 });
+    expect(c).toMatchObject({
+      S3_REGION: 'auto',
+      S3_FORCE_PATH_STYLE: false,
+      S3_BUCKET: 'my-bucket',
+    });
+    expect(() =>
+      loadConfig({ ...base, STORAGE_DRIVER: 's3', S3_ENDPOINT: 'https://t3.storageapi.dev' }),
+    ).toThrow(
+      /S3_BUCKET: required[\s\S]*S3_ACCESS_KEY_ID: required[\s\S]*S3_SECRET_ACCESS_KEY: required/,
+    );
+    expect(() => loadConfig({ ...base, NODE_ENV: 'production' })).toThrow(
+      /STORAGE_DRIVER: must be s3 in production/,
+    );
   });
 
   it('parses rotation keys, newest first', () => {

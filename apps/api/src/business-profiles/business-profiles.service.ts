@@ -19,6 +19,7 @@ import {
 import { DataSource, IsNull, Not, type EntityManager, type Repository } from 'typeorm';
 import { AuditService } from '../audit/audit.service.js';
 import { EncryptionService } from '../crypto/encryption.service.js';
+import { FilesService } from '../files/files.service.js';
 import { BusinessProfile } from './business-profile.entity.js';
 import {
   validateUpdate,
@@ -50,6 +51,7 @@ export class BusinessProfilesService {
     @InjectRepository(BusinessProfile) private readonly repo: Repository<BusinessProfile>,
     @InjectDataSource() private readonly ds: DataSource,
     private readonly crypto: EncryptionService,
+    private readonly files: FilesService,
     private readonly audit: AuditService,
   ) {}
 
@@ -226,6 +228,31 @@ export class BusinessProfilesService {
     if (p.archivedAt) return this.toView(p);
     p.archivedAt = new Date();
     return this.toView(await this.repo.save(p));
+  }
+
+  /** Replace the logo shown on PDFs (instead of the ShubhJets wordmark). The old file is deleted. */
+  async setLogo(
+    id: string,
+    upload: { buffer: Buffer; originalName: string },
+  ): Promise<BusinessProfileView> {
+    const p = await this.find(id);
+    if (p.archivedAt) throw new BadRequestException('This profile is archived');
+    const file = await this.files.upload({ ...upload, purpose: 'logo' });
+    const old = p.logoFileId;
+    p.logoFileId = file.id;
+    const saved = await this.repo.save(p);
+    if (old) await this.files.purge(old);
+    return this.toView(saved);
+  }
+
+  async removeLogo(id: string): Promise<BusinessProfileView> {
+    const p = await this.find(id);
+    if (!p.logoFileId) return this.toView(p);
+    const old = p.logoFileId;
+    p.logoFileId = null;
+    const saved = await this.repo.save(p);
+    await this.files.purge(old);
+    return this.toView(saved);
   }
 
   /** Full bank details, for the edit form only. Every view is audited. */

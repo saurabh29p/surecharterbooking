@@ -78,6 +78,30 @@ CI (GitHub Actions) runs everything on every push.
 | `pnpm --filter @shubhjets/api db:revert` | Undo the last migration (development only) |
 | `pnpm --filter @shubhjets/api gen:key` | Make a new `DATA_ENCRYPTION_KEYS` value |
 
+## File storage
+
+Uploads (operator documents, logos, receipts, guest IDs) go through one storage layer with two drivers:
+
+| `STORAGE_DRIVER` | Where files go | Use for |
+|---|---|---|
+| `local` (default) | `STORAGE_LOCAL_DIR` on disk (`.data/files`) | development and tests |
+| `s3` | any S3-compatible private bucket | production (a Railway Storage Bucket) |
+
+For the Railway bucket, set these on the API service, copied from the bucket's **Credentials** tab or wired with
+Railway variable references:
+
+| Variable | Railway bucket value |
+|---|---|
+| `S3_ENDPOINT` | the endpoint, e.g. `https://t3.storageapi.dev` |
+| `S3_BUCKET` | the bucket name |
+| `S3_REGION` | `auto` |
+| `S3_ACCESS_KEY_ID` / `S3_SECRET_ACCESS_KEY` | the bucket's access key and secret |
+| `S3_FORCE_PATH_STYLE` | `false` (Railway uses virtual-hosted URLs) |
+
+The API refuses to start in production with `STORAGE_DRIVER=local`, because container disks are wiped on every deploy.
+Files are private. The desk opens them through links that expire after 5 minutes: presigned bucket URLs for ordinary
+files, and links served by the API for encrypted files (guest IDs). Every opening of an encrypted file is logged.
+
 ## Keys you must back up
 
 > **Back up `DATA_ENCRYPTION_KEYS` somewhere safe (for example a password manager), separately from the database backups.**

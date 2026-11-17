@@ -10,6 +10,7 @@ import { APP_CONFIG, type AppConfig } from './config.js';
 import { ConfigModule } from './config.module.js';
 import { CryptoModule } from './crypto/crypto.module.js';
 import { dataSourceOptions } from './db/data-source.js';
+import { FilesModule } from './files/files.module.js';
 import { HealthController } from './health.controller.js';
 import { SettingsModule } from './settings/settings.module.js';
 
@@ -31,6 +32,7 @@ import { SettingsModule } from './settings/settings.module.js';
     }),
     AuditModule,
     CryptoModule,
+    FilesModule,
     SettingsModule,
     AuthModule,
     AirportsModule,
