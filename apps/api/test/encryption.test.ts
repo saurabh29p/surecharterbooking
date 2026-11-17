@@ -28,7 +28,7 @@ describe('EncryptionService', () => {
   it('detects tampering', () => {
     const svc = make(`k1:${key(1)}`);
     const blob = svc.encryptJson({ a: 1 });
-    blob[blob.length - 1] ^= 0xff;
+    blob[blob.length - 1] = (blob[blob.length - 1] ?? 0) ^ 0xff;
     expect(() => svc.decrypt(blob)).toThrow();
   });
 
