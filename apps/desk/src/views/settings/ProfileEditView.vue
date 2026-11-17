@@ -168,7 +168,7 @@ async function archive() {
   try {
     await api(`/business-profiles/${profile.value.id}/archive`, { method: 'POST' });
     toast.success(`${profile.value.label} archived`);
-    await router.replace('/settings');
+    await router.replace('/settings/profiles');
   } catch (e) {
     toast.error(e instanceof ApiError ? e.message : "Couldn't archive this profile");
   } finally {
@@ -180,7 +180,7 @@ async function archive() {
 
 <template>
   <div>
-    <RouterLink to="/settings" class="d-inline-block mb-2">‹ Settings</RouterLink>
+    <RouterLink to="/settings/profiles" class="d-inline-block mb-2">‹ Business profiles</RouterLink>
     <SjSkeleton v-if="loading" :lines="8" height="2.5rem" />
     <form v-else novalidate @submit.prevent="save">
       <div class="d-flex align-items-center gap-2 flex-wrap mb-3">

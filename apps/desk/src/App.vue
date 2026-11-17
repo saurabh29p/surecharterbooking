@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { RouterLink, RouterView, useRoute } from 'vue-router';
+import SjBanner from './components/SjBanner.vue';
 import SjToasts from './components/SjToasts.vue';
 
 const route = useRoute();
@@ -14,7 +15,9 @@ const isActive = (to: string) =>
 
 <template>
   <a href="#main" class="visually-hidden-focusable">Skip to content</a>
-  <template v-if="route.meta.bare">
+  <!-- Nothing until the router has resolved the first route (avoids a flash of the app shell on /login). -->
+  <template v-if="!route.matched.length" />
+  <template v-else-if="route.meta.bare">
     <RouterView />
   </template>
   <template v-else>
@@ -41,6 +44,7 @@ const isActive = (to: string) =>
         </nav>
       </div>
     </header>
+    <SjBanner />
     <main id="main" class="sj-main">
       <div class="container-xl py-3">
         <RouterView />

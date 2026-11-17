@@ -52,3 +52,9 @@ Answers to the build questions (17 Nov 2026) and other choices made during the b
 - Store `DATA_ENCRYPTION_KEYS` in a safe backup (password manager), separate from database backups. Losing it makes encrypted bank details and guest ID files unrecoverable.
 - Set real `ADMIN_EMAIL` / `ADMIN_PASSWORD` (not a `.test` address) and a fresh random `JWT_SECRET`.
 - Never run `pnpm seed` against production. It refuses, but don't try.
+
+## Build choices (step 3)
+- **The audit log is automatic.** Entities marked `@Audited` get a database subscriber that writes before/after values in the same transaction as the change, so nothing is forgotten and a rolled-back change leaves no entry. Changes must go through repository `save()`; bulk updates are logged as `BULK_UPDATED`. Non-change events (logins, viewing bank details, sharing) are logged explicitly.
+- **Who did it** comes from a per-request context: you (after login), Website visitor (before login), System (scheduled jobs) or AI (Phase B jobs, via `runAs`). The AI can never act as you.
+- **GST confirmation:** the GST rate and SAC code show a warning banner on every screen until you tick "My CA has confirmed" (a SAC code is required). Changing either value un-ticks it.
+- **Settings are defined once** in `packages/shared` (labels, units, limits), so the API and the desk validate identically.

@@ -27,6 +27,26 @@ export const routes: RouteRecordRaw[] = [
     component: () => import('./views/settings/SettingsView.vue'),
   },
   {
+    path: '/settings/profiles',
+    name: 'profiles',
+    component: () => import('./views/settings/ProfilesView.vue'),
+  },
+  {
+    path: '/settings/rules',
+    name: 'rules',
+    component: () => import('./views/settings/RulesView.vue'),
+  },
+  {
+    path: '/settings/activity',
+    name: 'activity',
+    component: () => import('./views/settings/ActivityView.vue'),
+  },
+  {
+    path: '/settings/security',
+    name: 'security',
+    component: () => import('./views/settings/SecurityView.vue'),
+  },
+  {
     path: '/settings/profiles/:id',
     name: 'profile',
     component: () => import('./views/settings/ProfileEditView.vue'),

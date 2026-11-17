@@ -34,3 +34,16 @@ describe('SjButton', () => {
     expect(toasts.map((t) => t.message)).toContain(reason);
   });
 });
+
+describe('toasts', () => {
+  it('clear stale errors on success and show at most two', () => {
+    const t = useToast();
+    t.toasts.splice(0);
+    t.error('Please fix the highlighted fields');
+    t.success('Saved');
+    expect(t.toasts.map((x) => x.message)).toEqual(['Saved']);
+    t.success('One');
+    t.success('Two');
+    expect(t.toasts.map((x) => x.message)).toEqual(['One', 'Two']);
+  });
+});

@@ -19,9 +19,17 @@ function dismiss(id: number) {
   if (i >= 0) toasts.splice(i, 1);
 }
 
+const MAX_VISIBLE = 2;
+
 function show(t: Omit<Toast, 'id' | 'tone'> & { tone?: ToastTone }): number {
   const id = nextId++;
-  toasts.push({ tone: 'success', ...t, id });
+  const tone = t.tone ?? 'success';
+  // A success makes earlier errors stale ("Please fix…" then "Saved").
+  if (tone === 'success') {
+    for (const old of toasts.filter((x) => x.tone === 'error')) dismiss(old.id);
+  }
+  toasts.push({ ...t, tone, id });
+  while (toasts.length > MAX_VISIBLE) toasts.shift();
   setTimeout(() => dismiss(id), AUTO_HIDE_MS);
   return id;
 }
