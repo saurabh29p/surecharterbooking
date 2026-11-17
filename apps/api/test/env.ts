@@ -10,5 +10,6 @@ export const TEST_ENV = {
   DATA_ENCRYPTION_KEYS: `t1:${Buffer.alloc(32, 7).toString('base64')}`,
   COOKIE_SECURE: 'false',
   STORAGE_DRIVER: 'local',
+  JOBS_ENABLED: 'false',
   STORAGE_LOCAL_DIR: join(tmpdir(), 'shubhjets-test-files'),
 };

@@ -47,6 +47,8 @@ const EnvSchema = z
     ADMIN_EMAIL: z.preprocess((v) => (v === '' ? undefined : v), z.string().email().optional()),
     ADMIN_PASSWORD: z.preprocess((v) => (v === '' ? undefined : v), z.string().optional()),
     /** Where uploaded files go: local disk (development) or an S3-compatible bucket (production, Railway). */
+    /** Run background jobs (daily operator expiry check). Off in tests, which run jobs directly. */
+    JOBS_ENABLED: bool.default(true),
     STORAGE_DRIVER: z.enum(['local', 's3']).default('local'),
     STORAGE_LOCAL_DIR: z.string().default('.data/files'),
     S3_ENDPOINT: emptyAsUndefined(z.string().url().optional()),
