@@ -97,3 +97,20 @@ describe('profileReadiness', () => {
     );
   });
 });
+
+describe('phones and CIN', async () => {
+  const { normalizePhone, checkCin } = await import('../src/index.js');
+  it('normalises Indian mobiles for WhatsApp links', () => {
+    expect(normalizePhone('98765 43210')).toBe('+919876543210');
+    expect(normalizePhone('+91 98765-43210')).toBe('+919876543210');
+    expect(normalizePhone('09876543210')).toBe('+919876543210');
+    expect(normalizePhone('919876543210')).toBe('+919876543210');
+    expect(normalizePhone('+44 20 7946 0958')).toBe('+442079460958');
+    expect(normalizePhone('12345')).toBeNull();
+    expect(normalizePhone('5876543210')).toBeNull();
+  });
+  it('checks CIN format', () => {
+    expect(checkCin('U62200DL2020PTC123456')).toBeNull();
+    expect(checkCin('U6220')).toMatch(/21 characters/);
+  });
+});

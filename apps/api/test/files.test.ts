@@ -8,13 +8,7 @@ import { S3StorageDriver } from '../src/files/s3.driver.js';
 import { createOwner, createTestApp, login, resetLimits, type TestApp } from './app.js';
 import { resetDb } from './db.js';
 import { TEST_ENV } from './env.js';
-
-/** A real 1×1 PNG. */
-export const PNG = Buffer.from(
-  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
-  'base64',
-);
-export const PDF = Buffer.from('%PDF-1.4\n1 0 obj<<>>endobj\ntrailer<<>>\n%%EOF\n');
+import { PDF, PNG } from './fixtures.js';
 
 describe('file storage (local driver)', () => {
   let t: TestApp;

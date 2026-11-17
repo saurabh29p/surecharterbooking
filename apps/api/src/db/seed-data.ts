@@ -286,6 +286,8 @@ export async function seed(
         cancellation_terms:
           'More than 7 days before departure: 10% of the charter price. 7 to 3 days: 50%. Less than 72 hours: 100%.',
         status,
+        verified_at: opts.verified ? hoursAgo(24 * 30) : null,
+        verified_by: opts.verified ? owner : null,
         created_by: owner,
       });
       for (const iata of bases)

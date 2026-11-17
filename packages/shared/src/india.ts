@@ -92,3 +92,24 @@ export function checkIfsc(input: string): string | null {
     ? null
     : 'An IFSC has 11 characters, like HDFC0001234';
 }
+
+/**
+ * Normalise a phone number to E.164 for wa.me links: "98765 43210" → "+919876543210".
+ * Indian numbers may be typed with or without +91 / 0; other countries need their + code.
+ * Returns null when it can't be a valid number.
+ */
+export function normalizePhone(input: string): string | null {
+  const trimmed = input.trim();
+  const digits = trimmed.replace(/[^\d]/g, '');
+  if (trimmed.startsWith('+'))
+    return digits.length >= 8 && digits.length <= 15 ? `+${digits}` : null;
+  const local = digits.replace(/^(?:91|0)(?=[6-9]\d{9}$)/, '');
+  return /^[6-9]\d{9}$/.test(local) ? `+91${local}` : null;
+}
+
+/** Company Identification Number, e.g. U62200DL2020PTC123456. */
+export function checkCin(input: string): string | null {
+  return /^[LU][0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6}$/.test(input.trim().toUpperCase())
+    ? null
+    : 'A CIN has 21 characters, like U62200DL2020PTC123456';
+}
