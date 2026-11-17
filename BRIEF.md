@@ -1,4 +1,4 @@
-# PROMPT FOR CLAUDE CODE — Wedding Charter Desk (v4)
+# PROMPT FOR CLAUDE CODE — Wedding Charter Desk (v5)
 
 You are building **Wedding Charter Desk**: a small, fast, mobile-first internal tool for ONE niche —
 **private jet flights for Indian destination weddings, sold through wedding planners.**
@@ -9,7 +9,7 @@ If a feature does not help close a wedding deal, do not build it.
 ## 0. How you must work
 1. Read this whole prompt first.
 2. Reply with: (a) a short build plan, (b) the data model, (c) ALL your questions in ONE batch. Then STOP and wait for my answers.
-3. After my answers, build in this order: Core (section 4) → AI gateway (5.1) → AI jobs (5.2–5.6) → Today screen polish.
+3. After my answers, build in this order: Core (section 4) → AI gateway (5.1) → imports (5.5) → AI jobs (5.2–5.4) → sharing (4.7) → Today screen polish.
 4. Small, working commits. Each step must run and pass its tests before the next one.
 5. At the end of each step, tell me in plain language what works, what doesn't, and what you need from me.
 
@@ -99,10 +99,24 @@ Email + password (argon2), rate-limited; admin seeded from env; session/JWT with
 ### 4.6 Data protection (DPDP Act 2023 / Rules 2025)
 Consent record for every planner/client contact (notice version, time, source); guest ID files encrypted, access-logged, auto-deleted; export/delete a person's data (logged).
 
+### 4.7 Share anything (quotes, agreements, invoices, rate requests, messages)
+Every document and draft has one **Share** button, for planners, clients and operators. The app prepares; **I always press send myself** (no auto-sending).
+- **Phone (main way):** use the Web Share API (`navigator.share`) with the PDF file + message text, so the phone's own share sheet opens and I pick WhatsApp, WhatsApp Business, Instagram, Facebook Messenger, Telegram, Gmail or any app.
+- **Direct buttons (desktop and phone):**
+  - WhatsApp: `https://wa.me/<number>?text=<message + secure link>` (number from the contact record).
+  - Telegram: `https://t.me/share/url?url=<secure link>&text=<message>`.
+  - Email: send from the app through a transactional email service (e.g. Resend or Amazon SES) with the PDF attached, from my business address; or a `mailto:` fallback.
+  - Instagram DM and Facebook Messenger: these don't accept pre-filled text from a website, so show **Copy message + link** and an **Open Instagram / Open Messenger** button.
+  - **Copy link** and **Download PDF** always available.
+- **Secure links:** each shared document gets a private link (random token, expires after N days, setting; can be revoked). The page shows the PDF and, for quotes, an "I accept" button that records name + time (I still confirm in the app).
+- **Right content per person:** quotes and client terms go to planner/client; rate requests and operator agreements go to operators. Operator net rates and my margin are never included in anything shared with planners or clients — enforce this in the PDF/share layer and test it.
+- **Log every share** on the record: document version, channel, recipient, time, and whether the secure link was opened.
+- WhatsApp Business API (automatic sending, templates) is for later, not now.
+
 ## 5. AI (OpenRouter)
 
 ### What AI does vs what code does
-- **AI only:** reads messy text into structured data, writes drafts, searches the public web, answers questions about my data, double-checks critical fields.
+- **AI only:** reads messy text into structured data, writes drafts, answers questions about my data. No web search inside the app.
 - **Code only:** all maths (margin, GST, totals, commission), all rules in 4.3, PDFs, storage, reminders, dashboard numbers.
 - **AI never:** marks an operator verified, sends any message, signs or sends agreements, confirms weddings, records or moves money, deletes data. All AI output is a **draft** with Approve / Edit / Reject. Only my click changes real records.
 - Never send to AI: guest ID files, bank details, signed contracts, passwords.
@@ -111,10 +125,9 @@ Consent record for every planner/client contact (notice version, time, source); 
 - One NestJS module for all AI calls. Each job has a DB config: model, fallback model, temperature (0–0.2 for extraction), max tokens, JSON schema.
 - Use OpenRouter structured outputs (`response_format: { type: "json_schema", strict: true }`) for every extraction, plus the `response-healing` plugin. Validate again with Zod; on failure retry once → fallback model → mark "needs review".
 - Check per provider that strict structured outputs are supported; route only to those providers.
-- Use OpenRouter's `web` plugin only for jobs 5.4 and 5.5.
 - Use prompt caching for long, repeated instructions.
 - Log every call in `AiCall`: job, model, tokens, cost, latency, linked record, output. Cost page in Settings.
-- **Monthly cap: ₹10,000** (setting). At 80% warn me; at 100% stop AI jobs (core app keeps working).
+- **Monthly cap: ₹5,000** (setting). At 80% warn me; at 100% stop AI jobs (core app keeps working).
 - **Evaluation harness:** per job, a "golden set" of 30 examples (input + correct output) and a command that scores any model on field-level accuracy, cost and speed. Seed starter sets from fake data; I will add real ones. Switch models only when the harness shows a better score.
 
 ### 5.2 Job 1 — Paste-to-wedding
@@ -128,36 +141,30 @@ Input: pasted WhatsApp/email text (English, Hindi or Hinglish). Output: Wedding 
 ### 5.4 Job 3 — Drafts
 Quote message to the planner, follow-ups when there's no reply after X hours (setting), guest-ID reminders before flight day, payment reminders.
 
-### 5.5 Job 4 — Supply finder
-- Find NSOP operators with jets that can serve the wedding routes, from public sources only: DGCA pages and notices, operators' own websites (including their safety-disclosure pages). Respect robots.txt and site terms; no logins; no LinkedIn.
-- Save each fetched page (text, URL, date). Extract a profile; every field stores source URL, snippet, date, model, confidence.
-- **Cross-check:** NSOP permit number, aircraft registrations and company name are extracted again by a second model; if they disagree or confidence is low → "needs review". Never fill these from one model alone.
-- Status stays `FOUND` until I upload and verify documents.
-- Monthly re-check of each operator's website; show me a field-by-field diff of changes.
-- Detect duplicates (same NSOP no. / CIN / website) and merge only with my approval.
+### 5.5 Imports (no AI — research is done outside the app)
+I research planners and operators separately (in Claude chat) and import them as CSV.
+- **Planner CSV**: firm, city, contact person, phone, email, website, Instagram, source link, fit note.
+- **Operator CSV**: legal name, brand, NSOP permit no., bases, aircraft (type, registration, category, seats), contacts, website, safety-disclosure URL, source link.
+- Import screen: upload → preview with column mapping → show duplicates (same phone/email/website, or same NSOP no./CIN) → I choose skip/merge/add → import.
+- Imported operators start as `FOUND`; only my document check makes them `VERIFIED`.
+- Export planners as CSV (for PitchPersona outreach).
 
-### 5.6 Job 5 — Planner finder
-- Find wedding planner firms in Udaipur, Jaipur, Jodhpur, Goa, Delhi, Mumbai from public business sources: firm name, website, city, public business contact, what they do, fit reason, source link, personalised first-message draft.
-- I approve each one. Export approved planners as CSV for PitchPersona.
-- No private individuals' data, no bought lists, no bulk WhatsApp.
-
-### 5.7 Today actions + assistant
+### 5.6 Today actions + assistant
 - **Actions** are generated by code rules (quote expiring, rates missing, IDs missing, follow-up due, expiry soon); AI only writes the one-line wording and the draft behind each button.
-- **Assistant panel** on every screen: runs jobs 1–5 and answers questions about my data using read-only tools (search weddings, legs, operators, planners, payments). It must cite linked records, say "not found" instead of guessing, never invent prices, permit numbers or availability, and open pre-filled forms instead of saving anything itself.
+- **Assistant panel** on every screen: runs jobs 1–3 and answers questions about my data using read-only tools (search weddings, legs, operators, planners, payments). It must cite linked records, say "not found" instead of guessing, never invent prices, permit numbers or availability, and open pre-filled forms instead of saving anything itself.
 
-### 5.8 Default models (via OpenRouter, editable in Settings)
-| Job | Model | Cross-check / fallback |
+### 5.7 Default models (via OpenRouter, editable in Settings)
+| Job | Model | Fallback |
 |---|---|---|
-| All jobs + assistant | Claude Sonnet 5.5 | Fallback: GPT-6.1 Sol |
-| Critical-field cross-check (permit no., registration, company name) | GPT-6.1 Sol | — |
-Verify exact OpenRouter model IDs at build time. Expected running cost: about ₹3,500–7,000/month in season.
+| Jobs 1–3 + assistant | Claude Sonnet 5.5 | GPT-6.1 Sol |
+Verify exact OpenRouter model IDs at build time. Expected running cost: about ₹1,500–3,000/month in season.
 
 ## 6. Not now (design data model so they fit later)
 Corporate / family-office clients, international trips, empty-legs board, client portal, e-sign API, WhatsApp Business API, payment links, charter marketplace APIs, contract-risk analysis, news monitoring.
 
 ## 7. Seed data and tests
 - Seed fake data only: "Planner P1–P5", "Operator A–D", weddings "W-101–W-106", with legs, rates and payments in different statuses. Never real company names or real NSOP numbers.
-- Settings seed: markup 10%, quote validity 24 h, target ₹20,00,000/month, GST placeholders (flagged), ID retention 30 days, AI cap ₹10,000.
+- Settings seed: markup 10%, quote validity 24 h, target ₹20,00,000/month, GST placeholders (flagged), ID retention 30 days, AI cap ₹5,000, secure link expiry 14 days.
 - Tests: every hard rule in 4.3; every AI prohibition; money formatting; margin/GST/commission maths; AI gateway schema validation, retry and fallback; redaction; the full flow enquiry → rates → quote → signed & paid → flying → done.
 
 ## 8. Definition of done
@@ -168,9 +175,10 @@ Corporate / family-office clients, international trips, empty-legs board, client
 - [ ] Unverified/expired operators cannot be quoted (API + UI).
 - [ ] A wedding cannot be confirmed before signed terms + payment; payouts/commission blocked until client money arrives.
 - [ ] All 3 agreements generate as PDF with data filled in, watermarked until lawyer-approved.
-- [ ] Supply finder builds `FOUND` operator profiles with sources; critical fields cross-checked; only I can verify.
-- [ ] Planner finder produces approved planners exportable as CSV.
-- [ ] AI cost page and ₹10,000 cap work.
+- [ ] I can import planners and operators from CSV with duplicate checks; imported operators stay `FOUND` until I verify them.
+- [ ] From my phone I can share any quote, agreement, invoice or rate request via WhatsApp, Instagram, Facebook, Telegram or email, and every share is logged.
+- [ ] Nothing shared with a planner or client ever shows operator net rates or my margin.
+- [ ] AI cost page and ₹5,000 cap work.
 - [ ] All tests pass; deploys to Railway + Vercel following the README.
 
 Start now: plan, data model and all your questions in one batch.
