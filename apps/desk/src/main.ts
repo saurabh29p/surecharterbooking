@@ -1,6 +1,7 @@
 import '@tabler/core/dist/css/tabler.min.css';
 import '@fontsource/manrope/400.css';
 import '@fontsource/manrope/600.css';
+import '@fontsource/manrope/700.css';
 import '@fontsource/bodoni-moda/600.css';
 import './styles.css';
 import { createApp } from 'vue';

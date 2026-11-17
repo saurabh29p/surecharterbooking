@@ -1,12 +1,26 @@
 /* Brand tokens shared with PDFs and the website ("night wedding" palette, WEBSITE.md §3). */
 :root {
   --sj-midnight: #0b1020;
+  --sj-panel: #121935;
   --sj-gold: #d4b26a;
   --sj-gold-dark: #7a5a1e;
   --sj-ivory: #f6f1e7;
+  --sj-ink: #1a1a22;
+  --sj-danger: #b42318;
+  --sj-success: #1f7a4d;
+  --sj-focus: #2563eb;
+  --sj-radius: 10px;
+  --sj-fast: 150ms;
+  --sj-ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
   --tblr-font-sans-serif: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --tblr-primary: #0b1020;
   --tblr-primary-rgb: 11, 16, 32;
+}
+
+body {
+  background: #f5f6f8;
+  color: var(--sj-ink);
+  -webkit-tap-highlight-color: transparent;
 }
 
 .sj-wordmark {
@@ -16,11 +30,452 @@
   letter-spacing: 0.02em;
 }
 
+/* Visible keyboard focus everywhere (UX.md §1). */
+:focus-visible {
+  outline: 2px solid var(--sj-focus);
+  outline-offset: 2px;
+}
+
+a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+a:hover {
+  text-decoration-thickness: 2px;
+}
+
+/* ---------- Buttons: default, hover, pressed, focus, disabled, loading ---------- */
+.sj-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0.6rem 1.1rem;
+  border-radius: var(--sj-radius);
+  border: 1px solid transparent;
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1.2;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    transform var(--sj-fast) var(--sj-ease-out),
+    box-shadow var(--sj-fast) var(--sj-ease-out),
+    background-color var(--sj-fast) var(--sj-ease-out),
+    opacity var(--sj-fast);
+}
+.sj-btn--sm {
+  min-height: 36px;
+  padding: 0.35rem 0.8rem;
+  font-size: 0.875rem;
+}
+.sj-btn--block {
+  width: 100%;
+}
+.sj-btn--primary {
+  background: var(--sj-midnight);
+  color: #fff;
+}
+.sj-btn--secondary {
+  background: #fff;
+  color: var(--sj-midnight);
+  border-color: #c9ccd4;
+}
+.sj-btn--danger {
+  background: var(--sj-danger);
+  color: #fff;
+}
+.sj-btn--ghost {
+  background: transparent;
+  color: var(--sj-midnight);
+}
+@media (hover: hover) {
+  .sj-btn:hover:not(.is-disabled):not(.is-loading) {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(11, 16, 32, 0.18);
+  }
+  .sj-btn--primary:hover:not(.is-disabled) {
+    box-shadow: 0 6px 18px rgba(212, 178, 106, 0.45);
+  }
+  .sj-btn--secondary:hover:not(.is-disabled),
+  .sj-btn--ghost:hover:not(.is-disabled) {
+    background: #eef0f4;
+  }
+}
+.sj-btn:active:not(.is-disabled):not(.is-loading) {
+  transform: scale(0.97);
+  transition-duration: 40ms;
+  filter: brightness(0.92);
+}
+.sj-btn.is-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.sj-btn.is-loading {
+  cursor: progress;
+}
+.sj-spinner {
+  width: 1em;
+  height: 1em;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: sj-spin 0.7s linear infinite;
+}
+@keyframes sj-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------- Cards that open something ---------- */
+.sj-card-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  transition:
+    transform var(--sj-fast) var(--sj-ease-out),
+    box-shadow var(--sj-fast) var(--sj-ease-out);
+}
+@media (hover: hover) {
+  .sj-card-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(11, 16, 32, 0.1);
+    text-decoration: none;
+  }
+}
+.sj-card-link:active {
+  transform: scale(0.99);
+}
+
+/* ---------- Forms ---------- */
+.form-control,
+.form-select {
+  min-height: 44px;
+  font-size: 16px; /* stops iOS zooming into inputs */
+}
+/* The error message says what's wrong; Tabler's ✕ icon would overlap in-field buttons like "Show". */
+.form-control.is-invalid {
+  background-image: none;
+  padding-right: 0.75rem;
+}
+.sj-btn__label {
+  white-space: nowrap;
+}
+
+/* Warnings must meet 4.5:1 contrast (UX.md §5); Tabler's default yellow text does not. */
+.alert-warning,
+.text-warning-emphasis {
+  color: #5c3d00 !important;
+}
+.alert-warning {
+  background: #fff6dc;
+  border-color: #f0d48a;
+}
+
+/* ---------- Toasts: bottom on phones, top-right on desktop ---------- */
+.sj-toasts {
+  position: fixed;
+  z-index: 2000;
+  left: 12px;
+  right: 12px;
+  /* Above the tab bar and the sticky action bar, so a toast never covers the main button. */
+  bottom: calc(140px + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+@media (min-width: 768px) {
+  .sj-toasts {
+    left: auto;
+    right: 20px;
+    top: 20px;
+    bottom: auto;
+    width: 380px;
+  }
+}
+.sj-toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: var(--sj-radius);
+  background: var(--sj-midnight);
+  color: #fff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+.sj-toast--error {
+  background: var(--sj-danger);
+}
+.sj-toast__icon {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  font-weight: 700;
+  flex: none;
+}
+.sj-toast--success .sj-toast__icon {
+  background: var(--sj-gold);
+  color: var(--sj-midnight);
+}
+.sj-toast__msg {
+  flex: 1;
+}
+.sj-toast__undo,
+.sj-toast__close {
+  background: none;
+  border: 0;
+  color: inherit;
+  min-width: 44px;
+  min-height: 36px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.sj-toast__undo {
+  color: var(--sj-gold);
+}
+.sj-toast-enter-active {
+  transition:
+    transform 220ms var(--sj-ease-out),
+    opacity 220ms var(--sj-ease-out);
+}
+.sj-toast-leave-active {
+  transition: opacity 160ms ease-in;
+}
+.sj-toast-enter-from {
+  opacity: 0;
+  transform: translateY(12px);
+}
+.sj-toast-leave-to {
+  opacity: 0;
+}
+
+/* ---------- Skeletons ---------- */
+.sj-skeleton__line {
+  border-radius: 6px;
+  margin-bottom: 0.6rem;
+  background: linear-gradient(90deg, #e6e8ec 25%, #f1f2f5 37%, #e6e8ec 63%);
+  background-size: 400% 100%;
+  animation: sj-shimmer 1.4s ease infinite;
+}
+@keyframes sj-shimmer {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
+}
+
+/* ---------- Bottom sheet / dialog ---------- */
+.sj-sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1900;
+  background: rgba(11, 16, 32, 0.5);
+  display: flex;
+  align-items: flex-end;
+}
+.sj-sheet {
+  width: 100%;
+  background: #fff;
+  border-radius: 16px 16px 0 0;
+  padding: 20px 16px calc(20px + env(safe-area-inset-bottom));
+}
+@media (min-width: 768px) {
+  .sj-sheet-backdrop {
+    align-items: center;
+    justify-content: center;
+  }
+  .sj-sheet {
+    width: 460px;
+    border-radius: 16px;
+  }
+}
+.sj-sheet-enter-active,
+.sj-sheet-leave-active {
+  transition: opacity 250ms var(--sj-ease-out);
+}
+.sj-sheet-enter-active .sj-sheet,
+.sj-sheet-leave-active .sj-sheet {
+  transition: transform 250ms var(--sj-ease-out);
+}
+.sj-sheet-enter-from,
+.sj-sheet-leave-to {
+  opacity: 0;
+}
+.sj-sheet-enter-from .sj-sheet,
+.sj-sheet-leave-to .sj-sheet {
+  transform: translateY(40px);
+}
+
+/* ---------- App shell ---------- */
+.sj-topbar {
+  background: var(--sj-midnight);
+  color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+.sj-topbar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+}
+.sj-topnav a {
+  color: #c9c2b5;
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+.sj-topnav a:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+.sj-topnav a.router-link-active {
+  color: var(--sj-gold);
+}
+.sj-main {
+  padding-bottom: calc(88px + env(safe-area-inset-bottom));
+}
+@media (min-width: 768px) {
+  .sj-main {
+    padding-bottom: 32px;
+  }
+}
+.sj-tabbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  display: flex;
+  background: #fff;
+  border-top: 1px solid #e3e5ea;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.sj-tabbar a {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-height: 56px;
+  color: #5b6170;
+  text-decoration: none;
+  font-size: 0.75rem;
+  font-weight: 600;
+  transition: color var(--sj-fast);
+}
+.sj-tabbar a:active {
+  transform: scale(0.96);
+}
+.sj-tabbar a.router-link-active {
+  color: var(--sj-midnight);
+}
+.sj-tabbar a.router-link-active .sj-tabbar__icon {
+  background: var(--sj-gold);
+}
+.sj-tabbar__icon {
+  width: 36px;
+  height: 4px;
+  border-radius: 2px;
+  background: transparent;
+  margin-bottom: 4px;
+}
+
+/* Sticky bottom action bar on detail screens (UX.md §4). */
+.sj-actionbar {
+  position: sticky;
+  bottom: calc(64px + env(safe-area-inset-bottom));
+  z-index: 900;
+  display: flex;
+  gap: 8px;
+  padding: 12px 0;
+  background: linear-gradient(to top, #f5f6f8 70%, rgba(245, 246, 248, 0));
+}
+@media (min-width: 768px) {
+  .sj-actionbar {
+    bottom: 0;
+  }
+}
+
+/* Status always uses text + colour, never colour alone (UX.md §5). */
+.sj-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.sj-badge--gold {
+  background: #f3e6c4;
+  color: #5c4415;
+}
+.sj-badge--warn {
+  background: #fdecc8;
+  color: #6b4a00;
+}
+.sj-badge--muted {
+  background: #eceef2;
+  color: #3d4250;
+}
+
+.sj-warning-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.sj-warning-list li::before {
+  content: '⚠ ';
+}
+
+/* Success moment (UX.md §2): a quick check, under 600 ms. */
+.sj-check {
+  display: inline-grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--sj-gold);
+  color: var(--sj-midnight);
+  font-size: 28px;
+  font-weight: 700;
+  animation: sj-pop 450ms var(--sj-ease-out);
+}
+@keyframes sj-pop {
+  0% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
 }
