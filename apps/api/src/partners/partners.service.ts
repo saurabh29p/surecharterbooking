@@ -11,6 +11,7 @@ import {
   type PartnerStatus,
 } from '@shubhjets/shared';
 import { IsNull, type DataSource, type EntityManager } from 'typeorm';
+import { ConsentService } from '../clients/consent.service.js';
 import { FilesService } from '../files/files.service.js';
 import { SettingsService } from '../settings/settings.service.js';
 import type {
@@ -73,6 +74,7 @@ export class PartnersService {
     @InjectDataSource() private readonly ds: DataSource,
     private readonly settings: SettingsService,
     private readonly files: FilesService,
+    private readonly consents: ConsentService,
   ) {}
 
   private today() {
@@ -225,6 +227,7 @@ export class PartnersService {
       clients,
       weddings,
       duplicates: await this.findDuplicates(p, id),
+      consents: await this.consents.list('PARTNER', id),
     };
   }
 

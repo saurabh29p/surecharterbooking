@@ -79,3 +79,17 @@ export function websiteDomain(url: string | null | undefined): string | null {
     return null;
   }
 }
+
+/** How a person agreed to be contacted / have their details kept (DPDP Act 2023). */
+export type ConsentSource =
+  'VERBAL_CALL' | 'WHATSAPP' | 'EMAIL' | 'WEBSITE_FORM' | 'SIGNED_AGREEMENT' | 'RESEARCH_IMPORT';
+export const CONSENT_SOURCE_LABELS: Record<ConsentSource, string> = {
+  VERBAL_CALL: 'Verbally, on a call',
+  WHATSAPP: 'On WhatsApp',
+  EMAIL: 'By email',
+  WEBSITE_FORM: 'Website enquiry form',
+  SIGNED_AGREEMENT: 'Signed agreement',
+  RESEARCH_IMPORT: 'Research import (public business listing)',
+};
+export const CONSENT_SOURCES = Object.keys(CONSENT_SOURCE_LABELS) as ConsentSource[];
+export type ConsentSubject = 'PARTNER' | 'CLIENT' | 'ENQUIRY' | 'GUEST';
