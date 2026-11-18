@@ -110,39 +110,3 @@ watch(filter, reload);
     </div>
   </div>
 </template>
-
-<style scoped>
-.sj-chip {
-  min-height: 40px;
-  padding: 6px 14px;
-  border-radius: 999px;
-  border: 1px solid #c9ccd4;
-  background: #fff;
-  font-weight: 600;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition:
-    background-color var(--sj-fast),
-    border-color var(--sj-fast);
-}
-.sj-chip:hover {
-  border-color: var(--sj-midnight);
-}
-.sj-chip:active {
-  transform: scale(0.97);
-}
-.sj-chip.is-active {
-  background: var(--sj-midnight);
-  border-color: var(--sj-midnight);
-  color: #fff;
-}
-.sj-list-enter-active {
-  transition:
-    opacity 200ms var(--sj-ease-out),
-    transform 200ms var(--sj-ease-out);
-}
-.sj-list-enter-from {
-  opacity: 0;
-  transform: translateY(6px);
-}
-</style>

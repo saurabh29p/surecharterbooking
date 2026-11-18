@@ -22,6 +22,21 @@ export const routes: RouteRecordRaw[] = [
   },
   { path: '/', name: 'today', component: () => import('./views/TodayView.vue') },
   {
+    path: '/operators',
+    name: 'operators',
+    component: () => import('./views/operators/OperatorsView.vue'),
+  },
+  {
+    path: '/operators/new',
+    name: 'operator-new',
+    component: () => import('./views/operators/OperatorNewView.vue'),
+  },
+  {
+    path: '/operators/:id',
+    name: 'operator',
+    component: () => import('./views/operators/OperatorView.vue'),
+  },
+  {
     path: '/settings',
     name: 'settings',
     component: () => import('./views/settings/SettingsView.vue'),

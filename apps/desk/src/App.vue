@@ -6,6 +6,7 @@ import SjToasts from './components/SjToasts.vue';
 const route = useRoute();
 const tabs = [
   { to: '/', label: 'Today' },
+  { to: '/operators', label: 'Operators' },
   { to: '/settings', label: 'Settings' },
 ];
 /** A tab stays highlighted on its sub-pages (e.g. Settings → a business profile). */
