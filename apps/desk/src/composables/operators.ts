@@ -57,6 +57,7 @@ export interface OperatorDetail {
   brand: string | null;
   cin: string | null;
   gstin: string | null;
+  address: string | null;
   nsopNo: string | null;
   nsopIssuedOn: string | null;
   website: string | null;

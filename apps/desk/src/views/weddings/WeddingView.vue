@@ -31,6 +31,7 @@ import {
 
 const RatesPanel = defineAsyncComponent(() => import('../../components/wedding/RatesPanel.vue'));
 const QuotePanel = defineAsyncComponent(() => import('../../components/wedding/QuotePanel.vue'));
+const DocsPanel = defineAsyncComponent(() => import('../../components/wedding/DocsPanel.vue'));
 
 const route = useRoute();
 const router = useRouter();
@@ -39,8 +40,12 @@ const { label: airportLabel } = useAirports();
 const id = String(route.params.id);
 const w = ref<WeddingDetail | null>(null);
 const busy = ref<string | null>(null);
+const TABS = ['overview', 'rates', 'quote', 'docs'] as const;
+const TAB_LABELS = { overview: 'Overview', rates: 'Rates', quote: 'Quote', docs: 'Docs' };
 const tab = computed(() =>
-  route.query.tab === 'rates' ? 'rates' : route.query.tab === 'quote' ? 'quote' : 'overview',
+  (TABS as readonly string[]).includes(String(route.query.tab))
+    ? String(route.query.tab)
+    : 'overview',
 );
 const setTab = (t: string) =>
   router.replace({ query: { ...route.query, tab: t === 'overview' ? undefined : t } });
@@ -243,14 +248,14 @@ async function reopen() {
 
       <nav class="sj-tabs mb-3" aria-label="Wedding sections">
         <button
-          v-for="t in ['overview', 'rates', 'quote']"
+          v-for="t in TABS"
           :key="t"
           type="button"
           :class="{ 'is-active': tab === t }"
           :aria-current="tab === t ? 'page' : undefined"
           @click="setTab(t)"
         >
-          {{ t === 'overview' ? 'Overview' : t === 'rates' ? 'Rates' : 'Quote' }}
+          {{ TAB_LABELS[t] }}
         </button>
       </nav>
 
@@ -418,7 +423,13 @@ async function reopen() {
 
       <RatesPanel v-else-if="tab === 'rates'" :wedding="w" @changed="load" />
 
-      <QuotePanel v-else :wedding="w" @changed="load" @go-rates="setTab('rates')" />
+      <QuotePanel
+        v-else-if="tab === 'quote'"
+        :wedding="w"
+        @changed="load"
+        @go-rates="setTab('rates')"
+      />
+      <DocsPanel v-else :wedding="w" @changed="load" />
     </template>
 
     <SjSheet

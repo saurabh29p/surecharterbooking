@@ -11,6 +11,7 @@ import {
   type OperatorDocKind,
 } from '@shubhjets/shared';
 import { computed, onMounted, reactive, ref } from 'vue';
+import AgreementCard from '../../components/AgreementCard.vue';
 import { useRoute } from 'vue-router';
 import { api, ApiError } from '../../api/client';
 import SjButton from '../../components/SjButton.vue';
@@ -400,6 +401,13 @@ async function saveBank() {
       </section>
 
       <!-- Documents -->
+      <AgreementCard
+        kind="OPERATOR_AGREEMENT"
+        :subject-id="op.id"
+        :subject-name="op.brand || op.legalName"
+        @changed="load"
+      />
+
       <section class="card mb-3" aria-labelledby="docs-h">
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center mb-2">

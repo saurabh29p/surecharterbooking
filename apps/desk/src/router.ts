@@ -88,6 +88,16 @@ export const routes: RouteRecordRaw[] = [
     component: () => import('./views/settings/RulesView.vue'),
   },
   {
+    path: '/settings/templates',
+    name: 'templates',
+    component: () => import('./views/settings/TemplatesView.vue'),
+  },
+  {
+    path: '/settings/templates/:kind',
+    name: 'template',
+    component: () => import('./views/settings/TemplateEditView.vue'),
+  },
+  {
     path: '/settings/import',
     name: 'import',
     component: () => import('./views/settings/ImportView.vue'),

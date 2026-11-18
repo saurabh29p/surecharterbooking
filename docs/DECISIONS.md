@@ -77,6 +77,20 @@ Answers to the build questions (17 Nov 2026) and other choices made during the b
 - **Fee-only invoicing warning:** with the fee-only model the GST amount lets a reader work out the margin
   (GST ÷ rate), so the quote screen warns about it. Full-value invoicing (the default) does not have this problem.
 
+## Build choices (step 9)
+- **Agreement templates are Markdown with `{{placeholders}}`**, versioned, with a "lawyer-approved on <date>" flag.
+  Three drafts ship in Indian contract format; blanks for the lawyer are marked `[●]`. Any edit makes a new version
+  that needs approval again; only the newest version can be approved.
+- **Drafts can't be signed.** Until its template is approved, every agreement says "DRAFT – NOT FOR SIGNATURE" and the
+  app refuses a signed copy. An approved agreement must be complete: missing details are listed and it isn't made.
+- **Client terms are built from the accepted (or live) quote's client-safe content** and get the same rule-4 PDF scan
+  as the quote. Signing an operator agreement also files it under the operator's documents; signing a referral
+  agreement marks the partner as signed.
+- **GST invoices:** full value only, from the accepted quote; numbered `PREFIX/FY/0001` per business profile and
+  financial year under a database lock; never reused (mistakes are cancelled, with a reason). Blocked until the
+  profile has GSTIN and address, the CA has confirmed GST rate and SAC code, and the client's billing address is known.
+- **Rate request PDF** names the wedding by code and city only: never the client, partner or a price.
+
 ## Build choices (step 4)
 - **Storage drivers:** `local` (development and tests) and `s3` (any S3-compatible bucket; Railway in production). Production refuses `local`.
 - **Uploads are checked by their real bytes** (PDF, PNG, JPEG, WebP only; SVG refused because it can carry scripts), with a size limit per purpose. Each file is fingerprinted (SHA-256).

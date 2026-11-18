@@ -11,6 +11,7 @@ import {
   type PartnerStatus,
 } from '@shubhjets/shared';
 import { onMounted, ref } from 'vue';
+import AgreementCard from '../../components/AgreementCard.vue';
 import { useRoute } from 'vue-router';
 import { api, ApiError } from '../../api/client';
 import ConsentPanel from '../../components/ConsentPanel.vue';
@@ -302,9 +303,17 @@ async function doRemoveReferral() {
       </section>
 
       <!-- Referral agreement -->
+      <AgreementCard
+        kind="REFERRAL_AGREEMENT"
+        :subject-id="p.id"
+        :subject-name="p.firm"
+        @changed="load"
+      />
+
       <section class="card mb-3" aria-labelledby="ref-h">
         <div class="card-body">
-          <h2 id="ref-h" class="h3">Referral agreement</h2>
+          <h2 id="ref-h" class="h3">Referral agreement status</h2>
+          <p class="small text-secondary mb-2">Signed one outside the app? Upload it here.</p>
           <p class="mb-2" :class="p.referralSigned ? 'text-success' : 'text-warning-emphasis'">
             {{ p.referralSigned ? '✓ Signed copy saved' : '⚠ Not signed yet' }}
           </p>

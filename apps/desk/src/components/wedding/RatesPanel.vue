@@ -11,6 +11,7 @@ import {
   type RatesOverview,
   type RequestResult,
 } from '../../composables/rates';
+import { sharePdf } from '../../composables/documents';
 import { useToast } from '../../composables/toast';
 import type { WeddingDetail } from '../../composables/weddings';
 import SjButton from '../SjButton.vue';
@@ -53,6 +54,28 @@ const closed = computed(() =>
 async function refresh() {
   await load();
   emit('changed');
+}
+
+const pdfBusy = ref<string | null>(null);
+/** The request as a branded PDF for the operator: share it, or download it on a computer. */
+async function requestPdf(requestId: string, operatorName: string) {
+  pdfBusy.value = requestId;
+  try {
+    const r = await api<{ documentId: string }>(`/rate-requests/${requestId}/pdf`, {
+      method: 'POST',
+    });
+    const out = await sharePdf(
+      `/documents/${r.documentId}/pdf`,
+      `Rate-request-${props.wedding.code}.pdf`,
+      `Rate request for ${props.wedding.code}`,
+    );
+    if (out === 'shared') toast.success(`Rate request PDF shared with ${operatorName}`);
+    if (out === 'downloaded') toast.success('Rate request PDF downloaded');
+  } catch (e) {
+    toast.error(e instanceof ApiError ? e.message : "Couldn't make the PDF");
+  } finally {
+    pdfBusy.value = null;
+  }
 }
 
 async function chase(requestId: string) {
@@ -159,6 +182,14 @@ const multiBlocker = (leg: LegComparison) => {
               >
                 {{ r.overdue ? '⚠ No reply for' : 'Waiting' }} {{ hoursText(r.waitingHours ?? 0) }}
               </span>
+              <button
+                type="button"
+                class="sj-pdflink"
+                :disabled="pdfBusy === r.id"
+                @click="requestPdf(r.id, r.operator.name)"
+              >
+                {{ pdfBusy === r.id ? 'Making PDF…' : 'Rate request PDF' }}
+              </button>
             </div>
             <SjButton
               v-if="!r.replied"
@@ -336,6 +367,21 @@ const multiBlocker = (leg: LegComparison) => {
 </template>
 
 <style scoped>
+.sj-pdflink {
+  border: 0;
+  background: none;
+  padding: 4px 0;
+  min-height: 32px;
+  font-size: 0.8125rem;
+  color: var(--sj-gold-dark);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.sj-pdflink:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
 .sj-row {
   display: flex;
   gap: 8px;

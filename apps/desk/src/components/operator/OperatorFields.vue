@@ -11,6 +11,7 @@ export interface OperatorForm {
   nsopIssuedOn: string;
   cin: string;
   gstin: string;
+  address: string;
   bases: string[];
   website: string;
   safetyDisclosureUrl: string;
@@ -121,6 +122,14 @@ const gstinCheck = (v: string) => {
       :maxlength="15"
       :validate="gstinCheck"
       :server-error="errors.gstin"
+    />
+    <SjField
+      v-model="form.address"
+      label="Registered address (for the agreement)"
+      optional
+      multiline
+      :maxlength="500"
+      :server-error="errors.address"
     />
     <SjField
       v-model="form.website"

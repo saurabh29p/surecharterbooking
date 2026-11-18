@@ -11,6 +11,8 @@ export interface PartnerForm {
   type: PartnerType;
   firm: string;
   city: string;
+  address: string;
+  gstin: string;
   contactPerson: string;
   phone: string;
   email: string;
@@ -46,6 +48,22 @@ const form = defineModel<PartnerForm>('form', { required: true });
     </fieldset>
     <SjField v-model="form.firm" label="Firm or hotel name" :server-error="errors.firm" />
     <SjField v-model="form.city" label="City" optional :server-error="errors.city" />
+    <SjField
+      v-model="form.address"
+      label="Address (for the referral agreement)"
+      optional
+      multiline
+      :maxlength="500"
+      :server-error="errors.address"
+    />
+    <SjField
+      v-model="form.gstin"
+      label="GSTIN (if registered)"
+      optional
+      uppercase
+      :maxlength="15"
+      :server-error="errors.gstin"
+    />
     <SjField
       v-model="form.contactPerson"
       label="Contact person"

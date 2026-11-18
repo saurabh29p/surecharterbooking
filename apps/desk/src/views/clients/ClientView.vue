@@ -23,6 +23,7 @@ interface ClientDetail {
   phone: string | null;
   email: string | null;
   gstin: string | null;
+  address: string | null;
   notes: string | null;
   partner: { id: string; firm: string } | null;
   weddings: {
@@ -52,6 +53,7 @@ const form = reactive({
   phone: '',
   email: '',
   gstin: '',
+  address: '',
   partnerId: '',
   notes: '',
   consentSource: '' as ConsentSource | '',
@@ -64,6 +66,7 @@ function fill(c: ClientDetail) {
     phone: c.phone ?? '',
     email: c.email ?? '',
     gstin: c.gstin ?? '',
+    address: c.address ?? '',
     partnerId: c.partner?.id ?? '',
     notes: c.notes ?? '',
   });
@@ -106,6 +109,7 @@ async function save() {
     phone: form.phone,
     email: form.email,
     gstin: form.gstin,
+    address: form.address,
     partnerId: form.partnerId || null,
     notes: form.notes,
   };
@@ -195,6 +199,14 @@ async function reload() {
               :maxlength="15"
               :validate="gstinCheck"
               :server-error="errors.gstin"
+            />
+            <SjField
+              v-model="form.address"
+              label="Billing address (for agreements and GST invoices)"
+              optional
+              multiline
+              :maxlength="500"
+              :server-error="errors.address"
             />
             <div class="mb-3">
               <label class="form-label" for="client-partner">Came through partner</label>

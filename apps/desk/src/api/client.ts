@@ -128,8 +128,9 @@ export async function api<T>(
 export async function fetchFile(
   path: string,
   fallbackName: string,
+  init: RequestInit & { json?: unknown } = {},
 ): Promise<{ blob: Blob; name: string }> {
-  const res = await authedFetch(path);
+  const res = await authedFetch(path, init);
   const disposition = res.headers.get('content-disposition') ?? '';
   const name = /filename="([^"]+)"/.exec(disposition)?.[1] ?? fallbackName;
   return { blob: await res.blob(), name };
