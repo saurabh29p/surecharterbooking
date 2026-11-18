@@ -52,12 +52,30 @@ Answers to the build questions (17 Nov 2026) and other choices made during the b
 - Store `DATA_ENCRYPTION_KEYS` in a safe backup (password manager), separate from database backups. Losing it makes encrypted bank details and guest ID files unrecoverable.
 - Set real `ADMIN_EMAIL` / `ADMIN_PASSWORD` (not a `.test` address) and a fresh random `JWT_SECRET`.
 - Never run `pnpm seed` against production. It refuses, but don't try.
+- The API image needs Chromium for quote PDFs (`playwright-core install --with-deps chromium`, or `PDF_CHROMIUM_PATH`).
 
 ## Build choices (step 3)
 - **The audit log is automatic.** Entities marked `@Audited` get a database subscriber that writes before/after values in the same transaction as the change, so nothing is forgotten and a rolled-back change leaves no entry. Changes must go through repository `save()`; bulk updates are logged as `BULK_UPDATED`. Non-change events (logins, viewing bank details, sharing) are logged explicitly.
 - **Who did it** comes from a per-request context: you (after login), Website visitor (before login), System (scheduled jobs) or AI (Phase B jobs, via `runAs`). The AI can never act as you.
 - **GST confirmation:** the GST rate and SAC code show a warning banner on every screen until you tick "My CA has confirmed" (a SAC code is required). Changing either value un-ticks it.
 - **Settings are defined once** in `packages/shared` (labels, units, limits), so the API and the desk validate identically.
+
+## Build choices (step 8)
+- **Cancellation terms are a schedule**, not only text: lines like "7+ days before departure: 10% kept". That lets code
+  compare ours with each operator's and say exactly where ours are looser ("3 to 7 days before departure: Operator A
+  keeps 50% but your terms keep only 10%"). Issuing with looser terms needs a deliberate confirmation. Free text
+  stays for extra conditions. Our default schedule is a setting (30+ days 10%, 7–30 days 50%, under 7 days 100%).
+- **A draft follows the chosen jets.** One line per jet per leg (a package rate's cost is that leg's share); each jet
+  keeps its markup (% or fixed) when jets change. Totals are always recomputed on the server with the shared maths.
+- **Quote statuses:** Draft → Ready to send (issued: PDF made, frozen, validity running) → Sent → Accepted, or
+  Expired / Replaced. A new version copies the last one; while it is drafted the quoted legs' jets can change again.
+- **The quote PDF is A5 portrait, one column,** with the total and validity on top, so it reads well on a phone in
+  WhatsApp and still prints cleanly. Bodoni Moda + Manrope, midnight and champagne gold. It names the operator and its
+  DGCA permit number, never the registration number.
+- **Rule 4, twice:** the PDF template only ever receives a client-safe quote object (no cost, margin, markup or
+  commission fields), and the finished PDF's text is scanned for every internal figure before it is stored.
+- **Fee-only invoicing warning:** with the fee-only model the GST amount lets a reader work out the margin
+  (GST ÷ rate), so the quote screen warns about it. Full-value invoicing (the default) does not have this problem.
 
 ## Build choices (step 4)
 - **Storage drivers:** `local` (development and tests) and `s3` (any S3-compatible bucket; Railway in production). Production refuses `local`.

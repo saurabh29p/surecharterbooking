@@ -128,6 +128,23 @@ The API refuses to start in production with `STORAGE_DRIVER=local`, because cont
 Files are private. The desk opens them through links that expire after 5 minutes: presigned bucket URLs for ordinary
 files, and links served by the API for encrypted files (guest IDs). Every opening of an encrypted file is logged.
 
+## Quote PDFs
+
+Quotes are A5 PDFs made on the server with headless Chromium (Playwright), with the brand fonts embedded, so they
+look the same everywhere. Locally and in CI the Chromium that Playwright installs is used:
+
+```bash
+pnpm --filter @shubhjets/api exec playwright-core install --with-deps chromium
+```
+
+In production either install it the same way in the API image, or point `PDF_CHROMIUM_PATH` at a system Chromium.
+
+**Rule 4 check on every PDF.** Before a quote PDF is stored or previewed, its text is read back out of the PDF and
+scanned for every internal figure behind it: each operator's net rate and leg share, our margins, markups,
+commission and the operators' bank details, written as `₹4,75,000`, `475000`, `4.75 lakh`, `₹4.75L` or as a
+percentage, plus the words "net rate", "margin", "markup" and "commission". If anything is found, the quote is not
+issued and nothing is stored. Tests: `apps/api/test/quote-pdf.test.ts`.
+
 ## Keys you must back up
 
 > **Back up `DATA_ENCRYPTION_KEYS` somewhere safe (for example a password manager), separately from the database backups.**

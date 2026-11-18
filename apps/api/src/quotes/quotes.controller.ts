@@ -9,7 +9,10 @@ import {
   Patch,
   Post,
   Put,
+  Res,
+  StreamableFile,
 } from '@nestjs/common';
+import type { Response } from 'express';
 import type { z } from 'zod';
 import { CurrentUser, type AuthUser } from '../auth/public.decorator.js';
 import { ZodPipe } from '../common/zod.pipe.js';
@@ -21,10 +24,20 @@ import {
   UpdateQuoteBody,
   type UpdateQuoteInput,
 } from './quote.dto.js';
-import { QuoteDocumentsService } from './quote-documents.service.js';
+import { QuoteDocumentsService, type QuotePdf } from './quote-documents.service.js';
 import { QuotesService } from './quotes.service.js';
 
 const uuid = () => new ParseUUIDPipe();
+
+function sendPdf(res: Response, pdf: QuotePdf, inline: boolean): StreamableFile {
+  res.setHeader('Content-Type', 'application/pdf');
+  res.setHeader(
+    'Content-Disposition',
+    `${inline ? 'inline' : 'attachment'}; filename="${pdf.filename.replace(/"/g, '')}"`,
+  );
+  res.setHeader('Cache-Control', 'no-store');
+  return new StreamableFile(pdf.bytes);
+}
 
 @Controller()
 export class QuotesController {
@@ -79,6 +92,23 @@ export class QuotesController {
     @Body(new ZodPipe(SentBody)) body: z.infer<typeof SentBody>,
   ) {
     return this.documents.markSent(id, body.channel, body.recipient ?? null);
+  }
+
+  /** The issued quote's PDF, exactly as stored. */
+  @Get('quotes/:id/pdf')
+  async pdf(@Param('id', uuid()) id: string, @Res({ passthrough: true }) res: Response) {
+    return sendPdf(res, await this.documents.stored(id), false);
+  }
+
+  /** A watermarked preview of a draft (not stored). */
+  @Get('quotes/:id/preview')
+  async preview(@Param('id', uuid()) id: string, @Res({ passthrough: true }) res: Response) {
+    return sendPdf(res, await this.documents.preview(id), true);
+  }
+
+  @Get('quotes/:id/shares')
+  shares(@Param('id', uuid()) id: string) {
+    return this.documents.shares(id);
   }
 
   @Post('quotes/:id/accept')

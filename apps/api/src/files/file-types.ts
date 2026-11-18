@@ -1,5 +1,6 @@
 /** What each kind of upload may be, checked against the file's real bytes (not its name). */
-export type FilePurpose = 'logo' | 'operator-document' | 'receipt' | 'signed-document' | 'guest-id';
+export type FilePurpose =
+  'logo' | 'operator-document' | 'receipt' | 'signed-document' | 'guest-id' | 'document';
 
 export interface FileKind {
   mime: string;
@@ -38,6 +39,13 @@ export const PURPOSES: Record<
     maxBytes: 20 * 1024 * 1024,
     encrypt: false,
     label: 'a PDF or image up to 20 MB',
+  },
+  /** PDFs the app generates (quotes, agreements, invoices). */
+  document: {
+    allowed: [PDF],
+    maxBytes: 10 * 1024 * 1024,
+    encrypt: false,
+    label: 'a PDF up to 10 MB',
   },
   'guest-id': {
     allowed: [PDF, PNG, JPEG, WEBP],
