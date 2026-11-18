@@ -651,7 +651,8 @@ export class RatesService {
           };
         })
         .sort((a, b) => a.cost - b.cost);
-      const usable = rows.filter((r) => r.quotable.ok && !r.expired);
+      // "Cheapest" marks the cheapest jet that can be chosen on its own (seats everyone).
+      const usable = rows.filter((r) => r.quotable.ok && !r.expired && r.seatsCoverPax);
       const chosen = rows.filter((r) => r.chosen);
       return {
         legId: leg.id,

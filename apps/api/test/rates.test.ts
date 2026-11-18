@@ -259,6 +259,8 @@ describe('rates: requests, replies, comparison and choice', () => {
         ).body.id as string;
       const big = await add('VT-ZZ4', 7 * L); // 10 seats
       const small = await add('VT-ZZ3', 6 * L); // 8 seats
+      // "Cheapest" only marks a jet that seats everyone on its own.
+      expect((await overview('W-101')).comparison[0].cheapestId).toBeNull();
       const one = await authed(t.http().put(`/api/legs/${l1!.id}/choices`))
         .send({ rateResponseIds: [big] })
         .expect(409);
