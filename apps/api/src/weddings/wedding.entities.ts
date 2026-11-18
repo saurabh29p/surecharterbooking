@@ -46,6 +46,8 @@ export class Wedding {
   placeOfSupplyState!: string | null;
   @Column('text', { nullable: true }) notes!: string | null;
   @Column('timestamptz', { name: 'deleted_at', nullable: true }) deletedAt!: Date | null;
+  /** When the wedding was confirmed (signed terms + required payment, rule 2). */
+  @Column('timestamptz', { name: 'confirmed_at', nullable: true }) confirmedAt!: Date | null;
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' }) createdAt!: Date;
   @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' }) updatedAt!: Date;
   @Column('uuid', { name: 'created_by', nullable: true }) createdBy!: string | null;

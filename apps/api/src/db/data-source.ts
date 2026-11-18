@@ -13,6 +13,7 @@ import { PartnersConsent1763400000003 } from './migrations/1763400000003-Partner
 import { ConsentSourceCheck1763400000004 } from './migrations/1763400000004-ConsentSourceCheck.js';
 import { QuoteBuilder1763400000005 } from './migrations/1763400000005-QuoteBuilder.js';
 import { Documents1763400000006 } from './migrations/1763400000006-Documents.js';
+import { Payments1763400000007 } from './migrations/1763400000007-Payments.js';
 
 /** Explicit lists (no globs) so this works the same under tsc output, Vitest and ESM. */
 export const MIGRATIONS = [
@@ -23,6 +24,7 @@ export const MIGRATIONS = [
   ConsentSourceCheck1763400000004,
   QuoteBuilder1763400000005,
   Documents1763400000006,
+  Payments1763400000007,
 ];
 
 export function dataSourceOptions(url: string, ssl = false): DataSourceOptions {
