@@ -14,3 +14,4 @@ export * from './leak-scan.js';
 export * from './quote.js';
 export * from './documents.js';
 export * from './payments.js';
+export * from './sharing.js';
