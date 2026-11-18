@@ -159,6 +159,13 @@ Every document has one **Share** button. The app prepares the message and a **se
   domain verified in Resend). The PDF is attached and the message carries the secure link. Until then, Email opens
   the phone's mail app with the message ready.
 
+## Today screen
+
+Open the app and **Today** shows, top to bottom: this month's margin against the target (change it in
+Settings → Rules), then **Do now** with the most urgent things first, each with one button, then weddings by status,
+the season so far, partner pipeline, lead sources and route coverage. Tap **Later** (or swipe a card left) to move
+an action to tomorrow morning; Undo brings it back. Pull down to refresh.
+
 ## Website enquiries
 
 The public website posts to three endpoints that need no login:

@@ -9,7 +9,7 @@ import {
   type PartnerStatus,
 } from '@shubhjets/shared';
 import { onMounted, ref, watch } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { api, ApiError } from '../../api/client';
 import SjButton from '../../components/SjButton.vue';
 import SjSkeleton from '../../components/SjSkeleton.vue';
@@ -27,7 +27,9 @@ import { useToast } from '../../composables/toast';
 const router = useRouter();
 const toast = useToast();
 
-const status = ref<PartnerStatus | ''>('');
+// Today's pipeline tiles open the list filtered to one status (?status=ACTIVE).
+const fromLink = String(useRoute().query.status ?? '') as PartnerStatus;
+const status = ref<PartnerStatus | ''>(PARTNER_STATUSES.includes(fromLink) ? fromLink : '');
 const dueOnly = ref(false);
 const q = ref('');
 const data = ref<PartnerList | null>(null);

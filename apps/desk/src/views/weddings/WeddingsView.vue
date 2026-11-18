@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import {
+  WEDDING_STATUSES,
   WEDDING_STATUS_LABELS,
   formatDayMonth,
   formatINRShort,
   type WeddingStatus,
 } from '@shubhjets/shared';
 import { computed, onMounted, ref, watch } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { api, ApiError } from '../../api/client';
 import SjButton from '../../components/SjButton.vue';
 import SjSkeleton from '../../components/SjSkeleton.vue';
@@ -18,7 +19,9 @@ import { useToast } from '../../composables/toast';
 const router = useRouter();
 const toast = useToast();
 const board = ref<WeddingBoard | null>(null);
-const status = ref<WeddingStatus | ''>('');
+// Today's tiles open the board filtered to one stage (?status=QUOTED).
+const fromLink = String(useRoute().query.status ?? '') as WeddingStatus;
+const status = ref<WeddingStatus | ''>(WEDDING_STATUSES.includes(fromLink) ? fromLink : '');
 const showClosed = ref(false);
 const q = ref('');
 

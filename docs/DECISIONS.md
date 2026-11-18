@@ -106,6 +106,27 @@ Answers to the build questions (17 Nov 2026) and other choices made during the b
 - **Guest IDs** are encrypted by the app, opened only through logged links, and deleted by a daily job (03:30 IST)
   N days after the last flight (Settings, default 30). "ID received" stays as a fact after the file is gone.
 
+## Build choices (step 13)
+- **Today is one API call** (`GET /api/today`) and is kept in memory while the app is open, so going back to it is
+  instant while it refreshes. Nothing is stored on the phone. It refreshes on pull-down, the ↻ button, and when you
+  come back to the app after 5 minutes.
+- **The month tracker comes first** and shows margin (before partner commission) from the accepted quote of every
+  wedding **confirmed** (signed and paid) this calendar month, against the target in Settings → Rules. The season is
+  the Indian financial year.
+- **Do now is made by code rules**, in three groups: **Now**, **Today**, **Coming up**. Within a group the order is
+  fixed: a client waiting (link acceptance, new website enquiry, quote about to lapse) comes before flights to mark,
+  guest IDs, confirming, operator expiry, chasing operators, payments, quotes to build or share, payouts,
+  follow-ups, enquiries to price, commission and the business profile.
+- **One button per action**: it opens the right tab, opens WhatsApp with a ready message (or calls), or does it in
+  place ("Mark flown", with Undo). Messages to operators name the wedding by code and city only, never the client.
+- **Later** hides an action until 7 am IST the next day (button or swipe left, with Undo). It is stored, so it holds
+  on every device.
+- Thresholds come from Settings: chase an operator after N hours (default 2), warn N hours before a quote expires,
+  ask for guest IDs N days before the first flight. A new website enquiry stays "reply within the hour" for 48 hours
+  or until rates are requested; operator expiry shows from 30 days (Now from 7 days).
+- **Route coverage** counts aircraft of verified operators based at either end of each website route and of every
+  route flying in the next 120 days (return flights count as the same route).
+
 ## Build choices (step 12)
 - **Public endpoints** (no login, for shubhjets.com): `POST /api/public/enquiries` (enquiry form),
   `POST /api/public/partners` (planners and hotels sign-up), `POST /api/public/events` (WhatsApp and call taps,
