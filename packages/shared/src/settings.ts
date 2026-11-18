@@ -170,6 +170,14 @@ export const SETTING_DEFS: readonly SettingDef[] = [
     max: 90,
   },
   {
+    key: 'privacy.notice_version',
+    group: 'privacy',
+    label: 'Privacy notice version',
+    kind: 'text',
+    maxLength: 40,
+    help: 'Saved on every consent record. Change it whenever your privacy notice changes.',
+  },
+  {
     key: 'ai.monthly_cap_paise',
     group: 'ai',
     label: 'Monthly AI spending cap',

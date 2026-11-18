@@ -9,12 +9,14 @@ import { ENTITIES } from './entities.js';
 import { InitialSchema1763400000000 } from './migrations/1763400000000-InitialSchema.js';
 import { ReferenceData1763400000001 } from './migrations/1763400000001-ReferenceData.js';
 import { OperatorVerification1763400000002 } from './migrations/1763400000002-OperatorVerification.js';
+import { PartnersConsent1763400000003 } from './migrations/1763400000003-PartnersConsent.js';
 
 /** Explicit lists (no globs) so this works the same under tsc output, Vitest and ESM. */
 export const MIGRATIONS = [
   InitialSchema1763400000000,
   ReferenceData1763400000001,
   OperatorVerification1763400000002,
+  PartnersConsent1763400000003,
 ];
 
 export function dataSourceOptions(url: string, ssl = false): DataSourceOptions {

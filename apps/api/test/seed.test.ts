@@ -1,7 +1,7 @@
 import { checkPayoutCovered, requiredPayment } from '@shubhjets/shared';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { EncryptionService } from '../src/crypto/encryption.service.js';
-import { DEFAULT_SETTINGS } from '../src/db/migrations/1763400000001-ReferenceData.js';
+import { ALL_DEFAULT_SETTINGS } from '../src/db/default-settings.js';
 import { SEED_OWNER, seed } from '../src/db/seed-data.js';
 import { createTestApp, resetLimits, type TestApp } from './app.js';
 
@@ -24,7 +24,7 @@ describe('seed data', () => {
     await t.ds.query(`UPDATE setting SET value = '1234' WHERE key = 'markup.default_bps'`);
     await seed(t.ds, t.app.get(EncryptionService));
     const [s] = await q<{ n: number }>(`SELECT count(*)::int AS n FROM setting`);
-    expect(s!.n).toBe(DEFAULT_SETTINGS.length);
+    expect(s!.n).toBe(ALL_DEFAULT_SETTINGS.length);
     const [markup] = await q<{ value: number }>(
       `SELECT value FROM setting WHERE key = 'markup.default_bps'`,
     );

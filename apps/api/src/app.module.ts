@@ -14,6 +14,7 @@ import { FilesModule } from './files/files.module.js';
 import { HealthController } from './health.controller.js';
 import { JobsModule } from './jobs/jobs.module.js';
 import { OperatorsModule } from './operators/operators.module.js';
+import { PartnersModule } from './partners/partners.module.js';
 import { SettingsModule } from './settings/settings.module.js';
 
 @Module({
@@ -40,6 +41,7 @@ import { SettingsModule } from './settings/settings.module.js';
     AirportsModule,
     BusinessProfilesModule,
     OperatorsModule,
+    PartnersModule,
     JobsModule,
   ],
   controllers: [HealthController],

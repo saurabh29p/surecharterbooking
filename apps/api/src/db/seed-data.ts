@@ -14,7 +14,7 @@ import {
 } from '@shubhjets/shared';
 import type { DataSource, EntityManager } from 'typeorm';
 import { hashPassword } from '../auth/password.js';
-import { DEFAULT_SETTINGS } from './migrations/1763400000001-ReferenceData.js';
+import { ALL_DEFAULT_SETTINGS } from './default-settings.js';
 import type { EncryptionService } from '../crypto/encryption.service.js';
 
 export const SEED_OWNER = { email: 'owner@shubhjets.test', password: 'shubhjets dev passphrase' };
@@ -128,7 +128,7 @@ export async function seed(
     // TRUNCATE ... CASCADE also empties tables that reference app_user (setting.updated_by),
     // so put the default settings back. Airports have no such reference and are untouched.
     await m.query(`DELETE FROM setting`);
-    for (const [key, value, confirmed] of DEFAULT_SETTINGS) {
+    for (const [key, value, confirmed] of ALL_DEFAULT_SETTINGS) {
       await m.query(`INSERT INTO setting (key, value, confirmed) VALUES ($1, $2::jsonb, $3)`, [
         key,
         JSON.stringify(value),

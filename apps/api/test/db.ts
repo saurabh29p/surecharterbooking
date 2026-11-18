@@ -1,5 +1,6 @@
 import type { DataSource } from 'typeorm';
-import { AIRPORTS, DEFAULT_SETTINGS } from '../src/db/migrations/1763400000001-ReferenceData.js';
+import { ALL_DEFAULT_SETTINGS } from '../src/db/default-settings.js';
+import { AIRPORTS } from '../src/db/migrations/1763400000001-ReferenceData.js';
 
 /**
  * Empty every table (except migrations), restart sequences and put the reference data
@@ -18,7 +19,7 @@ export async function resetDb(ds: DataSource): Promise<void> {
       [iata, icao, city, name, state],
     );
   }
-  for (const [key, value, confirmed] of DEFAULT_SETTINGS) {
+  for (const [key, value, confirmed] of ALL_DEFAULT_SETTINGS) {
     await ds.query(`INSERT INTO setting (key, value, confirmed) VALUES ($1, $2::jsonb, $3)`, [
       key,
       JSON.stringify(value),
