@@ -494,7 +494,7 @@ export function buildTodayActions(f: TodayFacts, r: TodayRules): TodayAction[] {
       kind: 'PAY_OPERATOR',
       urgency: soon ? 'NOW' : 'TODAY',
       title: `${p.code}: pay ${p.operator} ${formatINRShort(p.amount)}`,
-      detail: p.firstFlight ? `First flight ${inDays(r.today, p.firstFlight)}.` : null,
+      detail: p.firstFlight ? `Next flight ${inDays(r.today, p.firstFlight)}.` : null,
       to: wedding(p.weddingId, 'money'),
       button: { type: 'OPEN', label: 'Record payment', to: wedding(p.weddingId, 'money') },
       dueAt: p.firstFlight,

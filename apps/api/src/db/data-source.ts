@@ -16,6 +16,7 @@ import { Documents1763400000006 } from './migrations/1763400000006-Documents.js'
 import { Payments1763400000007 } from './migrations/1763400000007-Payments.js';
 import { Sharing1763400000008 } from './migrations/1763400000008-Sharing.js';
 import { Enquiries1763400000009 } from './migrations/1763400000009-Enquiries.js';
+import { TodaySnooze1763400000010 } from './migrations/1763400000010-TodaySnooze.js';
 
 /** Explicit lists (no globs) so this works the same under tsc output, Vitest and ESM. */
 export const MIGRATIONS = [
@@ -29,6 +30,7 @@ export const MIGRATIONS = [
   Payments1763400000007,
   Sharing1763400000008,
   Enquiries1763400000009,
+  TodaySnooze1763400000010,
 ];
 
 export function dataSourceOptions(url: string, ssl = false): DataSourceOptions {

@@ -24,6 +24,7 @@ import { GuestsModule } from './guests/guests.module.js';
 import { SharingModule } from './sharing/sharing.module.js';
 import { EmailModule } from './email/email.module.js';
 import { EnquiriesModule } from './enquiries/enquiries.module.js';
+import { TodayModule } from './today/today.module.js';
 import { OperatorsModule } from './operators/operators.module.js';
 import { PartnersModule } from './partners/partners.module.js';
 import { ClientsModule } from './clients/clients.module.js';
@@ -67,6 +68,7 @@ import { SettingsModule } from './settings/settings.module.js';
     EmailModule,
     SharingModule,
     EnquiriesModule,
+    TodayModule,
   ],
   controllers: [HealthController],
   // Throttle first, then require login (JwtAuthGuard is registered in AuthModule).

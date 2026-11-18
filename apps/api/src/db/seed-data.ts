@@ -72,6 +72,7 @@ async function ins(m: EntityManager, table: string, row: Row): Promise<string> {
 
 /** Tables holding seedable data (everything except migrations and reference data). */
 const DATA_TABLES = [
+  'today_snooze',
   'audit_log',
   'task',
   'share_acceptance',
@@ -677,6 +678,7 @@ export async function seed(
       ends_on: day(7),
       lead_source: 'PARTNER',
       status: 'SIGNED_AND_PAID',
+      confirmed_at: new Date(now.getTime() - 2 * 86_400_000),
     });
     const l104a = await leg(w104, 1, 'DEL', 'UDR', day(5), 8, 'MIDSIZE', 'CONFIRMED');
     const l104b = await leg(w104, 2, 'UDR', 'DEL', day(7), 8, 'MIDSIZE', 'CONFIRMED', [
@@ -744,6 +746,7 @@ export async function seed(
       ends_on: day(1),
       lead_source: 'HOTEL',
       status: 'FLYING',
+      confirmed_at: new Date(now.getTime() - 8 * 86_400_000),
     });
     const l105a = await leg(w105, 1, 'DEL', 'JDH', day(-1), 6, 'TURBOPROP', 'FLOWN');
     const l105b = await leg(w105, 2, 'JDH', 'DEL', day(1), 6, 'TURBOPROP', 'CONFIRMED', [
@@ -807,6 +810,7 @@ export async function seed(
       ends_on: day(-33),
       lead_source: 'PARTNER',
       status: 'DONE',
+      confirmed_at: new Date(now.getTime() - 50 * 86_400_000),
     });
     const l106a = await leg(w106, 1, 'BOM', 'GOX', day(-35), 8, 'MIDSIZE', 'FLOWN');
     const l106b = await leg(w106, 2, 'GOX', 'BOM', day(-33), 8, 'MIDSIZE', 'FLOWN', [
