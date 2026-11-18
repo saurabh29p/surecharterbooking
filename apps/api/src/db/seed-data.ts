@@ -539,9 +539,24 @@ export async function seed(
     });
     await ins(m, 'enquiry', {
       source: 'WEBSITE',
-      raw_text: '20 guests from Delhi to Udaipur, wedding next month',
-      payload: { role: 'family', guests: 20 },
+      raw_text: 'Mehndi and sangeet at the venue; guests land the day before.',
+      payload: {
+        name: 'Client C1 Family',
+        phone: '+919111111101',
+        role: 'FAMILY',
+        weddingCity: 'Udaipur',
+        weddingDate: day(30),
+        guests: 20,
+        guestsFrom: '20 from Delhi',
+        message: 'Mehndi and sangeet at the venue; guests land the day before.',
+        page: '/routes/delhi-to-udaipur',
+        utmSource: 'google',
+        utmMedium: 'cpc',
+        utmCampaign: 'delhi-udaipur',
+        gclid: 'demo-click-id',
+      },
       wedding_id: w101,
+      client_id: c1,
     });
     await leg(w101, 1, 'DEL', 'UDR', day(29), 20, 'HEAVY', 'OPEN');
     await leg(w101, 2, 'UDR', 'DEL', day(33), 20, 'HEAVY', 'OPEN', ['14:00', '17:00']);

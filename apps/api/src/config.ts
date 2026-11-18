@@ -35,6 +35,16 @@ const EnvSchema = z
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
     API_PORT: z.coerce.number().int().positive().default(3000),
     DESK_ORIGIN: z.string().url().default('http://localhost:5173'),
+    /** The public website(s) allowed to post enquiries, comma-separated (e.g. https://shubhjets.com,https://www.shubhjets.com). */
+    SITE_ORIGINS: z
+      .string()
+      .default('http://localhost:4321')
+      .transform((v) =>
+        v
+          .split(',')
+          .map((s) => s.trim().replace(/\/$/, ''))
+          .filter(Boolean),
+      ),
     /** Base of secure share links sent to clients, e.g. https://desk.example.com (defaults to DESK_ORIGIN). */
     PUBLIC_BASE_URL: emptyAsUndefined(z.string().url().optional()),
     /** Email from the app (Resend). Without a key the desk falls back to the phone's mail app. */

@@ -159,6 +159,26 @@ Every document has one **Share** button. The app prepares the message and a **se
   domain verified in Resend). The PDF is attached and the message carries the secure link. Until then, Email opens
   the phone's mail app with the message ready.
 
+## Website enquiries
+
+The public website posts to three endpoints that need no login:
+
+| Endpoint | What it does |
+| --- | --- |
+| `POST /api/public/enquiries` | Enquiry form → a new wedding in **Enquiry** with the client (or partner), consent, lead source, UTM and draft legs |
+| `POST /api/public/partners` | "For planners & hotels" form → a partner to follow up today |
+| `POST /api/public/events` | WhatsApp / call taps (`{"kind":"WHATSAPP","page":"/", "utmSource":…}`), counted per lead source |
+
+- Set `SITE_ORIGINS` to the website's addresses (e.g. `https://shubhjets.com,https://www.shubhjets.com`).
+  Only these may call the endpoints from a browser.
+- Both forms need `consent: true`. Send an empty hidden `companyWebsite` field and `elapsedMs` (how long the form was
+  open); filled hidden fields and forms sent in under 2.5 seconds are treated as spam but still get `{ ok: true }`.
+- Enquiry fields: `name`, `phone`, `role` (`family` / `planner` / `hotel`), `firm` (planners and hotels), `email`,
+  `weddingCity`, `weddingDate` (YYYY-MM-DD), `guests`, `guestsFrom` ("18 from Delhi, 6 from Mumbai"), `message`,
+  plus `page`, `leadSource`, `utmSource`, `utmMedium`, `utmCampaign`, `utmTerm`, `utmContent`, `gclid`.
+- Errors come back as `{ message, fields: { field: "what to fix" } }` in plain words, ready to show under each input.
+- A wedding from the website shows a **From the website** card on its Overview tab with what they typed.
+
 ## Keys you must back up
 
 > **Back up `DATA_ENCRYPTION_KEYS` somewhere safe (for example a password manager), separately from the database backups.**

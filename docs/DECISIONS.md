@@ -106,6 +106,24 @@ Answers to the build questions (17 Nov 2026) and other choices made during the b
 - **Guest IDs** are encrypted by the app, opened only through logged links, and deleted by a daily job (03:30 IST)
   N days after the last flight (Settings, default 30). "ID received" stays as a fact after the file is gone.
 
+## Build choices (step 12)
+- **Public endpoints** (no login, for shubhjets.com): `POST /api/public/enquiries` (enquiry form),
+  `POST /api/public/partners` (planners and hotels sign-up), `POST /api/public/events` (WhatsApp and call taps,
+  sent with `navigator.sendBeacon`). Only the origins in `SITE_ORIGINS` may call them from a browser, and without
+  cookies; the desk's endpoints never answer the website's origin.
+- **Consent is required** on both forms and recorded as "Website enquiry form" with the notice version.
+- **Spam:** a hidden field and a "filled in under 2.5 seconds" check. Bots get the same "thank you" as people, so
+  they learn nothing; their rows are kept (no wedding, no client) and counted as "spam caught". Each network may
+  send 8 forms per 10 minutes. IP addresses are stored only as a salted hash.
+- **A family enquiry** finds the client by WhatsApp number (or adds one); **a planner or hotel enquiry** finds the
+  partner by phone or email (or adds one as "Contacted", follow-up today). Either way the wedding starts in
+  "Enquiry" with venue city, date, notes, lead source and UTM. The wedding keeps the website lead source (Google Ads,
+  Instagram or Website) even when a partner sends it, so ad spend can be judged; the partner is still linked.
+- **Lead source:** a Google Ads click id or `google`/`cpc` → Google Ads; `instagram` → Instagram; otherwise Website.
+- **Draft legs:** one leg per city the guests fly from, when both airports are clear ("Goa" alone is not), for the
+  day before the wedding, marked "confirm on the call". Cities we don't serve are left in the notes.
+- **The same enquiry sent twice within 24 hours** (same number, role, city and date) joins the first wedding.
+
 ## Build choices (step 9)
 - **Agreement templates are Markdown with `{{placeholders}}`**, versioned, with a "lawyer-approved on <date>" flag.
   Three drafts ship in Indian contract format; blanks for the lawyer are marked `[●]`. Any edit makes a new version

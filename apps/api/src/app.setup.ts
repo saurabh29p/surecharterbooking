@@ -11,6 +11,17 @@ export function configureApp(app: NestExpressApplication, config: AppConfig): vo
   app.setGlobalPrefix('api');
   app.use(cookieParser());
   app.useBodyParser('json', { limit: '3mb' });
+  // The website sends tap events with navigator.sendBeacon (text/plain JSON).
+  app.useBodyParser('text', { limit: '4kb' });
   if (config.TRUST_PROXY) app.set('trust proxy', 1);
-  app.enableCors({ origin: config.DESK_ORIGIN, credentials: true });
+  // The desk (with its login cookie) and, for the public enquiry endpoints only, the website.
+  app.enableCors((req: { url?: string }, cb: (e: Error | null, o: object) => void) => {
+    const isPublic = (req.url ?? '').startsWith('/api/public/');
+    cb(
+      null,
+      isPublic
+        ? { origin: config.SITE_ORIGINS, credentials: false, methods: ['POST'], maxAge: 600 }
+        : { origin: config.DESK_ORIGIN, credentials: true },
+    );
+  });
 }

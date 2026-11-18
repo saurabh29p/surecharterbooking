@@ -280,7 +280,7 @@ export class PartnersService {
   /** New partners take the default commission from Settings unless given. Possible duplicates are returned as a warning. */
   async create(
     input: PartnerInput,
-    userId: string,
+    userId: string | null,
     m?: EntityManager,
   ): Promise<{ id: string; duplicates: DuplicateMatch[] }> {
     const run = async (tx: EntityManager) => {
