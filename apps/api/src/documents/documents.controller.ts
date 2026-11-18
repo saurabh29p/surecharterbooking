@@ -20,6 +20,7 @@ import { ZodPipe } from '../common/zod.pipe.js';
 import { AcceptFile, requireFile } from '../files/upload.js';
 import { AgreementsService } from './agreements.service.js';
 import { DocumentsService } from './documents.service.js';
+import { RateRequestDocsService } from './rate-request-docs.service.js';
 
 const uuid = () => new ParseUUIDPipe();
 
@@ -80,7 +81,14 @@ export class DocumentsController {
   constructor(
     private readonly agreements: AgreementsService,
     private readonly documents: DocumentsService,
+    private readonly rateRequests: RateRequestDocsService,
   ) {}
+
+  /** The rate request as a branded PDF for the operator (a new version each time). */
+  @Post('rate-requests/:id/pdf')
+  rateRequestPdf(@Param('id', uuid()) id: string, @CurrentUser() user: AuthUser) {
+    return this.rateRequests.generate(id, user.id);
+  }
 
   /** Makes a new version of an agreement from the current template and the record's details. */
   @Post('agreements')

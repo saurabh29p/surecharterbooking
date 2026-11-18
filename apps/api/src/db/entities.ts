@@ -10,6 +10,7 @@ import { CLIENT_ENTITIES } from '../clients/client.entities.js';
 import { WEDDING_ENTITIES } from '../weddings/wedding.entities.js';
 import { QUOTE_ENTITIES } from '../quotes/quote.entities.js';
 import { DOCUMENT_ENTITIES } from '../documents/document.entities.js';
+import { Invoice } from '../invoices/invoice.entity.js';
 import { Setting } from '../settings/setting.entity.js';
 
 /** Entities are added as each feature is built; the schema itself is complete in the migrations. */
@@ -27,4 +28,5 @@ export const ENTITIES = [
   ...WEDDING_ENTITIES,
   ...QUOTE_ENTITIES,
   ...DOCUMENT_ENTITIES,
+  Invoice,
 ];
