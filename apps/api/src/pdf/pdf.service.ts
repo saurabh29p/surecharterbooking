@@ -34,6 +34,22 @@ function fontFaces(): string {
   ].join('\n');
 }
 
+let webFontsCss: string | null = null;
+/** A lighter set for web pages people open on phones (Latin only, three faces). */
+export function webFonts(): string {
+  if (webFontsCss) return webFontsCss;
+  const face = (family: string, pkg: string, file: string, weight: number) => {
+    const b = readFileSync(require.resolve(`${pkg}/files/${file}-latin-${weight}-normal.woff2`));
+    return `@font-face{font-family:'${family}';font-style:normal;font-weight:${weight};font-display:swap;src:url(data:font/woff2;base64,${b.toString('base64')}) format('woff2')}`;
+  };
+  webFontsCss = [
+    face('Bodoni Moda', '@fontsource/bodoni-moda', 'bodoni-moda', 600),
+    face('Manrope', '@fontsource/manrope', 'manrope', 400),
+    face('Manrope', '@fontsource/manrope', 'manrope', 700),
+  ].join('\n');
+  return webFontsCss;
+}
+
 let fontsCss: string | null = null;
 /** The @font-face rules for Bodoni Moda and Manrope (loaded once). */
 export function brandFonts(): string {

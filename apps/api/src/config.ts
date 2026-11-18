@@ -35,6 +35,14 @@ const EnvSchema = z
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
     API_PORT: z.coerce.number().int().positive().default(3000),
     DESK_ORIGIN: z.string().url().default('http://localhost:5173'),
+    /** Base of secure share links sent to clients, e.g. https://desk.example.com (defaults to DESK_ORIGIN). */
+    PUBLIC_BASE_URL: emptyAsUndefined(z.string().url().optional()),
+    /** Email from the app (Resend). Without a key the desk falls back to the phone's mail app. */
+    RESEND_API_KEY: emptyAsUndefined(z.string().optional()),
+    RESEND_API_URL: z.string().url().default('https://api.resend.com'),
+    /** Verified sender, e.g. "ShubhJets <quotes@yourdomain.in>". */
+    EMAIL_FROM: emptyAsUndefined(z.string().optional()),
+    EMAIL_REPLY_TO: emptyAsUndefined(z.string().email().optional()),
     DATABASE_URL: z.string().url(),
     DATABASE_SSL: bool.default(false),
     JWT_SECRET: z.string().min(32, 'must be at least 32 characters'),

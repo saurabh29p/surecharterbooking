@@ -586,6 +586,31 @@ export class QuotesService {
       [q.id],
     );
     const hasPdf = !!pdfDoc;
+    const [doc] = await m.query(
+      `SELECT id FROM document WHERE quote_id = $1 AND type = 'QUOTE' LIMIT 1`,
+      [q.id],
+    );
+    // "I accept" from secure links, waiting for you to confirm.
+    const linkAcceptances: {
+      name: string;
+      acceptedAt: Date;
+      channel: string;
+      recipient: string | null;
+    }[] = doc
+      ? (
+          await m.query(
+            `SELECT a.name, a.accepted_at, s.channel, s.recipient FROM share_acceptance a
+               JOIN share s ON s.id = a.share_id JOIN document_version dv ON dv.id = s.document_version_id
+              WHERE dv.document_id = $1 ORDER BY a.accepted_at DESC`,
+            [doc.id],
+          )
+        ).map((r: Record<string, unknown>) => ({
+          name: r.name as string,
+          acceptedAt: r.accepted_at as Date,
+          channel: r.channel as string,
+          recipient: r.recipient as string | null,
+        }))
+      : [];
 
     return {
       id: q.id,
@@ -626,6 +651,8 @@ export class QuotesService {
           ? { basis: q.commissionBasis, bps: q.commissionBps }
           : null,
       hasPdf,
+      documentId: (doc?.id as string | undefined) ?? null,
+      linkAcceptances,
       blockers,
       warnings,
     };

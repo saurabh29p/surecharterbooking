@@ -21,6 +21,7 @@ import { DocumentsModule } from './documents/documents.module.js';
 import { InvoicesModule } from './invoices/invoices.module.js';
 import { PaymentsModule } from './payments/payments.module.js';
 import { GuestsModule } from './guests/guests.module.js';
+import { SharingModule } from './sharing/sharing.module.js';
 import { OperatorsModule } from './operators/operators.module.js';
 import { PartnersModule } from './partners/partners.module.js';
 import { ClientsModule } from './clients/clients.module.js';
@@ -61,6 +62,7 @@ import { SettingsModule } from './settings/settings.module.js';
     InvoicesModule,
     PaymentsModule,
     GuestsModule,
+    SharingModule,
   ],
   controllers: [HealthController],
   // Throttle first, then require login (JwtAuthGuard is registered in AuthModule).
