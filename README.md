@@ -186,6 +186,12 @@ The public website posts to three endpoints that need no login:
 - Errors come back as `{ message, fields: { field: "what to fix" } }` in plain words, ready to show under each input.
 - A wedding from the website shows a **From the website** card on its Overview tab with what they typed.
 
+## Privacy requests (DPDP)
+
+On a client or partner page, **Their data (DPDP)** has **Download their data** (a JSON file to send them) and
+**Erase personal data** (shows what is removed and what the law makes you keep; refused while a wedding is open).
+Both are logged in Settings → Activity.
+
 ## Keys you must back up
 
 > **Back up `DATA_ENCRYPTION_KEYS` somewhere safe (for example a password manager), separately from the database backups.**

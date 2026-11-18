@@ -10,6 +10,7 @@ import { computed, onMounted, reactive, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { api, ApiError } from '../../api/client';
 import ConsentPanel from '../../components/ConsentPanel.vue';
+import PrivacyPanel from '../../components/PrivacyPanel.vue';
 import SjButton from '../../components/SjButton.vue';
 import SjField from '../../components/SjField.vue';
 import SjSkeleton from '../../components/SjSkeleton.vue';
@@ -291,6 +292,7 @@ async function reload() {
           :consents="client.consents"
           @changed="reload"
         />
+        <PrivacyPanel :id="client.id" kind="client" />
       </template>
     </template>
   </div>

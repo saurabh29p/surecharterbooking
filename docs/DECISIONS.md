@@ -106,6 +106,20 @@ Answers to the build questions (17 Nov 2026) and other choices made during the b
 - **Guest IDs** are encrypted by the app, opened only through logged links, and deleted by a daily job (03:30 IST)
   N days after the last flight (Settings, default 30). "ID received" stays as a fact after the file is gone.
 
+## Build choices (step 14)
+- **DPDP requests** are on each client and partner page ("Their data"). **Download their data** gives a JSON file
+  of everything held about them: details, consents, enquiries, documents sent and acceptances, their weddings,
+  quotes (client total only), payments and invoices (clients), or calls logged and commission payments (partners).
+  Never costs, margins or operators (rule 4). Each export is logged.
+- **Erase personal data** removes the person from every place they are kept: their record, website enquiries,
+  who documents went to, the messages and "I accept" names, quote PDFs and unsigned terms, their name, phone and
+  email inside wedding notes, call notes, and their details in the activity log. It keeps only what the law needs:
+  tax invoices and money records (GST law, about 8 years; to be confirmed with the CA), signed contracts, and the
+  consent records (marked withdrawn) as proof. A test searches every table afterwards to prove nothing is left.
+- **It can't be undone**, so the screen lists exactly what goes and what stays, and it is refused while one of
+  their weddings is still open, or (partners) while commission is still owed. Guests are erased by removing them
+  on the Guests tab (name, phone and ID file go).
+
 ## Build choices (step 13)
 - **Today is one API call** (`GET /api/today`) and is kept in memory while the app is open, so going back to it is
   instant while it refreshes. Nothing is stored on the phone. It refreshes on pull-down, the ↻ button, and when you

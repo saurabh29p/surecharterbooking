@@ -15,6 +15,7 @@ import AgreementCard from '../../components/AgreementCard.vue';
 import { useRoute } from 'vue-router';
 import { api, ApiError } from '../../api/client';
 import ConsentPanel from '../../components/ConsentPanel.vue';
+import PrivacyPanel from '../../components/PrivacyPanel.vue';
 import SjButton from '../../components/SjButton.vue';
 import SjConfirm from '../../components/SjConfirm.vue';
 import SjField from '../../components/SjField.vue';
@@ -381,6 +382,8 @@ async function doRemoveReferral() {
         :consents="p.consents"
         @changed="load"
       />
+
+      <PrivacyPanel :id="p.id" kind="partner" />
 
       <!-- Details -->
       <section class="card mb-3" aria-labelledby="det-h">
