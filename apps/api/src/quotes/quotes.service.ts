@@ -580,6 +580,13 @@ export class QuotesService {
         );
     }
 
+    const [pdfDoc] = await m.query(
+      `SELECT 1 FROM document d JOIN document_version dv ON dv.document_id = d.id
+        WHERE d.quote_id = $1 AND d.type = 'QUOTE' AND dv.pdf_file_id IS NOT NULL LIMIT 1`,
+      [q.id],
+    );
+    const hasPdf = !!pdfDoc;
+
     return {
       id: q.id,
       weddingId: q.weddingId,
@@ -618,6 +625,7 @@ export class QuotesService {
         q.commissionBasis && q.commissionBps !== null
           ? { basis: q.commissionBasis, bps: q.commissionBps }
           : null,
+      hasPdf,
       blockers,
       warnings,
     };

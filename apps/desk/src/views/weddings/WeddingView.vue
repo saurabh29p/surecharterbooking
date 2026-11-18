@@ -5,6 +5,7 @@ import {
   LEAD_SOURCE_LABELS,
   LEG_STATUS_LABELS,
   formatDate,
+  toIstDate,
   type LeadSource,
 } from '@shubhjets/shared';
 import { computed, defineAsyncComponent, onMounted, reactive, ref } from 'vue';
@@ -32,6 +33,8 @@ import {
 const RatesPanel = defineAsyncComponent(() => import('../../components/wedding/RatesPanel.vue'));
 const QuotePanel = defineAsyncComponent(() => import('../../components/wedding/QuotePanel.vue'));
 const DocsPanel = defineAsyncComponent(() => import('../../components/wedding/DocsPanel.vue'));
+const MoneyPanel = defineAsyncComponent(() => import('../../components/wedding/MoneyPanel.vue'));
+const GuestsPanel = defineAsyncComponent(() => import('../../components/wedding/GuestsPanel.vue'));
 
 const route = useRoute();
 const router = useRouter();
@@ -40,8 +43,15 @@ const { label: airportLabel } = useAirports();
 const id = String(route.params.id);
 const w = ref<WeddingDetail | null>(null);
 const busy = ref<string | null>(null);
-const TABS = ['overview', 'rates', 'quote', 'docs'] as const;
-const TAB_LABELS = { overview: 'Overview', rates: 'Rates', quote: 'Quote', docs: 'Docs' };
+const TABS = ['overview', 'rates', 'quote', 'money', 'guests', 'docs'] as const;
+const TAB_LABELS = {
+  overview: 'Overview',
+  rates: 'Rates',
+  quote: 'Quote',
+  money: 'Money',
+  guests: 'Guests',
+  docs: 'Docs',
+};
 const tab = computed(() =>
   (TABS as readonly string[]).includes(String(route.query.tab))
     ? String(route.query.tab)
@@ -112,6 +122,29 @@ async function doDeleteLeg() {
   } finally {
     busy.value = null;
     deleteLeg.value = null;
+  }
+}
+
+// ---------- Flights ----------
+const today = toIstDate(new Date());
+async function markFlown(l: LegRow) {
+  busy.value = `flown-${l.id}`;
+  try {
+    await api(`/legs/${l.id}/flown`, { method: 'POST' });
+    await load();
+    toast.success(`Leg ${l.seq} marked flown`, async () => {
+      try {
+        await api(`/legs/${l.id}/flown`, { method: 'DELETE' });
+        await load();
+        toast.success('Undone');
+      } catch (e) {
+        toast.error(e instanceof ApiError ? e.message : "Couldn't undo");
+      }
+    });
+  } catch (e) {
+    toast.error(e instanceof ApiError ? e.message : "Couldn't mark it flown");
+  } finally {
+    busy.value = null;
   }
 }
 
@@ -293,7 +326,20 @@ async function reopen() {
                   >
                 </span>
               </button>
-              <span class="sj-badge sj-badge--muted">{{ LEG_STATUS_LABELS[l.status] }}</span>
+              <SjButton
+                v-if="l.status === 'CONFIRMED' && l.flightDate <= today"
+                size="sm"
+                :loading="busy === `flown-${l.id}`"
+                loading-label="Saving…"
+                @click="markFlown(l)"
+                >Mark flown</SjButton
+              >
+              <span
+                v-else
+                class="sj-badge"
+                :class="l.status === 'FLOWN' ? 'sj-badge--gold' : 'sj-badge--muted'"
+                >{{ l.status === 'FLOWN' ? '✓ ' : '' }}{{ LEG_STATUS_LABELS[l.status] }}</span
+              >
               <SjButton
                 v-if="!locked"
                 variant="ghost"
@@ -429,6 +475,8 @@ async function reopen() {
         @changed="load"
         @go-rates="setTab('rates')"
       />
+      <MoneyPanel v-else-if="tab === 'money'" :wedding="w" @changed="load" />
+      <GuestsPanel v-else-if="tab === 'guests'" :wedding="w" />
       <DocsPanel v-else :wedding="w" @changed="load" />
     </template>
 
@@ -479,11 +527,18 @@ async function reopen() {
 <style scoped>
 .sj-tabs {
   display: flex;
-  gap: 4px;
+  gap: 2px;
   border-bottom: 1px solid #e3e5ea;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.sj-tabs::-webkit-scrollbar {
+  display: none;
 }
 .sj-tabs button {
-  flex: 1;
+  flex: 1 0 auto;
+  padding: 0 8px;
+  font-size: 0.875rem;
   min-height: 44px;
   background: none;
   border: 0;

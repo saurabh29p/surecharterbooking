@@ -96,6 +96,7 @@ async function afterIssue() {
   shares.value = await api<ShareRow[]>(`/quotes/${q.value.id}/shares`).catch(() => []);
   // Fetch the PDF now, so the phone's share sheet can open straight from the tap.
   pdfFile.value = null;
+  if (!q.value.hasPdf) return;
   try {
     const { blob, name } = await fetchFile(`/quotes/${q.value.id}/pdf`, `${q.value.reference}.pdf`);
     pdfFile.value = new File([blob], name, { type: 'application/pdf' });

@@ -101,6 +101,8 @@ export interface QuoteDetail {
   commission: { basis: CommissionBasis; bps: number } | null;
   blockers: string[];
   warnings: string[];
+  /** Quotes issued before PDFs existed (demo data) have none. */
+  hasPdf: boolean;
 }
 
 export interface ShareRow {

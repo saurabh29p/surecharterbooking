@@ -77,6 +77,20 @@ Answers to the build questions (17 Nov 2026) and other choices made during the b
 - **Fee-only invoicing warning:** with the fee-only model the GST amount lets a reader work out the margin
   (GST ÷ rate), so the quote screen warns about it. Full-value invoicing (the default) does not have this problem.
 
+## Build choices (step 10)
+- **Confirming a wedding (rule 2)** is one action with a checklist: accepted quote, signed client terms (an
+  uploaded signed copy of an approved, non-draft version) and client payments ≥ the wedding's required share
+  (default 100%). Nothing else can set "Signed and paid".
+- **Payouts (rule 3):** an operator payout (net + the operator's GST) or partner commission can be made payable or
+  recorded as paid only when client money received covers it on top of everything already payable. Commission
+  also waits until the wedding has flown (as the referral agreement says). TDS on commission is optional per payout.
+- **Client payments** need an accepted quote and can't exceed the balance (typo guard). Payments are never deleted:
+  "Remove" keeps them for the record and has Undo; removal is refused if payouts rely on the money or the wedding
+  is confirmed with it.
+- **Flights:** "Mark flown" per leg from its flight date; first leg → Flying, all legs → Done.
+- **Guest IDs** are encrypted by the app, opened only through logged links, and deleted by a daily job (03:30 IST)
+  N days after the last flight (Settings, default 30). "ID received" stays as a fact after the file is gone.
+
 ## Build choices (step 9)
 - **Agreement templates are Markdown with `{{placeholders}}`**, versioned, with a "lawyer-approved on <date>" flag.
   Three drafts ship in Indian contract format; blanks for the lawyer are marked `[●]`. Any edit makes a new version
