@@ -6,6 +6,7 @@ import SjToasts from './components/SjToasts.vue';
 const route = useRoute();
 const tabs: { to: string; label: string; also?: string[] }[] = [
   { to: '/', label: 'Today' },
+  { to: '/weddings', label: 'Weddings' },
   { to: '/operators', label: 'Operators' },
   { to: '/partners', label: 'Partners', also: ['/clients'] },
   { to: '/settings', label: 'Settings' },

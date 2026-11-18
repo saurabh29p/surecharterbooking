@@ -157,6 +157,13 @@ a:hover {
   min-height: 44px;
   font-size: 16px; /* stops iOS zooming into inputs */
 }
+/* Date, time and number inputs have a browser minimum width that overflows phone layouts; let them shrink. */
+.form-control,
+.form-select,
+.flex-fill {
+  min-width: 0;
+}
+
 /* The error message says what's wrong; Tabler's ✕ icon would overlap in-field buttons like "Show". */
 .form-control.is-invalid {
   background-image: none;

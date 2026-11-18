@@ -232,7 +232,7 @@ export class WeddingsService {
       `SELECT w.id, w.code, w.status, w.venue_city, w.starts_on, w.ends_on, w.lead_source, w.lost_reason,
               pa.id AS partner_id, pa.firm AS partner_firm, c.id AS client_id, c.name AS client_name,
               (SELECT count(*)::int FROM leg l WHERE l.wedding_id = w.id) AS legs,
-              (SELECT coalesce(sum(l.pax), 0)::int FROM leg l WHERE l.wedding_id = w.id) AS pax,
+              (SELECT coalesce(max(l.pax), 0)::int FROM leg l WHERE l.wedding_id = w.id) AS pax,
               (SELECT min(l.flight_date) FROM leg l WHERE l.wedding_id = w.id AND l.status <> 'CANCELLED') AS first_flight,
               q.totals, q.status AS quote_status
          FROM wedding w

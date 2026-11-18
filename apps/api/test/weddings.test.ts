@@ -136,7 +136,7 @@ describe('weddings and legs', () => {
         value: 10_15_000_00,
         margin: 1_00_000_00,
         legs: 2,
-        pax: 16,
+        pax: 8,
         partner: { firm: 'Planner P1' },
         quoteStatus: 'ACCEPTED',
       });
