@@ -35,6 +35,9 @@ const QuotePanel = defineAsyncComponent(() => import('../../components/wedding/Q
 const DocsPanel = defineAsyncComponent(() => import('../../components/wedding/DocsPanel.vue'));
 const MoneyPanel = defineAsyncComponent(() => import('../../components/wedding/MoneyPanel.vue'));
 const GuestsPanel = defineAsyncComponent(() => import('../../components/wedding/GuestsPanel.vue'));
+const WebsiteEnquiryCard = defineAsyncComponent(
+  () => import('../../components/wedding/WebsiteEnquiryCard.vue'),
+);
 
 const route = useRoute();
 const router = useRouter();
@@ -294,6 +297,11 @@ async function reopen() {
 
       <!-- Overview -->
       <template v-if="tab === 'overview'">
+        <WebsiteEnquiryCard
+          v-if="['WEBSITE', 'GOOGLE_ADS', 'INSTAGRAM'].includes(w.leadSource)"
+          :wedding-id="w.id"
+          :drafted-legs="w.legs.some((l) => l.notes?.startsWith('From the website form'))"
+        />
         <section class="card mb-3" aria-labelledby="legs-h">
           <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-2">
