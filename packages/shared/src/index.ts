@@ -8,3 +8,4 @@ export * from './settings.js';
 export * from './operator.js';
 export * from './partner.js';
 export * from './csv-import.js';
+export * from './wedding.js';
