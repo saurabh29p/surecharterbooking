@@ -199,4 +199,8 @@ Both are logged in Settings → Activity.
 > from a database backup. When rotating, put the new key first and keep the old ones in the list until everything has
 > been re-encrypted.
 
-Eval and deploy steps are added to this README as those steps are built.
+## Deploying
+
+See [docs/DEPLOY.md](docs/DEPLOY.md): the setup (Railway API, Postgres and bucket; Vercel desk; Resend email), every
+setting, the order of work and the go-live checklist. The API image is built from the root `Dockerfile`
+(`railway.json`); the desk's forwarding and headers are in `apps/desk/vercel.json`.

@@ -89,6 +89,17 @@ const EnvSchema = z
           ctx.addIssue({ code: 'custom', path: [key], message: 'required when STORAGE_DRIVER=s3' });
       }
     }
+    if (
+      env.NODE_ENV === 'production' &&
+      !/^https:\/\/(?!localhost)/.test(env.PUBLIC_BASE_URL ?? env.DESK_ORIGIN)
+    ) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['DESK_ORIGIN'],
+        message:
+          "must be the desk's https address in production (secure share links are built from it)",
+      });
+    }
     if (env.NODE_ENV === 'production' && env.STORAGE_DRIVER === 'local') {
       ctx.addIssue({
         code: 'custom',
@@ -103,7 +114,8 @@ export type AppConfig = Omit<z.infer<typeof EnvSchema>, 'COOKIE_SECURE'> & {
 };
 
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
-  const parsed = EnvSchema.safeParse(env);
+  // Railway (and most hosts) give the port as PORT.
+  const parsed = EnvSchema.safeParse({ ...env, API_PORT: env.API_PORT ?? env.PORT });
   if (!parsed.success) {
     const problems = parsed.error.issues
       .map((i) => `  ${i.path.join('.')}: ${i.message}`)

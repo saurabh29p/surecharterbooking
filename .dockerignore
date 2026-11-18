@@ -1,0 +1,14 @@
+**/node_modules
+**/dist
+**/.vite
+**/coverage
+.git
+.github
+.env
+.env.*
+!.env.example
+.data
+apps/desk
+apps/site
+docs
+*.md

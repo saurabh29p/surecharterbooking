@@ -120,6 +120,14 @@ Answers to the build questions (17 Nov 2026) and other choices made during the b
   their weddings is still open, or (partners) while commission is still owed. Guests are erased by removing them
   on the Guests tab (name, phone and ID file go).
 
+- **Deploy:** the API is one Docker image (Node 22.23.4, same as development; Chromium for PDFs), configured by
+  `railway.json`; migrations run on start. The desk is a static Vercel build that forwards `/api` and `/s` to the
+  API. Addresses: `app.shubhjets.com` (desk and secure links), `api.shubhjets.com` (API), `shubhjets.com` (website).
+  The API now reads Railway's `PORT`, and refuses to start in production without an https desk address.
+- **Rate limits behind Vercel:** `TRUST_PROXY=true` trusts Railway's edge only, so desk requests (through Vercel)
+  are limited per Vercel address and website requests per visitor. Trusting more hops would let anyone fake their
+  address on the public endpoints.
+
 ## Build choices (step 13)
 - **Today is one API call** (`GET /api/today`) and is kept in memory while the app is open, so going back to it is
   instant while it refreshes. Nothing is stored on the phone. It refreshes on pull-down, the ↻ button, and when you

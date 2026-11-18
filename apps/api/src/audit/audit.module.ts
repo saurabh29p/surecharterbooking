@@ -14,6 +14,6 @@ import { RequestContextMiddleware } from './request-context.middleware.js';
 })
 export class AuditModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(RequestContextMiddleware).forRoutes('*');
+    consumer.apply(RequestContextMiddleware).forRoutes('{*path}');
   }
 }

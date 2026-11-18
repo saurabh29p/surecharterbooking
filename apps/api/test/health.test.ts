@@ -35,7 +35,26 @@ describe('config', () => {
     const config = loadConfig(base);
     expect(config.API_PORT).toBe(3000);
     expect(config.COOKIE_SECURE).toBe(false);
-    expect(loadConfig({ ...base, NODE_ENV: 'production', ...s3 }).COOKIE_SECURE).toBe(true);
+    const prod = {
+      ...base,
+      NODE_ENV: 'production',
+      DESK_ORIGIN: 'https://app.example.test',
+      ...s3,
+    };
+    expect(loadConfig(prod).COOKIE_SECURE).toBe(true);
+    // The host's PORT is used when API_PORT isn't set.
+    expect(loadConfig({ ...base, PORT: '8080' }).API_PORT).toBe(8080);
+    // Share links need the desk's real address in production.
+    expect(() => loadConfig({ ...prod, DESK_ORIGIN: 'http://localhost:5173' })).toThrow(
+      /DESK_ORIGIN: must be the desk's https address in production/,
+    );
+    expect(
+      loadConfig({
+        ...prod,
+        DESK_ORIGIN: 'http://localhost:5173',
+        PUBLIC_BASE_URL: 'https://app.example.test',
+      }).PUBLIC_BASE_URL,
+    ).toBe('https://app.example.test');
     expect(config.STORAGE_DRIVER).toBe('local');
   });
 
@@ -51,9 +70,9 @@ describe('config', () => {
     ).toThrow(
       /S3_BUCKET: required[\s\S]*S3_ACCESS_KEY_ID: required[\s\S]*S3_SECRET_ACCESS_KEY: required/,
     );
-    expect(() => loadConfig({ ...base, NODE_ENV: 'production' })).toThrow(
-      /STORAGE_DRIVER: must be s3 in production/,
-    );
+    expect(() =>
+      loadConfig({ ...base, NODE_ENV: 'production', DESK_ORIGIN: 'https://app.example.test' }),
+    ).toThrow(/STORAGE_DRIVER: must be s3 in production/);
   });
 
   it('parses rotation keys, newest first', () => {
