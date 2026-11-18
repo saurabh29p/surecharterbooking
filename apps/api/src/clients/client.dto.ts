@@ -12,6 +12,7 @@ export const ClientFields = z.object({
   phone: optionalPhone,
   email: optionalEmail,
   gstin: optionalGstin,
+  address: optionalText(500),
   partnerId: z.string().uuid().nullable().optional(),
   notes: optionalText(4000),
   /** Record consent at the same time (recommended). */

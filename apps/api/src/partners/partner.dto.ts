@@ -3,6 +3,7 @@ import { z } from 'zod';
 import {
   optionalDate,
   optionalEmail,
+  optionalGstin,
   optionalPhone,
   optionalText,
   optionalUrl,
@@ -24,6 +25,8 @@ export const PartnerFields = z.object({
   sourceLink: optionalUrl,
   fitNote: optionalText(500),
   notes: optionalText(4000),
+  address: optionalText(500),
+  gstin: optionalGstin,
   status: z.enum(PARTNER_STATUSES as [string, ...string[]]).optional(),
   commissionBasis: z.enum(['MARGIN_SHARE', 'BOOKING_PERCENT']).optional(),
   commissionBps: z.number().int().min(0).max(10_000, 'At most 100%').optional(),

@@ -854,6 +854,13 @@ export async function seed(
       reference: 'FAKE-UTR-106-P2',
       created_by: owner,
     });
+
+    // Fake addresses for agreements and invoices.
+    await m.query(`UPDATE client SET address = name || ', 1 Example Road, New Delhi 110001'`);
+    await m.query(
+      `UPDATE operator SET address = legal_name || ', Example Hangar, IGI Airport, New Delhi 110037'`,
+    );
+    await m.query(`UPDATE partner SET address = firm || ', 10 Example Street'`);
   });
 
   const counts: Record<string, number> = {};

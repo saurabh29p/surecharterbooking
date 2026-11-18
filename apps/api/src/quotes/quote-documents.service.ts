@@ -52,7 +52,7 @@ export class QuoteDocumentsService {
   ) {}
 
   /** Our bank details and logo, added at render time (never stored in the snapshot). */
-  private async complete(m: EntityManager, outward: OutwardQuote, profileId: string) {
+  async complete(m: EntityManager, outward: OutwardQuote, profileId: string) {
     // Bank details are never loaded by default (select: false); read them for this document only.
     const [p] = (await m.query(
       `SELECT bank_details_enc, logo_file_id FROM business_profile WHERE id = $1`,
@@ -135,24 +135,39 @@ export class QuoteDocumentsService {
     const { pdf, text } = await this.pdf.renderWithText(renderQuoteHtml(o), {
       footer: quoteFooter(o),
     });
+    await this.assertNoLeaks(m, q, o, text, pdf, 'quote PDF');
+    return pdf;
+  }
+
+  /**
+   * Rule 4 for any document built from a quote (the quote itself, client terms, the invoice):
+   * scans the page text and the text inside the PDF for every internal figure behind the quote.
+   */
+  async assertNoLeaks(
+    m: EntityManager,
+    q: Quote,
+    o: OutwardQuote,
+    pageText: string,
+    pdf: Buffer,
+    what: string,
+  ): Promise<void> {
     const input = await this.scanInput(m, q, o);
     const pdfText = await this.pdf.text(pdf);
     const seen = new Set<string>();
     const findings: LeakFinding[] = [
-      ...findLeaks(text, input),
+      ...findLeaks(pageText, input),
       ...findLeaks(pdfText, input),
     ].filter((f) => !seen.has(f.label) && seen.add(f.label));
     if (findings.length) {
       this.log.error(
-        `Quote ${q.id}: PDF blocked, internal figures found: ${describeLeaks(findings)}`,
+        `Quote ${q.id}: ${what} blocked, internal figures found: ${describeLeaks(findings)}`,
       );
       throw new ConflictException({
         code: 'LEAK_BLOCKED',
-        message: `Stopped: the quote PDF would show internal figures (${describeLeaks(findings)}). Nothing was issued or sent. Remove them from the quote text and try again.`,
+        message: `Stopped: the ${what} would show internal figures (${describeLeaks(findings)}). Nothing was issued or sent. Remove them from the quote text and try again.`,
         findings,
       });
     }
-    return pdf;
   }
 
   private filename(o: OutwardQuote): string {

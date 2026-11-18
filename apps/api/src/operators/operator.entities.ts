@@ -23,6 +23,7 @@ export class Operator {
   @Column('text', { nullable: true }) brand!: string | null;
   @Column('text', { nullable: true }) cin!: string | null;
   @Column('text', { nullable: true }) gstin!: string | null;
+  @Column('text', { nullable: true }) address!: string | null;
   @Column('text', { name: 'nsop_no', nullable: true }) nsopNo!: string | null;
   @Column('date', { name: 'nsop_issued_on', nullable: true }) nsopIssuedOn!: string | null;
   /** Mirrors the current verified NSOP document's expiry. */

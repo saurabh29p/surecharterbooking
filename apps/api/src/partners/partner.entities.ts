@@ -15,6 +15,8 @@ export class Partner {
   @Column('text') type!: PartnerType;
   @Column('text') firm!: string;
   @Column('text', { nullable: true }) city!: string | null;
+  @Column('text', { nullable: true }) address!: string | null;
+  @Column('text', { nullable: true }) gstin!: string | null;
   @Column('text', { name: 'contact_person', nullable: true }) contactPerson!: string | null;
   @Column('text', { nullable: true }) phone!: string | null;
   @Column('text', { nullable: true }) email!: string | null;

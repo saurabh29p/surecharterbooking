@@ -38,6 +38,7 @@ const OperatorFields = z.object({
   cancellationTerms: optionalText(2000),
   cancellationSchedule: optionalSchedule,
   notes: optionalText(4000),
+  address: optionalText(500),
   /** Home airports (where its aircraft are based), e.g. ["DEL", "UDR"]. */
   bases: z.array(iata).max(20).optional(),
   /** Object = set, null = remove, absent = keep. */

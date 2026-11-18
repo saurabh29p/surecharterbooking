@@ -72,6 +72,7 @@ export class ClientsService {
       phone: c.phone,
       email: c.email,
       gstin: c.gstin,
+      address: c.address,
       notes: c.notes,
       partner: partnerRows[0] ?? null,
       weddings,
@@ -90,6 +91,7 @@ export class ClientsService {
           phone: input.phone ?? null,
           email: input.email ?? null,
           gstin: input.gstin ?? null,
+          address: input.address ?? null,
           partnerId: input.partnerId ?? null,
           notes: input.notes ?? null,
           deletedAt: null,
@@ -115,7 +117,16 @@ export class ClientsService {
     await this.ds.transaction(async (m) => {
       const c = await this.find(id, m);
       await this.assertPartner(m, input.partnerId);
-      for (const k of ['name', 'type', 'phone', 'email', 'gstin', 'partnerId', 'notes'] as const) {
+      for (const k of [
+        'name',
+        'type',
+        'phone',
+        'email',
+        'gstin',
+        'address',
+        'partnerId',
+        'notes',
+      ] as const) {
         const v = input[k];
         if (v === undefined || ((k === 'name' || k === 'type') && v === null)) continue;
         (c as unknown as Record<string, unknown>)[k] = v;

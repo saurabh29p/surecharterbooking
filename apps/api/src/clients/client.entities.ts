@@ -17,6 +17,8 @@ export class Client {
   @Column('text', { nullable: true }) phone!: string | null;
   @Column('text', { nullable: true }) email!: string | null;
   @Column('text', { nullable: true }) gstin!: string | null;
+  /** Billing address (agreements and GST invoices). */
+  @Column('text', { nullable: true }) address!: string | null;
   @Column('uuid', { name: 'partner_id', nullable: true }) partnerId!: string | null;
   @Column('text', { nullable: true }) notes!: string | null;
   @Column('timestamptz', { name: 'deleted_at', nullable: true }) deletedAt!: Date | null;
