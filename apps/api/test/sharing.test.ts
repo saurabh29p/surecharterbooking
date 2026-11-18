@@ -70,7 +70,7 @@ describe('secure share links, the link page and "I accept"', () => {
     ).body;
     expect(prep.message).toContain('{link}');
     expect(prep.message).toContain('₹12,33,100 including GST');
-    expect(prep.recipient).toMatchObject({ name: 'Client' });
+    expect(prep.recipient).toMatchObject({ name: 'Client C2 Family' });
     expect(prep.expiryDays).toBe(14);
 
     const res = (await link().expect(201)).body;

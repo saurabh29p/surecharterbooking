@@ -103,6 +103,13 @@ export interface QuoteDetail {
   warnings: string[];
   /** Quotes issued before PDFs existed (demo data) have none. */
   hasPdf: boolean;
+  documentId: string | null;
+  linkAcceptances: {
+    name: string;
+    acceptedAt: string;
+    channel: string;
+    recipient: string | null;
+  }[];
 }
 
 export interface ShareRow {

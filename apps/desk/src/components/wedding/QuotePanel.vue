@@ -24,6 +24,8 @@ import {
 import { useToast } from '../../composables/toast';
 import type { WeddingDetail } from '../../composables/weddings';
 import ScheduleEditor from '../ScheduleEditor.vue';
+import ShareHistory from '../ShareHistory.vue';
+import ShareSheet from '../ShareSheet.vue';
 import SjButton from '../SjButton.vue';
 import SjConfirm from '../SjConfirm.vue';
 import SjField from '../SjField.vue';
@@ -380,34 +382,31 @@ async function discard() {
 
 // ---------- Share, sent, accepted ----------
 
-const shareText = computed(() =>
-  q.value
-    ? `${props.wedding.venueCity ? `${props.wedding.venueCity} wedding` : 'Wedding'} flights: our quote ${q.value.reference}, ${money(q.value.totals.total)} including GST.${q.value.validUntil ? ` Valid until ${formatDateTime(new Date(q.value.validUntil))}.` : ''}`
-    : '',
-);
-
-async function share() {
+const shareOpen = ref(false);
+const historyTick = ref(0);
+function share() {
   if (!q.value) return;
-  let file = pdfFile.value;
-  if (!file) {
-    await afterIssue();
-    file = pdfFile.value;
-  }
-  const data = file ? { files: [file], title: q.value.reference, text: shareText.value } : null;
-  if (data && navigator.canShare?.(data)) {
-    try {
-      await navigator.share(data);
-      await markSent('WEB_SHARE', null, 'Quote shared');
-    } catch (e) {
-      if ((e as DOMException).name !== 'AbortError')
-        toast.error("Couldn't open the share sheet. Download the PDF and send it yourself.");
-    }
+  if (q.value.documentId && q.value.hasPdf) {
+    shareOpen.value = true;
     return;
   }
-  // No share sheet (desktop): download it, then say how it was sent.
-  await downloadPdf();
+  // Quotes made before PDFs existed: download it and say how it was sent.
+  void downloadPdf();
   sentChannel.value = 'WHATSAPP';
   sentOpen.value = true;
+}
+async function onShared() {
+  historyTick.value++;
+  if (!q.value) return;
+  q.value = await api<QuoteDetail>(`/quotes/${q.value.id}`);
+  quotes.value = await api<QuoteSummary[]>(`/weddings/${props.wedding.id}/quotes`);
+}
+
+/** "I accept" from a secure link: you confirm it here. */
+function confirmLinkAcceptance(name: string) {
+  acceptName.value = name;
+  acceptError.value = null;
+  acceptOpen.value = true;
 }
 
 async function downloadPdf() {
@@ -433,7 +432,7 @@ async function markSent(channel: string, recipient: string | null, ok?: string) 
       method: 'POST',
       json: { channel, recipient },
     });
-    shares.value = await api<ShareRow[]>(`/quotes/${q.value.id}/shares`);
+    historyTick.value++;
     quotes.value = await api<QuoteSummary[]>(`/weddings/${props.wedding.id}/quotes`);
     sentOpen.value = false;
     sentTo.value = '';
@@ -585,6 +584,24 @@ const issueBlocker = computed(() =>
           </div>
         </div>
       </section>
+
+      <!-- "I accept" from a secure link, waiting for you -->
+      <div
+        v-if="q.linkAcceptances.length && q.status !== 'ACCEPTED' && !expired && live"
+        class="sj-alert sj-alert--ok mb-3"
+        role="status"
+      >
+        <div class="fw-bold">✓ {{ q.linkAcceptances[0]!.name }} accepted on the link</div>
+        <div class="small mb-2">
+          {{ formatDateTime(new Date(q.linkAcceptances[0]!.acceptedAt))
+          }}<template v-if="q.linkAcceptances[0]!.recipient">
+            · sent to {{ q.linkAcceptances[0]!.recipient }}</template
+          >. Confirm it to record the acceptance.
+        </div>
+        <SjButton size="sm" @click="confirmLinkAcceptance(q.linkAcceptances[0]!.name)"
+          >Confirm acceptance</SjButton
+        >
+      </div>
 
       <!-- What stops issuing, and what to check -->
       <div v-if="draft && q.blockers.length" class="sj-alert sj-alert--danger mb-3" role="alert">
@@ -808,21 +825,9 @@ const issueBlocker = computed(() =>
       <!-- Sent log -->
       <section v-if="!draft" class="card mb-3" aria-labelledby="sent-h">
         <div class="card-body">
-          <h3 id="sent-h" class="h4">Sent</h3>
-          <p v-if="!shares.length" class="small text-secondary mb-0">
-            Not sent yet. Share the PDF, then it is logged here.
-          </p>
-          <div
-            v-for="s in shares"
-            :key="s.id"
-            class="d-flex justify-content-between small py-1 sj-row"
-          >
-            <span
-              >{{ SHARE_CHANNELS.find((c) => c.value === s.channel)?.label ?? s.channel
-              }}<template v-if="s.recipient"> · {{ s.recipient }}</template></span
-            >
-            <span class="text-secondary">{{ formatDateTime(new Date(s.sharedAt)) }}</span>
-          </div>
+          <h3 id="sent-h" class="h4">Sent and opened</h3>
+          <ShareHistory v-if="q.documentId" :document-id="q.documentId" :reload="historyTick" />
+          <p v-else class="small text-secondary mb-0">Not sent yet.</p>
         </div>
       </section>
 
@@ -921,6 +926,14 @@ const issueBlocker = computed(() =>
     </template>
 
     <!-- Sheets -->
+    <ShareSheet
+      :open="shareOpen"
+      :document-id="q?.documentId ?? null"
+      :title="`quote ${q?.reference ?? ''}`"
+      :filename="`ShubhJets-Quote-${(q?.reference ?? '').replace(' · ', '-')}.pdf`"
+      @close="shareOpen = false"
+      @shared="onShared"
+    />
     <SjSheet :open="extrasOpen" title="Extras" @close="extrasOpen = false">
       <div v-for="(e, i) in extras" :key="i" class="sj-extra">
         <div class="d-flex gap-2 align-items-end">
@@ -1151,6 +1164,11 @@ const issueBlocker = computed(() =>
   background: #fdecea;
   color: #6b1a12;
   border: 1px solid #f3c2bc;
+}
+.sj-alert--ok {
+  background: #e7f6ec;
+  color: #145c36;
+  border: 1px solid #b9e2c7;
 }
 .sj-alert--warn {
   background: #fff6e0;

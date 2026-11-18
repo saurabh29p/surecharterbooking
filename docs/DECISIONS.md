@@ -79,6 +79,19 @@ Answers to the build questions (17 Nov 2026) and other choices made during the b
 - **Fee-only invoicing warning:** with the fee-only model the GST amount lets a reader work out the margin
   (GST ÷ rate), so the quote screen warns about it. Full-value invoicing (the default) does not have this problem.
 
+## Build choices (step 11)
+- **One Share sheet for every document.** Each send makes its own secure link (random token; only its hash is
+  stored), so you can see who opened what. Links expire after the days in Settings (14) and can be switched off.
+- **The link page** is served by the API (no scripts, never indexed, no referrer, no framing, rate-limited) and shows
+  only client-safe content and the stored, leak-scanned PDF. Production needs the desk host to forward `/s/*`.
+- **"I accept" on a quote link records name, time and a hashed IP; it never accepts the quote by itself.** It shows on
+  the Quote tab as "accepted on the link — Confirm acceptance". Links stop accepting when the quote expires or is
+  replaced.
+- **Email from the app** goes through Resend with the PDF attached and the secure link in the message, idempotent per
+  share. Until it's set up, Email opens the phone's mail app.
+- WhatsApp and Telegram get the message with the link pre-filled; Instagram and Messenger can't take pre-filled text,
+  so the message is copied and the app opened.
+
 ## Build choices (step 10)
 - **Confirming a wedding (rule 2)** is one action with a checklist: accepted quote, signed client terms (an
   uploaded signed copy of an approved, non-draft version) and client payments ≥ the wedding's required share

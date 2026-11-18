@@ -2,9 +2,11 @@
 import { DOCUMENT_STATUS_LABELS, formatDateTime } from '@shubhjets/shared';
 import { computed, ref } from 'vue';
 import { api, ApiError } from '../api/client';
-import { openPdf, sharePdf, type DocumentRow } from '../composables/documents';
+import { openPdf, type DocumentRow } from '../composables/documents';
 import { SHARE_CHANNELS } from '../composables/quotes';
 import { useToast } from '../composables/toast';
+import ShareHistory from './ShareHistory.vue';
+import ShareSheet from './ShareSheet.vue';
 import SjButton from './SjButton.vue';
 import SjField from './SjField.vue';
 import SjSheet from './SjSheet.vue';
@@ -31,6 +33,8 @@ const toast = useToast();
 const latest = computed(() => props.doc?.versions[0] ?? null);
 const busy = ref<string | null>(null);
 const sentOpen = ref(false);
+const shareOpen = ref(false);
+const historyTick = ref(0);
 const sentChannel = ref('WHATSAPP');
 const sentTo = ref('');
 const fileInput = ref<HTMLInputElement | null>(null);
@@ -50,26 +54,6 @@ async function open() {
     await openPdf(`/documents/${props.doc.id}/pdf`);
   } catch (e) {
     toast.error(e instanceof ApiError ? e.message : "Couldn't open the PDF");
-  } finally {
-    busy.value = null;
-  }
-}
-
-async function share() {
-  if (!props.doc) return;
-  busy.value = 'share';
-  try {
-    const r = await sharePdf(
-      `/documents/${props.doc.id}/pdf`,
-      `${props.title}.pdf`,
-      props.shareText,
-    );
-    if (r === 'shared') await logSent('WEB_SHARE', null, 'Shared');
-    if (r === 'downloaded') sentOpen.value = true;
-  } catch (e) {
-    toast.error(
-      e instanceof ApiError ? e.message : "Couldn't share it. Download it and send it yourself.",
-    );
   } finally {
     busy.value = null;
   }
@@ -156,9 +140,7 @@ async function openSigned() {
           Missing: {{ latest.missing.join(', ') }}. They show as red marks in the PDF.
         </div>
         <div class="d-flex flex-wrap gap-2 mt-2">
-          <SjButton size="sm" :loading="busy === 'share'" loading-label="Opening…" @click="share"
-            >Share</SjButton
-          >
+          <SjButton size="sm" @click="shareOpen = true">Share</SjButton>
           <SjButton
             variant="secondary"
             size="sm"
@@ -191,15 +173,10 @@ async function openSigned() {
             @change="onFile"
           />
         </div>
-        <details v-if="doc.shares.length || doc.versions.length > 1" class="small mt-2">
-          <summary>History</summary>
-          <ul class="ps-3 mb-0 mt-1">
-            <li v-for="s in doc.shares" :key="s.id">
-              v{{ s.version }} sent by
-              {{ SHARE_CHANNELS.find((c) => c.value === s.channel)?.label ?? s.channel
-              }}<template v-if="s.recipient"> to {{ s.recipient }}</template
-              >, {{ formatDateTime(new Date(s.sharedAt)) }}
-            </li>
+        <details class="small mt-2" @toggle="historyTick++">
+          <summary>Sent, opened and versions</summary>
+          <ShareHistory :document-id="doc.id" :reload="historyTick" />
+          <ul class="ps-3 mb-0 mt-2">
             <li v-for="v in doc.versions" :key="v.id">
               v{{ v.version }} made {{ formatDateTime(new Date(v.createdAt))
               }}{{ v.draft ? ' (draft)' : '' }}{{ v.signed ? ' · signed' : '' }}
@@ -221,6 +198,14 @@ async function openSigned() {
       </div>
     </div>
 
+    <ShareSheet
+      :open="shareOpen"
+      :document-id="doc?.id ?? null"
+      :title="title"
+      :filename="`${title}.pdf`"
+      @close="shareOpen = false"
+      @shared="(historyTick++, emit('changed'))"
+    />
     <SjSheet :open="sentOpen" title="How did you send it?" @close="sentOpen = false">
       <div class="mb-3">
         <label class="form-label" :for="`dc-ch-${doc?.id}`">Sent by</label>

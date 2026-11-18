@@ -11,9 +11,9 @@ import {
   type RatesOverview,
   type RequestResult,
 } from '../../composables/rates';
-import { sharePdf } from '../../composables/documents';
 import { useToast } from '../../composables/toast';
 import type { WeddingDetail } from '../../composables/weddings';
+import ShareSheet from '../ShareSheet.vue';
 import SjButton from '../SjButton.vue';
 import SjSkeleton from '../SjSkeleton.vue';
 import AddReplySheet from './AddReplySheet.vue';
@@ -57,20 +57,15 @@ async function refresh() {
 }
 
 const pdfBusy = ref<string | null>(null);
-/** The request as a branded PDF for the operator: share it, or download it on a computer. */
+const rrDoc = ref<{ id: string; operator: string } | null>(null);
+/** The request as a branded PDF for the operator, then the Share sheet (WhatsApp, email…). */
 async function requestPdf(requestId: string, operatorName: string) {
   pdfBusy.value = requestId;
   try {
     const r = await api<{ documentId: string }>(`/rate-requests/${requestId}/pdf`, {
       method: 'POST',
     });
-    const out = await sharePdf(
-      `/documents/${r.documentId}/pdf`,
-      `Rate-request-${props.wedding.code}.pdf`,
-      `Rate request for ${props.wedding.code}`,
-    );
-    if (out === 'shared') toast.success(`Rate request PDF shared with ${operatorName}`);
-    if (out === 'downloaded') toast.success('Rate request PDF downloaded');
+    rrDoc.value = { id: r.documentId, operator: operatorName };
   } catch (e) {
     toast.error(e instanceof ApiError ? e.message : "Couldn't make the PDF");
   } finally {
@@ -347,6 +342,13 @@ const multiBlocker = (leg: LegComparison) => {
       <p v-else class="small text-secondary">Rates are closed for this wedding.</p>
     </template>
 
+    <ShareSheet
+      :open="!!rrDoc"
+      :document-id="rrDoc?.id ?? null"
+      :title="`rate request to ${rrDoc?.operator ?? ''}`"
+      :filename="`Rate-request-${wedding.code}.pdf`"
+      @close="rrDoc = null"
+    />
     <RequestRatesSheet
       :open="requestOpen"
       :wedding-id="wedding.id"

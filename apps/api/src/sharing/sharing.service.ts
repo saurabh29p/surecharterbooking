@@ -132,7 +132,7 @@ export class SharingService {
       legalName: d.legal_name,
       gstin: d.gstin,
       recipient: {
-        name: recipient.name ? String(recipient.name).split(' ')[0]! : null,
+        name: recipient.name ? String(recipient.name) : null,
         phone: recipient.phone ?? null,
         email: recipient.email ?? null,
       },
