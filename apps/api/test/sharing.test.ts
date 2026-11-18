@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import { findLeaks } from '@shubhjets/shared';
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { EmailService } from '../src/email/email.service.js';
 import { EncryptionService } from '../src/crypto/encryption.service.js';
 import { SEED_OWNER, seed } from '../src/db/seed-data.js';
 import { OperatorsService } from '../src/operators/operators.service.js';
@@ -242,5 +243,85 @@ describe('secure share links, the link page and "I accept"', () => {
       [quote.documentId],
     );
     expect(rows[0].diff).toMatchObject({ channel: 'WHATSAPP', link: true });
+  });
+
+  describe('email from the app', () => {
+    it('falls back to the mail app while Resend is not set up', async () => {
+      const prep = (
+        await authed(t.http().get(`/api/documents/${quote.documentId}/share`)).expect(200)
+      ).body;
+      expect(prep.emailReady).toBe(false);
+      const res = await authed(t.http().post(`/api/documents/${quote.documentId}/email`))
+        .send({ to: 'c2@example.test' })
+        .expect(409);
+      expect(res.body.code).toBe('EMAIL_NOT_CONFIGURED');
+    });
+
+    it('sends through Resend with the PDF attached and a secure link, and logs it', async () => {
+      const email = t.app.get(EmailService);
+      const saved = { ...email.options };
+      email.options = {
+        apiKey: 're_test',
+        from: 'ShubhJets <quotes@example.test>',
+        replyTo: 'owner@example.test',
+        url: 'https://resend.example.test',
+      };
+      const calls: { url: string; init: RequestInit }[] = [];
+      email.fetchImpl = vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
+        calls.push({ url: String(url), init: init! });
+        return new Response(JSON.stringify({ id: 'email-123' }), { status: 200 });
+      }) as typeof fetch;
+      try {
+        await authed(t.http().post(`/api/documents/${quote.documentId}/email`))
+          .send({ to: 'not-an-email' })
+          .expect(400);
+        const res = await authed(t.http().post(`/api/documents/${quote.documentId}/email`))
+          .send({ to: 'c2@example.test' })
+          .expect(201);
+        expect(calls).toHaveLength(1);
+        expect(calls[0]!.url).toBe('https://resend.example.test/emails');
+        const headers = calls[0]!.init.headers as Record<string, string>;
+        expect(headers.Authorization).toBe('Bearer re_test');
+        expect(headers['Idempotency-Key']).toBe(`share-${res.body.shareId}`);
+        const body = JSON.parse(String(calls[0]!.init.body));
+        expect(body).toMatchObject({
+          from: 'ShubhJets <quotes@example.test>',
+          to: ['c2@example.test'],
+          reply_to: 'owner@example.test',
+        });
+        expect(body.subject).toBe('Your charter quote W-102 · Q1 · ShubhJets');
+        expect(body.text).toContain(res.body.url);
+        expect(body.html).toContain(`href="${res.body.url}"`);
+        expect(body.attachments[0].filename).toBe('ShubhJets-Quote-W-102-Q1.pdf');
+        expect(Buffer.from(body.attachments[0].content, 'base64').subarray(0, 5).toString()).toBe(
+          '%PDF-',
+        );
+        const shares = (
+          await authed(t.http().get(`/api/documents/${quote.documentId}/shares`)).expect(200)
+        ).body;
+        expect(shares[0]).toMatchObject({ channel: 'EMAIL', recipient: 'c2@example.test' });
+        const [log] = await t.ds.query(`SELECT diff FROM audit_log WHERE action = 'EMAILED'`);
+        expect(log.diff).toMatchObject({ to: 'c2@example.test', providerId: 'email-123' });
+
+        // Refused by the email service: nothing is recorded.
+        email.fetchImpl = vi.fn(
+          async () =>
+            new Response(JSON.stringify({ message: 'Domain not verified' }), { status: 403 }),
+        ) as typeof fetch;
+        const refused = await authed(t.http().post(`/api/documents/${quote.documentId}/email`))
+          .send({ to: 'c2@example.test' })
+          .expect(503);
+        expect(refused.body.message).toBe(
+          'The email service refused it: Domain not verified. Try again, or send it from your mail app.',
+        );
+        const after = (
+          await authed(t.http().get(`/api/documents/${quote.documentId}/shares`)).expect(200)
+        ).body;
+        expect(after).toHaveLength(1);
+      } finally {
+        email.options = saved;
+        email.fetchImpl = (...args) => fetch(...args);
+      }
+    });
   });
 });

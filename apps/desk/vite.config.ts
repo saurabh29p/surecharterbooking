@@ -12,6 +12,12 @@ export default defineConfig({
         target: process.env.API_PROXY_TARGET ?? 'http://localhost:3000',
         changeOrigin: false,
       },
+      // Secure share links (/s/<token>) are pages served by the API.
+      '/s/': {
+        target: process.env.API_PROXY_TARGET ?? 'http://localhost:3000',
+        changeOrigin: false,
+        rewrite: (path) => `/api${path}`,
+      },
     },
   },
   test: { environment: 'happy-dom', include: ['test/**/*.test.ts'] },

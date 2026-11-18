@@ -145,6 +145,20 @@ commission and the operators' bank details, written as `₹4,75,000`, `475000`, 
 percentage, plus the words "net rate", "margin", "markup" and "commission". If anything is found, the quote is not
 issued and nothing is stored. Tests: `apps/api/test/quote-pdf.test.ts`.
 
+## Sharing and email
+
+Every document has one **Share** button. The app prepares the message and a **secure link**; you press send.
+
+- Each share gets its own link (`/s/<random token>`), so you can see who opened it and when. Links expire after
+  the number of days in Settings (default 14) and can be switched off at any time. Only a hash of the token is stored.
+- The link page is a small branded page (no scripts, never indexed) with the PDF. Quotes also have **I accept**:
+  the client types their name and ticks a box; the acceptance appears on the Quote tab for you to confirm.
+- In development Vite forwards `/s/*` to the API. **In production the desk's host must forward `/s/*` to the API's
+  `/api/s/*`** (a rewrite next to the `/api/*` one), and `PUBLIC_BASE_URL` is the desk's address.
+- **Email from the app** uses [Resend](https://resend.com): set `RESEND_API_KEY` and `EMAIL_FROM` (a sender on a
+  domain verified in Resend). The PDF is attached and the message carries the secure link. Until then, Email opens
+  the phone's mail app with the message ready.
+
 ## Keys you must back up
 
 > **Back up `DATA_ENCRYPTION_KEYS` somewhere safe (for example a password manager), separately from the database backups.**

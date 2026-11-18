@@ -16,6 +16,12 @@ const LinkBody = z.object({
   subject: optionalText(200),
 });
 
+const EmailBody = z.object({
+  to: z.string().trim().email('Enter an email address'),
+  message: optionalText(4000),
+  subject: optionalText(200),
+});
+
 @Controller()
 export class SharingController {
   constructor(private readonly sharing: SharingService) {}
@@ -34,6 +40,16 @@ export class SharingController {
     @CurrentUser() user: AuthUser,
   ) {
     return this.sharing.createLink(id, body, user.id);
+  }
+
+  /** Email from the app with the PDF attached (409 EMAIL_NOT_CONFIGURED until Resend is set up). */
+  @Post('documents/:id/email')
+  email(
+    @Param('id', uuid()) id: string,
+    @Body(new ZodPipe(EmailBody)) body: z.infer<typeof EmailBody>,
+    @CurrentUser() user: AuthUser,
+  ) {
+    return this.sharing.email(id, body, user.id);
   }
 
   @Get('documents/:id/shares')

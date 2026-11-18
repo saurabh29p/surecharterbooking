@@ -25,7 +25,9 @@ import {
 import type { DataSource, EntityManager } from 'typeorm';
 import { AuditService } from '../audit/audit.service.js';
 import { APP_CONFIG, type AppConfig } from '../config.js';
+import { EmailService } from '../email/email.service.js';
 import { FilesService } from '../files/files.service.js';
+import { esc } from '../documents/brand.js';
 import { Quote } from '../quotes/quote.entities.js';
 import { QuotesService } from '../quotes/quotes.service.js';
 import { SettingsService } from '../settings/settings.service.js';
@@ -68,7 +70,13 @@ export class SharingService {
     private readonly quotes: QuotesService,
     private readonly files: FilesService,
     private readonly audit: AuditService,
+    private readonly email_: EmailService,
   ) {}
+
+  /** Whether email from the app is set up (else the desk opens the mail app). */
+  emailReady() {
+    return this.email_.configured();
+  }
 
   private base(): string {
     return (this.config.PUBLIC_BASE_URL ?? this.config.DESK_ORIGIN).replace(/\/$/, '');
@@ -152,6 +160,7 @@ export class SharingService {
       link: LINK_PLACEHOLDER,
     };
     return {
+      emailReady: this.emailReady(),
       title: DOCUMENT_TYPE_LABELS[info.type],
       message: shareMessage(ctx),
       subject: shareSubject(ctx),
@@ -172,8 +181,9 @@ export class SharingService {
       subject?: string | null;
     },
     userId: string,
+    outer?: EntityManager,
   ) {
-    return this.ds.transaction(async (m) => {
+    const run = async (m: EntityManager) => {
       const info = await this.info(documentId, m);
       if (!info.pdfFileId) throw new ConflictException('This document has no PDF yet.');
       const prep = await this.prepare(documentId);
@@ -228,6 +238,57 @@ export class SharingService {
         telegramUrl: telegramUrl(url, message),
         mailtoUrl: mailtoUrl(input.email ?? prep.recipient.email, subject, message),
       };
+    };
+    return outer ? run(outer) : this.ds.transaction(run);
+  }
+
+  /**
+   * Sends the document by email from the app: a new secure link in the message and the PDF
+   * attached. All or nothing: if the email service refuses, no share is recorded.
+   */
+  async email(
+    documentId: string,
+    input: { to: string; message?: string | null; subject?: string | null },
+    userId: string,
+  ) {
+    if (!this.email_.configured())
+      throw new ConflictException({
+        code: 'EMAIL_NOT_CONFIGURED',
+        message: 'Email from the app is not set up yet. Your mail app opens instead.',
+      });
+    return this.ds.transaction(async (m) => {
+      const link = await this.createLink(
+        documentId,
+        {
+          channel: 'EMAIL',
+          recipient: input.to,
+          email: input.to,
+          message: input.message,
+          subject: input.subject,
+        },
+        userId,
+        m,
+      );
+      const info = await this.info(documentId, m);
+      const { file, bytes } = await this.files.read(info.pdfFileId!);
+      const sent = await this.email_.send({
+        to: input.to,
+        subject: link.subject,
+        text: link.message,
+        html: emailHtml(info.brand, link.message, link.url),
+        attachments: [{ filename: file.originalName ?? 'document.pdf', content: bytes }],
+        idempotencyKey: `share-${link.shareId}`,
+      });
+      await this.audit.record(
+        {
+          entity: 'document',
+          entityId: documentId,
+          action: 'EMAILED',
+          diff: { to: input.to, shareId: link.shareId, providerId: sent.id },
+        },
+        m,
+      );
+      return { shareId: link.shareId, url: link.url };
     });
   }
 
@@ -400,4 +461,26 @@ export class SharingService {
     );
     return { ok: true as const };
   }
+}
+
+/** A simple branded HTML version of the message; the link becomes a button. */
+export function emailHtml(brand: string, message: string, url: string): string {
+  const paras = message
+    .split(/\n{2,}/)
+    .map(
+      (p) =>
+        `<p style="margin:0 0 14px">${esc(p)
+          .replace(/\n/g, '<br>')
+          .split(esc(url))
+          .join(`<a href="${esc(url)}" style="color:#7a5a1e">${esc(url)}</a>`)}</p>`,
+    )
+    .join('');
+  return `<!doctype html><html><body style="margin:0;background:#f6f1e7;font-family:Arial,Helvetica,sans-serif;color:#1a1a22">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:24px 12px">
+<table role="presentation" width="100%" style="max-width:560px;background:#ffffff;border-radius:12px;overflow:hidden" cellpadding="0" cellspacing="0">
+<tr><td style="background:#0b1020;padding:20px 24px;font-family:Georgia,serif;font-size:26px;color:#d4b26a">${esc(brand)}</td></tr>
+<tr><td style="padding:24px;font-size:15px;line-height:1.55">${paras}
+<p style="margin:18px 0 0"><a href="${esc(url)}" style="display:inline-block;background:#d4b26a;color:#1a1a22;text-decoration:none;font-weight:bold;padding:12px 22px;border-radius:999px">Open securely</a></p>
+<p style="margin:16px 0 0;font-size:12px;color:#5d584f">The PDF is attached. The link is private to you and expires after a while.</p>
+</td></tr></table></td></tr></table></body></html>`;
 }

@@ -52,6 +52,8 @@ Answers to the build questions (17 Nov 2026) and other choices made during the b
 - Store `DATA_ENCRYPTION_KEYS` in a safe backup (password manager), separate from database backups. Losing it makes encrypted bank details and guest ID files unrecoverable.
 - Set real `ADMIN_EMAIL` / `ADMIN_PASSWORD` (not a `.test` address) and a fresh random `JWT_SECRET`.
 - Never run `pnpm seed` against production. It refuses, but don't try.
+- Forward `/s/*` on the desk's host to the API's `/api/s/*` (secure share links) and set `PUBLIC_BASE_URL`.
+- Email: create a Resend account, verify the sending domain, then set `RESEND_API_KEY` and `EMAIL_FROM`.
 - The API image needs Chromium for quote PDFs (`playwright-core install --with-deps chromium`, or `PDF_CHROMIUM_PATH`).
 
 ## Build choices (step 3)
