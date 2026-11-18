@@ -92,10 +92,11 @@ export function refreshSession(): Promise<Session | null> {
   return refreshing;
 }
 
-export async function api<T>(
+/** Authenticated request (refreshing once on 401); returns the raw response, throwing ApiError when not OK. */
+async function authedFetch(
   path: string,
   init: RequestInit & { json?: unknown } = {},
-): Promise<T> {
+): Promise<Response> {
   const { json, ...rest } = init;
   const build = (): RequestInit => {
     const headers = new Headers(rest.headers);
@@ -109,8 +110,31 @@ export async function api<T>(
     if (session) res = await rawFetch(path, build());
   }
   if (!res.ok) throw await parseError(res);
+  return res;
+}
+
+export async function api<T>(
+  path: string,
+  init: RequestInit & { json?: unknown } = {},
+): Promise<T> {
+  const res = await authedFetch(path, init);
   if (res.status === 204) return undefined as T;
   return (await res.json()) as T;
+}
+
+/** Download a file that needs login (CSV templates and exports) and save it on the device. */
+export async function download(path: string, fallbackName: string): Promise<void> {
+  const res = await authedFetch(path);
+  const disposition = res.headers.get('content-disposition') ?? '';
+  const name = /filename="([^"]+)"/.exec(disposition)?.[1] ?? fallbackName;
+  const url = URL.createObjectURL(await res.blob());
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 10_000);
 }
 
 export async function login(email: string, password: string): Promise<Session> {

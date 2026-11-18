@@ -73,6 +73,11 @@ export const routes: RouteRecordRaw[] = [
     component: () => import('./views/settings/RulesView.vue'),
   },
   {
+    path: '/settings/import',
+    name: 'import',
+    component: () => import('./views/settings/ImportView.vue'),
+  },
+  {
     path: '/settings/activity',
     name: 'activity',
     component: () => import('./views/settings/ActivityView.vue'),

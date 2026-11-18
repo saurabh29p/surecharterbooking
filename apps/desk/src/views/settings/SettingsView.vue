@@ -65,6 +65,18 @@ const target = computed(() => {
         </div>
       </RouterLink>
 
+      <RouterLink to="/settings/import" class="card sj-card-link">
+        <div class="card-body d-flex align-items-center gap-3">
+          <div class="flex-fill">
+            <div class="fw-bold">Import and export</div>
+            <div class="text-secondary small">
+              Partners and operators from CSV; download partners and weddings
+            </div>
+          </div>
+          <span aria-hidden="true" class="fs-2 text-secondary">›</span>
+        </div>
+      </RouterLink>
+
       <RouterLink to="/settings/activity" class="card sj-card-link">
         <div class="card-body d-flex align-items-center gap-3">
           <div class="flex-fill">

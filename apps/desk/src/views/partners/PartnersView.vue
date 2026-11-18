@@ -89,7 +89,12 @@ async function quick(p: PartnerListItem, kind: ActivityKind) {
     <PeopleTabs active="partners" />
     <div class="d-flex justify-content-between align-items-center gap-2 mb-2">
       <h1 class="page-title mb-0">Partners</h1>
-      <SjButton size="sm" @click="router.push('/partners/new')">Add partner</SjButton>
+      <div class="d-flex gap-1">
+        <SjButton variant="ghost" size="sm" @click="router.push('/settings/import?kind=partners')"
+          >Import</SjButton
+        >
+        <SjButton size="sm" @click="router.push('/partners/new')">Add partner</SjButton>
+      </div>
     </div>
 
     <div class="d-flex gap-2 flex-wrap mb-2" role="group" aria-label="Pipeline stage">

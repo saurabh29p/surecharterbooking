@@ -60,7 +60,12 @@ watch(q, () => {
   <div>
     <div class="d-flex justify-content-between align-items-center gap-2 mb-2">
       <h1 class="page-title mb-0">Operators</h1>
-      <SjButton size="sm" @click="router.push('/operators/new')">Add operator</SjButton>
+      <div class="d-flex gap-1">
+        <SjButton variant="ghost" size="sm" @click="router.push('/settings/import?kind=operators')"
+          >Import</SjButton
+        >
+        <SjButton size="sm" @click="router.push('/operators/new')">Add operator</SjButton>
+      </div>
     </div>
     <p class="text-secondary small">Only verified operators can be chosen for a leg or a quote.</p>
 
