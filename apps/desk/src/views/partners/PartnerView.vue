@@ -322,6 +322,8 @@ async function doRemoveReferral() {
             <input
               ref="fileInput"
               type="file"
+              tabindex="-1"
+              aria-label="Choose the signed referral agreement"
               accept="application/pdf,image/png,image/jpeg"
               class="visually-hidden"
               @change="uploadReferral"

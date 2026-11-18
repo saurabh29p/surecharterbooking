@@ -83,6 +83,8 @@ async function remove() {
       <input
         ref="input"
         type="file"
+        tabindex="-1"
+        aria-label="Choose the logo image"
         accept="image/png,image/jpeg,image/webp"
         class="visually-hidden"
         @change="onPick"

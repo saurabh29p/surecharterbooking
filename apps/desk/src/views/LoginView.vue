@@ -53,7 +53,7 @@ async function submit() {
   <div class="sj-login">
     <div class="sj-login__card">
       <div class="text-center mb-4">
-        <div class="sj-wordmark fs-1">ShubhJets</div>
+        <div class="sj-wordmark sj-wordmark--light fs-1">ShubhJets</div>
         <div class="text-secondary">Wedding Charter Desk</div>
       </div>
       <form novalidate @submit.prevent="submit">
@@ -113,7 +113,7 @@ async function submit() {
   position: absolute;
   right: 4px;
   top: 30px;
-  min-height: 40px;
+  min-height: 44px;
   min-width: 56px;
   border: 0;
   background: none;

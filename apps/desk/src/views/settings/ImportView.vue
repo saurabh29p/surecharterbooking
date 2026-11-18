@@ -212,6 +212,8 @@ async function save(path: string, name: string) {
         <input
           ref="input"
           type="file"
+          tabindex="-1"
+          aria-label="Choose the CSV file"
           accept=".csv,text/csv"
           class="visually-hidden"
           @change="onFile"

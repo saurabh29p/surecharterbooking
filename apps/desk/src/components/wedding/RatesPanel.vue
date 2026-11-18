@@ -373,7 +373,7 @@ const multiBlocker = (leg: LegComparison) => {
   border: 0;
   background: none;
   padding: 4px 0;
-  min-height: 32px;
+  min-height: 44px;
   font-size: 0.8125rem;
   color: var(--sj-gold-dark);
   font-weight: 600;

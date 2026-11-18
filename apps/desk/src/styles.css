@@ -17,6 +17,15 @@
   --tblr-primary-rgb: 11, 16, 32;
 }
 
+/* UX.md §5: text at least 4.5:1. Tabler's grey and green are too light on our backgrounds. */
+:root:root,
+:root:root [data-bs-theme] {
+  --tblr-secondary: #5b606e;
+  --tblr-secondary-rgb: 91, 96, 110;
+  --tblr-success: #1f7a4d;
+  --tblr-success-rgb: 31, 122, 77;
+}
+
 body {
   background: #f5f6f8;
   color: var(--sj-ink);
@@ -71,6 +80,12 @@ a:hover {
   min-height: 36px;
   padding: 0.35rem 0.8rem;
   font-size: 0.875rem;
+}
+/* Compact to look at, but the tap area is still 44px tall (UX.md §1). */
+.sj-btn--sm::after {
+  content: '';
+  position: absolute;
+  inset: -4px 0;
 }
 .sj-btn--block {
   width: 100%;
@@ -479,7 +494,7 @@ a:hover {
 
 /* Filter chips and list entry animation, shared by list screens. */
 .sj-chip {
-  min-height: 40px;
+  min-height: 44px;
   padding: 6px 14px;
   border-radius: 999px;
   border: 1px solid #c9ccd4;
@@ -520,4 +535,23 @@ a:hover {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* The gold wordmark needs the darker gold on light backgrounds to stay readable. */
+.sj-wordmark--light {
+  color: var(--sj-gold-dark);
+}
+
+/* Checkbox and radio rows: the whole row is the tap target. */
+label.form-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding-left: 0;
+}
+label.form-check .form-check-input {
+  float: none;
+  margin: 0;
+  flex: none;
 }

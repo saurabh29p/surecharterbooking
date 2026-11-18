@@ -101,7 +101,7 @@ async function next(save: boolean) {
 <template>
   <div class="container-tight py-4 px-3">
     <div class="text-center mb-3">
-      <span class="sj-wordmark fs-2">ShubhJets</span>
+      <span class="sj-wordmark sj-wordmark--light fs-2">ShubhJets</span>
     </div>
     <div class="card">
       <div class="card-body">

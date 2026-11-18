@@ -144,12 +144,7 @@ const jets = (r: NonNullable<typeof data.value>['routes'][number]) =>
 
     <!-- The month against the target: always the first thing on screen. -->
     <SjSkeleton v-if="!data" :lines="1" height="5.5rem" />
-    <RouterLink
-      v-else-if="tracker"
-      to="/settings/rules"
-      class="sj-tracker sj-card-link mb-3"
-      aria-label="This month: what you keep against the target, and margin (change the target in Rules)"
-    >
+    <RouterLink v-else-if="tracker" to="/settings/rules" class="sj-tracker sj-card-link mb-3">
       <div class="d-flex justify-content-between align-items-baseline">
         <span class="sj-tracker__label">{{ tracker.label }}</span>
         <span class="sj-tracker__pct"
@@ -184,6 +179,7 @@ const jets = (r: NonNullable<typeof data.value>['routes'][number]) =>
           >{{ formatINRShort(tracker.toGo) }} to go · {{ tracker.daysLeft }} days left</template
         ><template v-else>target reached ✓</template>
       </div>
+      <span class="visually-hidden">Change the target in Settings, Rules.</span>
     </RouterLink>
 
     <div class="d-flex align-items-baseline justify-content-between mb-2">

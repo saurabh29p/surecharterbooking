@@ -1236,6 +1236,7 @@ const issueBlocker = computed(() =>
 .sj-linkbtn {
   border: 0;
   background: none;
+  min-height: 44px;
   padding: 10px 0;
   color: var(--sj-gold-dark);
   font-weight: 600;

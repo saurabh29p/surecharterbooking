@@ -1,29 +1,54 @@
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { computed, onMounted, watch } from 'vue';
 import { useSettings } from '../composables/settings';
 
 /**
  * App-wide warnings (e.g. GST not yet confirmed by the CA) until they are fixed.
  * One compact line on every screen; tap to read them all.
+ *
+ * The last warnings are remembered on this device, so the banner is there from the first paint
+ * instead of pushing the page down when settings arrive (UX.md §2: no layout jumps).
  */
+const KEY = 'sj-banner-warnings';
 const { state, load } = useSettings();
+function remembered(): string[] {
+  try {
+    const v = JSON.parse(localStorage.getItem(KEY) ?? '[]');
+    return Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string') : [];
+  } catch {
+    return [];
+  }
+}
+const early = remembered();
+const warnings = computed(() => (state.loaded ? state.warnings : early));
+watch(
+  () => [state.loaded, state.warnings] as const,
+  ([loaded, w]) => {
+    if (!loaded) return;
+    try {
+      localStorage.setItem(KEY, JSON.stringify(w));
+    } catch {
+      // Private mode or storage blocked: the banner just appears a moment later.
+    }
+  },
+);
 onMounted(() => load().catch(() => undefined));
 </script>
 
 <template>
-  <div v-if="state.warnings.length" class="sj-banner" role="status">
+  <div v-if="warnings.length" class="sj-banner" role="status">
     <div class="container-xl d-flex gap-2 align-items-center py-1">
       <details class="flex-fill">
         <summary>
           <span aria-hidden="true">⚠</span>
           {{
-            state.warnings.length === 1
-              ? state.warnings[0]!.split('.')[0]
-              : `${state.warnings.length} settings need attention before quotes go out`
+            warnings.length === 1
+              ? warnings[0]!.split('.')[0]
+              : `${warnings.length} settings need attention before quotes go out`
           }}
         </summary>
         <ul class="mb-1 ps-3">
-          <li v-for="w in state.warnings" :key="w">{{ w }}</li>
+          <li v-for="w in warnings" :key="w">{{ w }}</li>
         </ul>
       </details>
       <RouterLink to="/settings/rules" class="sj-banner__link">Review</RouterLink>

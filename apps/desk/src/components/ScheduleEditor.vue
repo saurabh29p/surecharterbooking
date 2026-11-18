@@ -140,7 +140,8 @@ function remove(i: number) {
   padding: 0 8px;
 }
 .sj-tier__x {
-  width: 36px;
+  flex: none;
+  width: 44px;
   height: 44px;
   border: 0;
   background: transparent;
@@ -159,6 +160,7 @@ function remove(i: number) {
 .sj-linkbtn {
   border: 0;
   background: none;
+  min-height: 44px;
   padding: 10px 0;
   color: var(--sj-gold-dark);
   font-weight: 600;

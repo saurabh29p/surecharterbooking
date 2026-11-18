@@ -33,7 +33,7 @@ defineProps<{ active: 'partners' | 'clients' }>();
 .sj-segment a {
   flex: 1;
   text-align: center;
-  min-height: 40px;
+  min-height: 44px;
   display: grid;
   place-items: center;
   border-radius: 9px;
