@@ -352,17 +352,23 @@ describe('Today: Do now', () => {
 });
 
 describe('Today: month tracker', () => {
-  it('compares the month with the target and projects the month end', () => {
-    expect(monthTracker('2026-11-18', 9_00_000_00, 20_00_000_00)).toEqual({
+  it('compares what you keep this month with the target and projects the month end', () => {
+    // The target applies to what you keep after the partner's commission.
+    expect(
+      monthTracker('2026-11-18', { keep: 9_00_000_00, margin: 11_00_000_00 }, 20_00_000_00),
+    ).toEqual({
       label: 'Nov 2026',
-      margin: 9_00_000_00,
+      keep: 9_00_000_00,
+      margin: 11_00_000_00,
       target: 20_00_000_00,
       percent: 45,
       daysLeft: 12,
       projected: 15_00_000_00,
       toGo: 11_00_000_00,
     });
-    expect(monthTracker('2026-11-30', 25_00_000_00, 20_00_000_00)).toMatchObject({
+    expect(
+      monthTracker('2026-11-30', { keep: 25_00_000_00, margin: 30_00_000_00 }, 20_00_000_00),
+    ).toMatchObject({
       percent: 125,
       toGo: 0,
       daysLeft: 0,

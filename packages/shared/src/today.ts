@@ -1,6 +1,6 @@
 /**
  * The Today screen (BRIEF.md §5.4): "Do now" actions made by code rules from the records, each with
- * one button, most urgent first; and the month's margin against the target.
+ * one button, most urgent first; and what you keep this month against the target.
  */
 import {
   addDays,
@@ -597,19 +597,29 @@ export function snoozeUntil(today: IsoDate): Date {
 export interface MonthTracker {
   /** "Nov 2026" */
   label: string;
+  /** What you keep: margin after partner commission. The target applies to this. */
+  keep: Paise;
+  /** Margin before commission. */
   margin: Paise;
   target: Paise;
-  /** 0–100+, whole percent of target. */
+  /** 0–100+, whole percent of target reached by what you keep. */
   percent: number;
   daysLeft: number;
-  /** At the pace so far, the month would end around this. */
+  /** At the pace so far, what you would keep by the month end. */
   projected: Paise;
   /** Still needed to hit the target (0 when hit). */
   toGo: Paise;
 }
 
-/** The month's margin against the target, with a straight-line projection. */
-export function monthTracker(today: IsoDate, margin: Paise, target: Paise): MonthTracker {
+/**
+ * The month against the target. The target is measured on what you keep (after the partner's
+ * commission); margin before commission is shown beside it. Straight-line projection.
+ */
+export function monthTracker(
+  today: IsoDate,
+  amounts: { keep: Paise; margin: Paise },
+  target: Paise,
+): MonthTracker {
   const [y, m, d] = today.split('-').map(Number) as [number, number, number];
   const days = new Date(Date.UTC(y, m, 0)).getUTCDate();
   const label = new Date(Date.UTC(y, m - 1, 1)).toLocaleDateString('en-IN', {
@@ -617,14 +627,16 @@ export function monthTracker(today: IsoDate, margin: Paise, target: Paise): Mont
     year: 'numeric',
     timeZone: 'UTC',
   });
+  const { keep, margin } = amounts;
   return {
     label,
+    keep,
     margin,
     target,
-    percent: target > 0 ? Math.floor((margin * 100) / target) : 0,
+    percent: target > 0 ? Math.floor((keep * 100) / target) : 0,
     daysLeft: days - d,
-    projected: Math.round((margin * days) / d),
-    toGo: Math.max(0, target - margin),
+    projected: Math.round((keep * days) / d),
+    toGo: Math.max(0, target - keep),
   };
 }
 

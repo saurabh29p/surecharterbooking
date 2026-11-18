@@ -67,20 +67,24 @@ describe('Today', () => {
     expect(text).not.toMatch(/Client C\d/);
   });
 
-  it('shows the month against the target, the season and the overview', async () => {
+  it('shows what you keep this month against the target, the season and the overview', async () => {
     const b = await today();
-    // W-104 (₹1.0L) and W-105 (₹0.6L) were confirmed this month; W-106 (₹0.7L) in September.
+    // W-104 (₹1.0L margin) and W-105 (₹0.6L) were confirmed this month; W-106 (₹0.7L) in
+    // September. Partners take 20% of the margin, so you keep ₹0.8L + ₹0.48L.
     expect(b.tracker.month).toMatchObject({
       label: 'Nov 2026',
+      keep: 1_28_000_00,
       margin: 1_60_000_00,
       target: 20_00_000_00,
-      percent: 8,
+      percent: 6,
+      toGo: 18_72_000_00,
       weddingsConfirmed: 2,
       daysLeft: 12,
     });
     expect(b.tracker.season).toEqual({
       label: '2026-27',
       margin: 2_30_000_00,
+      keep: 1_82_600_00, // W-106's partner takes 2% of the booking (₹15,400)
       weddingsConfirmed: 3,
       averageMargin: 76_666_67,
     });
@@ -109,7 +113,7 @@ describe('Today', () => {
     await authed(t.http().patch('/api/settings'))
       .send({ values: { 'target.monthly_margin_paise': 10_00_000_00 } })
       .expect(200);
-    expect((await today()).tracker.month).toMatchObject({ target: 10_00_000_00, percent: 16 });
+    expect((await today()).tracker.month).toMatchObject({ target: 10_00_000_00, percent: 12 });
   });
 
   it('"Later" hides an action until 7 am tomorrow, with undo', async () => {

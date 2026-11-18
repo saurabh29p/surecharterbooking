@@ -161,8 +161,8 @@ Every document has one **Share** button. The app prepares the message and a **se
 
 ## Today screen
 
-Open the app and **Today** shows, top to bottom: this month's margin against the target (change it in
-Settings → Rules), then **Do now** with the most urgent things first, each with one button, then weddings by status,
+Open the app and **Today** shows, top to bottom: this month's **You keep** (after partner commission) against the
+target, with **Margin** (before commission) beside it (change the target in Settings → Rules), then **Do now** with the most urgent things first, each with one button, then weddings by status,
 the season so far, partner pipeline, lead sources and route coverage. Tap **Later** (or swipe a card left) to move
 an action to tomorrow morning; Undo brings it back. Pull down to refresh.
 

@@ -110,9 +110,10 @@ Answers to the build questions (17 Nov 2026) and other choices made during the b
 - **Today is one API call** (`GET /api/today`) and is kept in memory while the app is open, so going back to it is
   instant while it refreshes. Nothing is stored on the phone. It refreshes on pull-down, the ↻ button, and when you
   come back to the app after 5 minutes.
-- **The month tracker comes first** and shows margin (before partner commission) from the accepted quote of every
-  wedding **confirmed** (signed and paid) this calendar month, against the target in Settings → Rules. The season is
-  the Indian financial year.
+- **The month tracker comes first** and shows two figures from the accepted quote of every wedding **confirmed**
+  (signed and paid) this calendar month: **You keep** (margin after the partner's commission) and **Margin**
+  (before commission). The monthly target in Settings → Rules applies to **You keep**. The season is the Indian
+  financial year and shows both too.
 - **Do now is made by code rules**, in three groups: **Now**, **Today**, **Coming up**. Within a group the order is
   fixed: a client waiting (link acceptance, new website enquiry, quote about to lapse) comes before flights to mark,
   guest IDs, confirming, operator expiry, chasing operators, payments, quotes to build or share, payouts,

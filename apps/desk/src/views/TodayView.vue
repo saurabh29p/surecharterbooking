@@ -148,15 +148,25 @@ const jets = (r: NonNullable<typeof data.value>['routes'][number]) =>
       v-else-if="tracker"
       to="/settings/rules"
       class="sj-tracker sj-card-link mb-3"
-      aria-label="Margin this month against the target (change the target in Rules)"
+      aria-label="This month: what you keep against the target, and margin (change the target in Rules)"
     >
       <div class="d-flex justify-content-between align-items-baseline">
-        <span class="sj-tracker__label">{{ tracker.label }} margin</span>
-        <span class="sj-tracker__pct">{{ tracker.percent }}%</span>
+        <span class="sj-tracker__label">{{ tracker.label }}</span>
+        <span class="sj-tracker__pct"
+          >{{ tracker.percent }}% of {{ formatINRShort(tracker.target) }}</span
+        >
       </div>
-      <div class="sj-tracker__fig">
-        {{ formatINRShort(tracker.margin) }}
-        <span class="sj-tracker__of">of {{ formatINRShort(tracker.target) }}</span>
+      <div class="sj-tracker__figs">
+        <div>
+          <div class="sj-tracker__name">You keep</div>
+          <div class="sj-tracker__fig">{{ formatINRShort(tracker.keep) }}</div>
+        </div>
+        <div class="text-end">
+          <div class="sj-tracker__name">Margin</div>
+          <div class="sj-tracker__fig sj-tracker__fig--small">
+            {{ formatINRShort(tracker.margin) }}
+          </div>
+        </div>
       </div>
       <div
         class="sj-tracker__bar"
@@ -164,7 +174,7 @@ const jets = (r: NonNullable<typeof data.value>['routes'][number]) =>
         :aria-valuenow="tracker.percent"
         aria-valuemin="0"
         aria-valuemax="100"
-        :aria-label="`${tracker.percent}% of the monthly target`"
+        :aria-label="`You keep ${tracker.percent}% of the monthly target`"
       >
         <span :style="{ width: barWidth }" />
       </div>
@@ -238,6 +248,10 @@ const jets = (r: NonNullable<typeof data.value>['routes'][number]) =>
           <div>
             <div class="sj-tile__n">{{ formatINRShort(data.tracker.season.margin) }}</div>
             <div class="sj-tile__label">Margin</div>
+          </div>
+          <div>
+            <div class="sj-tile__n">{{ formatINRShort(data.tracker.season.keep) }}</div>
+            <div class="sj-tile__label">You keep</div>
           </div>
           <div>
             <div class="sj-tile__n">{{ data.tracker.season.weddingsConfirmed }}</div>
@@ -345,16 +359,25 @@ const jets = (r: NonNullable<typeof data.value>['routes'][number]) =>
   font-weight: 800;
   color: var(--sj-gold);
 }
+.sj-tracker__figs {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 2px;
+}
+.sj-tracker__name {
+  font-size: 0.75rem;
+  color: #c9c3b4;
+}
 .sj-tracker__fig {
   font-family: 'Bodoni Moda', Georgia, serif;
   font-size: 1.6rem;
   font-weight: 600;
-  line-height: 1.2;
+  line-height: 1.15;
 }
-.sj-tracker__of {
-  font-family: var(--tblr-font-sans-serif);
-  font-size: 0.9rem;
-  color: #c9c3b4;
+.sj-tracker__fig--small {
+  font-size: 1.15rem;
+  color: #e7e1d3;
 }
 .sj-tracker__bar {
   height: 6px;
@@ -410,7 +433,7 @@ const jets = (r: NonNullable<typeof data.value>['routes'][number]) =>
 }
 .sj-season {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 8px;
 }
 .sj-routes li {

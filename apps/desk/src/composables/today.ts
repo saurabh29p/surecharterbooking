@@ -15,8 +15,14 @@ export interface TodayData {
   actions: TodayAction[];
   snoozedCount: number;
   tracker: {
-    month: MonthTracker & { netMargin: number; weddingsConfirmed: number };
-    season: { label: string; margin: number; weddingsConfirmed: number; averageMargin: number };
+    month: MonthTracker & { weddingsConfirmed: number };
+    season: {
+      label: string;
+      margin: number;
+      keep: number;
+      weddingsConfirmed: number;
+      averageMargin: number;
+    };
   };
   board: { status: WeddingStatus; count: number; value: number; margin: number }[];
   pipeline: { counts: { status: PartnerStatus; count: number }[]; followUpsDue: number };

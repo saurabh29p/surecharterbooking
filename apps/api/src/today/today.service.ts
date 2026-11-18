@@ -359,7 +359,7 @@ export class TodayService {
     };
   }
 
-  /** This month's margin against the target, and the season (financial year) so far. */
+  /** What you keep this month against the target (and margin before commission), and the season so far. */
   private async tracker(today: string) {
     const month = monthRange(today);
     const season = seasonRange(today);
@@ -378,13 +378,13 @@ export class TodayService {
     const seasonMargin = Number(s.margin);
     return {
       month: {
-        ...monthTracker(today, Number(m.margin), target),
-        netMargin: Number(m.net),
+        ...monthTracker(today, { keep: Number(m.net), margin: Number(m.margin) }, target),
         weddingsConfirmed: m.n as number,
       },
       season: {
         label: season.label,
         margin: seasonMargin,
+        keep: Number(s.net),
         weddingsConfirmed: s.n as number,
         averageMargin: s.n ? Math.round(seasonMargin / (s.n as number)) : 0,
       },
