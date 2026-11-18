@@ -182,7 +182,8 @@ export async function seed(
         firm: type === 'HOTEL' ? `Hotel ${n}` : `Planner ${n}`,
         city,
         contact_person: `Contact ${n}`,
-        phone: `+9190000000${n.replace(/\D/g, '').padStart(2, '0')}`,
+        // Planners 90000 000xx, hotels 90000 001xx: distinct numbers, so no false duplicate warnings.
+        phone: `+919000000${type === 'HOTEL' ? '1' : '0'}${n.replace(/\D/g, '').padStart(2, '0')}`,
         email: `${n.toLowerCase()}@example.test`,
         website: `https://${n.toLowerCase()}.example.test`,
         instagram: `@${n.toLowerCase()}_example`,
@@ -195,9 +196,9 @@ export async function seed(
       await ins(m, 'consent', {
         subject_type: 'PARTNER',
         subject_id: id,
-        notice_version: 'seed-v1',
+        notice_version: 'v1-draft',
         given_at: now,
-        source: 'seed',
+        source: 'RESEARCH_IMPORT',
       });
       return id;
     };
@@ -240,9 +241,9 @@ export async function seed(
       await ins(m, 'consent', {
         subject_type: 'CLIENT',
         subject_id: id,
-        notice_version: 'seed-v1',
+        notice_version: 'v1-draft',
         given_at: now,
-        source: 'seed',
+        source: 'WHATSAPP',
       });
       return id;
     };

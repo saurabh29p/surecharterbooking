@@ -33,6 +33,17 @@ describe('seed data', () => {
     expect(a!.n).toBe(18);
   });
 
+  it('gives every partner its own phone (no false duplicate warnings) and only valid consent sources', async () => {
+    const [dup] = await q<{ n: number }>(
+      `SELECT count(*)::int AS n FROM (SELECT phone FROM partner GROUP BY phone HAVING count(*) > 1) d`,
+    );
+    expect(dup!.n).toBe(0);
+    const sources = await q<{ source: string }>(
+      `SELECT DISTINCT source FROM consent ORDER BY source`,
+    );
+    expect(sources.map((s) => s.source)).toEqual(['RESEARCH_IMPORT', 'WHATSAPP']);
+  });
+
   it('has W-101 to W-106, one in each status of the pipeline', async () => {
     const rows = await q<{ code: string; status: string }>(
       `SELECT code, status FROM wedding ORDER BY number`,

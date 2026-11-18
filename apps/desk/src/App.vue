@@ -4,14 +4,18 @@ import SjBanner from './components/SjBanner.vue';
 import SjToasts from './components/SjToasts.vue';
 
 const route = useRoute();
-const tabs = [
+const tabs: { to: string; label: string; also?: string[] }[] = [
   { to: '/', label: 'Today' },
   { to: '/operators', label: 'Operators' },
+  { to: '/partners', label: 'Partners', also: ['/clients'] },
   { to: '/settings', label: 'Settings' },
 ];
 /** A tab stays highlighted on its sub-pages (e.g. Settings → a business profile). */
-const isActive = (to: string) =>
-  to === '/' ? route.path === '/' : route.path === to || route.path.startsWith(`${to}/`);
+const isActive = (to: string) => {
+  if (to === '/') return route.path === '/';
+  const tab = tabs.find((t) => t.to === to);
+  return [to, ...(tab?.also ?? [])].some((p) => route.path === p || route.path.startsWith(`${p}/`));
+};
 </script>
 
 <template>
