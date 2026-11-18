@@ -116,6 +116,10 @@ describe('quote PDF: branded document and the rule-4 text scan', () => {
       'Valid until',
       '19 Nov 2026',
       'Cancellation',
+      // Our own bank account, for the client's payment.
+      'Bank transfer to Example Exim LLP',
+      '000011112222',
+      'EXMP0000001',
     ])
       expect(text.replace(/\s+/g, ''), shown).toContain(shown.replace(/\s+/g, ''));
 

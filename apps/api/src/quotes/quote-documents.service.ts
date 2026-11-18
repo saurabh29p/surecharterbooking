@@ -10,7 +10,6 @@ import {
 } from '@shubhjets/shared';
 import type { DataSource, EntityManager } from 'typeorm';
 import { AuditService } from '../audit/audit.service.js';
-import { BusinessProfile } from '../business-profiles/business-profile.entity.js';
 import { EncryptionService } from '../crypto/encryption.service.js';
 import { FilesService } from '../files/files.service.js';
 import { PdfService } from '../pdf/pdf.service.js';
@@ -54,10 +53,14 @@ export class QuoteDocumentsService {
 
   /** Our bank details and logo, added at render time (never stored in the snapshot). */
   private async complete(m: EntityManager, outward: OutwardQuote, profileId: string) {
-    const p = await m.getRepository(BusinessProfile).findOneBy({ id: profileId });
+    // Bank details are never loaded by default (select: false); read them for this document only.
+    const [p] = (await m.query(
+      `SELECT bank_details_enc, logo_file_id FROM business_profile WHERE id = $1`,
+      [profileId],
+    )) as { bank_details_enc: Buffer | null; logo_file_id: string | null }[];
     let bank: OutwardQuote['bank'] = null;
-    if (p?.bankDetailsEnc) {
-      const b = this.crypto.decryptJson<BankDetails>(p.bankDetailsEnc);
+    if (p?.bank_details_enc) {
+      const b = this.crypto.decryptJson<BankDetails>(p.bank_details_enc);
       bank = {
         accountName: b.accountName,
         accountNumber: b.accountNumber,
@@ -67,8 +70,8 @@ export class QuoteDocumentsService {
       };
     }
     let logo: string | null = null;
-    if (p?.logoFileId) {
-      const { file, bytes } = await this.files.read(p.logoFileId).catch(() => ({
+    if (p?.logo_file_id) {
+      const { file, bytes } = await this.files.read(p.logo_file_id).catch(() => ({
         file: null,
         bytes: null,
       }));

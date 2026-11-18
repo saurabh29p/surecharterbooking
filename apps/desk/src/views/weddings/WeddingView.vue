@@ -30,6 +30,7 @@ import {
 } from '../../composables/weddings';
 
 const RatesPanel = defineAsyncComponent(() => import('../../components/wedding/RatesPanel.vue'));
+const QuotePanel = defineAsyncComponent(() => import('../../components/wedding/QuotePanel.vue'));
 
 const route = useRoute();
 const router = useRouter();
@@ -417,9 +418,7 @@ async function reopen() {
 
       <RatesPanel v-else-if="tab === 'rates'" :wedding="w" @changed="load" />
 
-      <section v-else class="card card-body text-center text-secondary">
-        <p class="mb-0">The quote builder (prices, GST, PDF) arrives in the next step.</p>
-      </section>
+      <QuotePanel v-else :wedding="w" @changed="load" @go-rates="setTab('rates')" />
     </template>
 
     <SjSheet

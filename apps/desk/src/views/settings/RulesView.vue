@@ -7,11 +7,13 @@ import {
   formatDateTime,
   formatINR,
   validateSetting,
+  type CancellationSchedule,
   type SettingDef,
   type SettingGroup,
 } from '@shubhjets/shared';
 import { computed, onMounted, reactive, ref } from 'vue';
 import { api, ApiError } from '../../api/client';
+import ScheduleEditor from '../../components/ScheduleEditor.vue';
 import SjButton from '../../components/SjButton.vue';
 import SjSkeleton from '../../components/SjSkeleton.vue';
 import {
@@ -34,9 +36,13 @@ const errors = reactive<Record<string, string>>({});
 const saving = ref<SettingGroup | null>(null);
 const gstConfirmed = ref(false);
 
-// Cancellation charges get their own editor in the quote step.
-const defsFor = (g: SettingGroup) =>
-  SETTING_DEFS.filter((d) => d.group === g && d.kind !== 'schedule');
+const defsFor = (g: SettingGroup) => SETTING_DEFS.filter((d) => d.group === g);
+
+/** The schedule editor reports whether every line is valid. */
+function onScheduleValid(def: SettingDef, ok: boolean) {
+  if (ok) delete errors[def.key];
+  else errors[def.key] = 'Fix the cancellation lines first';
+}
 const gstSavedConfirmed = computed(() => settings.row('gst.rate_bps')?.confirmed === true);
 /** Most recent change to any setting in the group. */
 function lastChanged(g: SettingGroup): string | null {
@@ -221,6 +227,14 @@ function moneyHint(def: SettingDef): string | undefined {
               <span>{{ o.label }}</span>
             </label>
           </div>
+
+          <ScheduleEditor
+            v-else-if="def.kind === 'schedule'"
+            :model-value="drafts[def.key] as CancellationSchedule"
+            :id-prefix="def.key"
+            @update:model-value="(v) => (drafts[def.key] = v)"
+            @valid="(ok) => onScheduleValid(def, ok)"
+          />
 
           <textarea
             v-else-if="def.multiline"

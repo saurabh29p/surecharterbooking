@@ -10,6 +10,8 @@ export class ApiError extends Error {
     message: string,
     /** Field-by-field problems from the API, for inline form errors. */
     readonly fields: Record<string, string> = {},
+    /** The whole error body (e.g. a `code` and details such as the gaps in cancellation terms). */
+    readonly body: Record<string, unknown> = {},
   ) {
     super(message);
     this.name = 'ApiError';
@@ -59,7 +61,7 @@ async function parseError(res: Response): Promise<ApiError> {
       : res.status >= 500
         ? 'Something went wrong on our side. Please try again.'
         : `Request failed (${res.status})`;
-  return new ApiError(res.status, message, body.fields ?? {});
+  return new ApiError(res.status, message, body.fields ?? {}, body as Record<string, unknown>);
 }
 
 async function rawFetch(path: string, init: RequestInit = {}): Promise<Response> {
@@ -120,6 +122,17 @@ export async function api<T>(
   const res = await authedFetch(path, init);
   if (res.status === 204) return undefined as T;
   return (await res.json()) as T;
+}
+
+/** A file that needs login, as a Blob with its file name (for sharing or opening a PDF). */
+export async function fetchFile(
+  path: string,
+  fallbackName: string,
+): Promise<{ blob: Blob; name: string }> {
+  const res = await authedFetch(path);
+  const disposition = res.headers.get('content-disposition') ?? '';
+  const name = /filename="([^"]+)"/.exec(disposition)?.[1] ?? fallbackName;
+  return { blob: await res.blob(), name };
 }
 
 /** Download a file that needs login (CSV templates and exports) and save it on the device. */

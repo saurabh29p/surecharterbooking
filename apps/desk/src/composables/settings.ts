@@ -2,6 +2,7 @@ import {
   groupIndian,
   parsePercent,
   parseRupees,
+  type CancellationSchedule,
   type CommissionDefault,
   type SettingDef,
 } from '@shubhjets/shared';
@@ -48,7 +49,7 @@ export function useSettings() {
 }
 
 /** What the input box shows for a stored value. */
-export type Draft = string | { basis: string; pct: string };
+export type Draft = string | { basis: string; pct: string } | CancellationSchedule;
 
 export function toDraft(def: SettingDef, value: unknown): Draft {
   switch (def.kind) {
@@ -62,6 +63,8 @@ export function toDraft(def: SettingDef, value: unknown): Draft {
       const v = value as CommissionDefault;
       return { basis: v.basis, pct: String(v.bps / 100) };
     }
+    case 'schedule':
+      return ((value as CancellationSchedule | null) ?? []).map((t) => ({ ...t }));
     default:
       return String(value ?? '');
   }
@@ -83,6 +86,8 @@ export function fromDraft(def: SettingDef, draft: Draft): unknown {
       const d = draft as { basis: string; pct: string };
       return { basis: d.basis, bps: parsePercent(d.pct) };
     }
+    case 'schedule':
+      return draft;
     default:
       return String(draft).trim();
   }
