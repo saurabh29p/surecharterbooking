@@ -16,7 +16,7 @@ import {
 } from '@shubhjets/shared';
 import type { DataSource, EntityManager } from 'typeorm';
 import { hashPassword } from '../auth/password.js';
-import { ALL_DEFAULT_SETTINGS } from './default-settings.js';
+import { ALL_DEFAULT_SETTINGS, insertDefaultTemplates } from './default-settings.js';
 import type { EncryptionService } from '../crypto/encryption.service.js';
 
 export const SEED_OWNER = { email: 'owner@shubhjets.test', password: 'shubhjets dev passphrase' };
@@ -144,6 +144,8 @@ export async function seed(
         confirmed,
       ]);
     }
+    await m.query(`DELETE FROM document_template`);
+    await insertDefaultTemplates(m);
 
     // ---------- Owner and business profile ----------
     const owner = await ins(m, 'app_user', {

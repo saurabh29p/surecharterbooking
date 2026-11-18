@@ -1,5 +1,5 @@
 import type { DataSource } from 'typeorm';
-import { ALL_DEFAULT_SETTINGS } from '../src/db/default-settings.js';
+import { ALL_DEFAULT_SETTINGS, insertDefaultTemplates } from '../src/db/default-settings.js';
 import { AIRPORTS } from '../src/db/migrations/1763400000001-ReferenceData.js';
 
 /**
@@ -26,4 +26,5 @@ export async function resetDb(ds: DataSource): Promise<void> {
       confirmed,
     ]);
   }
+  await insertDefaultTemplates(ds);
 }

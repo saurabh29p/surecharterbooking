@@ -17,6 +17,7 @@ import { JobsModule } from './jobs/jobs.module.js';
 import { WeddingsModule } from './weddings/weddings.module.js';
 import { QuotesModule } from './quotes/quotes.module.js';
 import { PdfModule } from './pdf/pdf.module.js';
+import { DocumentsModule } from './documents/documents.module.js';
 import { OperatorsModule } from './operators/operators.module.js';
 import { PartnersModule } from './partners/partners.module.js';
 import { ClientsModule } from './clients/clients.module.js';
@@ -53,6 +54,7 @@ import { SettingsModule } from './settings/settings.module.js';
     ImportsModule,
     WeddingsModule,
     QuotesModule,
+    DocumentsModule,
   ],
   controllers: [HealthController],
   // Throttle first, then require login (JwtAuthGuard is registered in AuthModule).
