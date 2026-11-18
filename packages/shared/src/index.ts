@@ -12,3 +12,4 @@ export * from './wedding.js';
 export * from './cancellation.js';
 export * from './leak-scan.js';
 export * from './quote.js';
+export * from './documents.js';

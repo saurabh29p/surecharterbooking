@@ -34,6 +34,11 @@ export interface LeakScanInput {
    */
   allowedAmounts?: readonly Paise[];
   allowedPercents?: readonly number[];
+  /**
+   * Also look for internal words ("net rate", "margin"…). Default true. Off only for documents
+   * that must name the commission basis, e.g. a partner referral agreement ("20% of the Margin").
+   */
+  checkWords?: boolean;
 }
 
 export interface LeakFinding {
@@ -102,9 +107,11 @@ export function findLeaks(text: string, input: LeakScanInput): LeakFinding[] {
   const findings: LeakFinding[] = [];
   const clean = normaliseScanText(text);
 
-  for (const w of INTERNAL_WORDS) {
-    const m = w.re.exec(clean);
-    if (m) findings.push({ label: w.label, found: m[0] });
+  if (input.checkWords !== false) {
+    for (const w of INTERNAL_WORDS) {
+      const m = w.re.exec(clean);
+      if (m) findings.push({ label: w.label, found: m[0] });
+    }
   }
 
   const allowed = new Set(input.allowedAmounts ?? []);

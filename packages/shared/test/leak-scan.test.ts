@@ -54,6 +54,12 @@ describe('findLeaks', () => {
     expect(describeLeaks(found)).toContain('Margin % ("9.09%")');
   });
 
+  it('can skip the word check for documents that must name the commission basis', () => {
+    expect(findLeaks('Commission: 20% of the Margin', { amounts: [], checkWords: false })).toEqual(
+      [],
+    );
+  });
+
   it('catches operator bank details even with spaces or dashes', () => {
     const texts = [
       { label: 'Operator A bank account', value: '000111222333' },
