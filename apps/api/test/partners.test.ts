@@ -64,6 +64,22 @@ describe('partners', () => {
     expect(Object.keys(res.body.fields).sort()).toEqual(['email', 'firm', 'phone', 'type']);
   });
 
+  it('checks duplicates on any one detail alone (regression: phone without website crashed)', async () => {
+    await create({ type: 'PLANNER', firm: 'Phone only', phone: '9876543299' }).expect(201);
+    const res = await create({
+      type: 'PLANNER',
+      firm: 'Email only',
+      email: 'x@example.test',
+    }).expect(201);
+    expect(res.body.duplicates).toEqual([]);
+    const dup = await create({ type: 'PLANNER', firm: 'Same phone', phone: '9876543299' }).expect(
+      201,
+    );
+    expect(dup.body.duplicates).toEqual([
+      expect.objectContaining({ firm: 'Phone only', matchedOn: ['phone'] }),
+    ]);
+  });
+
   it('warns about possible duplicates (same phone, email or website) without blocking', async () => {
     await create({
       type: 'PLANNER',

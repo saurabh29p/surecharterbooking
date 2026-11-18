@@ -248,12 +248,14 @@ export class PartnersService {
     }[] = await m.query(
       `SELECT id, firm, phone, email, website FROM partner
         WHERE deleted_at IS NULL AND ($1::uuid IS NULL OR id <> $1)
-          AND ((phone IS NOT NULL AND phone = $2) OR (email IS NOT NULL AND lower(email) = lower($3)) OR website ILIKE $4)`,
+          AND ((phone IS NOT NULL AND phone = $2)
+            OR (email IS NOT NULL AND lower(email) = lower($3))
+            OR ($4::text IS NOT NULL AND website ILIKE $4))`,
       [
         excludeId ?? null,
         candidate.phone ?? null,
         candidate.email ?? null,
-        domain ? `%${domain}%` : '\u0000',
+        domain ? `%${domain}%` : null,
       ],
     );
     return rows

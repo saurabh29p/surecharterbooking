@@ -78,6 +78,32 @@ CI (GitHub Actions) runs everything on every push.
 | `pnpm --filter @shubhjets/api db:revert` | Undo the last migration (development only) |
 | `pnpm --filter @shubhjets/api gen:key` | Make a new `DATA_ENCRYPTION_KEYS` value |
 
+## Importing your research (CSV)
+
+Templates with the exact headers and one fake example row:
+[`docs/templates/partners-template.csv`](docs/templates/partners-template.csv) and
+[`docs/templates/operators-template.csv`](docs/templates/operators-template.csv) (also downloadable in the desk).
+
+- **Partners:** `type` (planner, hotel or other) and `firm` are required. Phones can be 10-digit Indian mobiles
+  or start with `+` and a country code.
+- **Operators:** only `legal_name` is required. Cells with several values use `;` between items and `|` between parts:
+  - `bases`: `DEL;UDR`
+  - `aircraft`: `type|registration|category|seats`, e.g. `Citation XLS|VT-ZZ9|midsize|8;King Air B200||turboprop|7`
+    (category: turboprop, light, midsize, super-midsize or heavy)
+  - `contacts`: `name|phone|email`
+- **Column names:** they don't have to match exactly. The import matches common alternatives (e.g. "Mobile" →
+  phone), and you can change the match before importing.
+- **Checking:** the preview flags problems line by line and finds duplicates (partners: same phone, email or website;
+  operators: same NSOP number or website), both in your records and earlier in the same file.
+- **Choices:** for each line you choose add, merge or skip.
+  - Merge only fills empty fields and adds new bases, aircraft and contacts; it never overwrites.
+  - The import is all or nothing.
+  - Imported operators always start unverified; imported partners start as new leads with a "research import" consent record.
+- **Limits:** 2 MB and 2,000 lines per file.
+
+Exports (partners, weddings) are UTF-8 CSV that opens correctly in Excel. Cells that a spreadsheet could run as
+formulas are escaped.
+
 ## File storage
 
 Uploads (operator documents, logos, receipts, guest IDs) go through one storage layer with two drivers:

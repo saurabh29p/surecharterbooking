@@ -25,6 +25,8 @@
     "@node-rs/argon2": "^2.2.2",
     "@shubhjets/shared": "workspace:*",
     "cookie-parser": "^1.4.7",
+    "csv-parse": "^7.0.3",
+    "csv-stringify": "^6.9.0",
     "jose": "^6.2.17",
     "pg": "^8.23.1",
     "pg-boss": "^12.38.2",

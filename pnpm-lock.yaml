@@ -71,6 +71,12 @@ importers:
       cookie-parser:
         specifier: ^1.4.7
         version: 1.4.7
+      csv-parse:
+        specifier: ^7.0.3
+        version: 7.0.3
+      csv-stringify:
+        specifier: ^6.9.0
+        version: 6.9.0
       jose:
         specifier: ^6.2.17
         version: 6.2.17
@@ -1247,6 +1253,12 @@ packages:
 
   csstype@3.2.4:
     resolution: {integrity: sha512-PoKaoPzQapnEoqUSnHx1u6W6ku8CVEgKsnpmmzU3m1nwkidpPBQ8V/Zq2+bWNrsOKoKLwTGdbx6xF7BXP1zLVQ==}
+
+  csv-parse@7.0.3:
+    resolution: {integrity: sha512-YFd3QM/yo17vH91L1IOZuvl09zM0zEEtdfTcOCKWcMdM++MNaQSyp09slXyFCLaPXvHstQFx/xC8myiFHSMUvw==}
+
+  csv-stringify@6.9.0:
+    resolution: {integrity: sha512-6b3e29CILFfSQ2nDRuZMRROzQOpPuJ+s8zPB5H7eK5ncXBbFOyVuRLU5Sx/zAUmVri3Ly49GyC8NEme4SVSAbA==}
 
   dayjs@1.11.23:
     resolution: {integrity: sha512-QDTCU0M0MxR3hQfnlDJfwekQiaanm1ubOD231u73WBckQ/fsamwRLiE2GBz6D3a/xF1NgfiDLJjXBa1hYOYTtQ==}
@@ -3700,6 +3712,10 @@ snapshots:
       which: 2.0.2
 
   csstype@3.2.4: {}
+
+  csv-parse@7.0.3: {}
+
+  csv-stringify@6.9.0: {}
 
   dayjs@1.11.23: {}
 

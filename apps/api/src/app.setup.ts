@@ -10,6 +10,7 @@ import type { AppConfig } from './config.js';
 export function configureApp(app: NestExpressApplication, config: AppConfig): void {
   app.setGlobalPrefix('api');
   app.use(cookieParser());
+  app.useBodyParser('json', { limit: '3mb' });
   if (config.TRUST_PROXY) app.set('trust proxy', 1);
   app.enableCors({ origin: config.DESK_ORIGIN, credentials: true });
 }

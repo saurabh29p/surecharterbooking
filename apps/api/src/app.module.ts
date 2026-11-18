@@ -12,6 +12,7 @@ import { CryptoModule } from './crypto/crypto.module.js';
 import { dataSourceOptions } from './db/data-source.js';
 import { FilesModule } from './files/files.module.js';
 import { HealthController } from './health.controller.js';
+import { ImportsModule } from './imports/imports.module.js';
 import { JobsModule } from './jobs/jobs.module.js';
 import { OperatorsModule } from './operators/operators.module.js';
 import { PartnersModule } from './partners/partners.module.js';
@@ -45,6 +46,7 @@ import { SettingsModule } from './settings/settings.module.js';
     ClientsModule,
     PartnersModule,
     JobsModule,
+    ImportsModule,
   ],
   controllers: [HealthController],
   // Throttle first, then require login (JwtAuthGuard is registered in AuthModule).
