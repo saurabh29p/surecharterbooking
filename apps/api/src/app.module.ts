@@ -15,6 +15,7 @@ import { HealthController } from './health.controller.js';
 import { ImportsModule } from './imports/imports.module.js';
 import { JobsModule } from './jobs/jobs.module.js';
 import { WeddingsModule } from './weddings/weddings.module.js';
+import { QuotesModule } from './quotes/quotes.module.js';
 import { OperatorsModule } from './operators/operators.module.js';
 import { PartnersModule } from './partners/partners.module.js';
 import { ClientsModule } from './clients/clients.module.js';
@@ -49,6 +50,7 @@ import { SettingsModule } from './settings/settings.module.js';
     JobsModule,
     ImportsModule,
     WeddingsModule,
+    QuotesModule,
   ],
   controllers: [HealthController],
   // Throttle first, then require login (JwtAuthGuard is registered in AuthModule).

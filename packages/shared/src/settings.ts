@@ -3,10 +3,11 @@
  * desk builds its forms from them, so both always agree. Tax values are never hard-coded:
  * GST rate and SAC code stay "unconfirmed" (warning banner) until confirmed after the CA checks them.
  */
+import { normaliseSchedule, scheduleProblem, type CancellationTier } from './cancellation.js';
 import type { CommissionBasis, InvoicingModel } from './pricing.js';
 
 export type SettingGroup = 'pricing' | 'tax' | 'targets' | 'today' | 'privacy' | 'ai';
-export type SettingKind = 'percent' | 'money' | 'int' | 'text' | 'enum' | 'commission';
+export type SettingKind = 'percent' | 'money' | 'int' | 'text' | 'enum' | 'commission' | 'schedule';
 
 export interface SettingDef {
   key: string;
@@ -91,13 +92,20 @@ export const SETTING_DEFS: readonly SettingDef[] = [
     help: 'Share of the quote total the client must pay before a wedding is confirmed. Each wedding can differ.',
   },
   {
+    key: 'quote.cancellation_schedule',
+    group: 'pricing',
+    label: 'Default cancellation charges',
+    kind: 'schedule',
+    help: 'Printed on quotes. Each quote compares them with the operator’s and warns if yours are looser.',
+  },
+  {
     key: 'quote.cancellation_terms',
     group: 'pricing',
-    label: 'Default cancellation terms',
+    label: 'Extra cancellation conditions',
     kind: 'text',
     multiline: true,
     maxLength: 2000,
-    help: 'Printed on quotes. They must never be looser than the operator’s terms.',
+    help: 'Optional. Printed under the cancellation charges, e.g. “Date changes are subject to aircraft availability.”',
   },
   { key: 'gst.rate_bps', group: 'tax', label: 'GST rate', kind: 'percent', min: 0, max: 4000 },
   {
@@ -235,7 +243,16 @@ export function validateSetting(def: SettingDef, value: unknown): string | null 
         return 'Enter a percentage between 0 and 100';
       return null;
     }
+    case 'schedule':
+      if (!Array.isArray(value)) return 'Add the cancellation charges';
+      return scheduleProblem(value as CancellationTier[]);
   }
+}
+
+/** The stored form of a valid value (schedules sorted, furthest from departure first). */
+export function normaliseSetting(def: SettingDef, value: unknown): unknown {
+  if (def.kind === 'schedule') return normaliseSchedule(value as CancellationTier[]);
+  return typeof value === 'string' ? value.trim() : value;
 }
 
 export interface SettingEntry {
@@ -252,10 +269,6 @@ export function settingsWarnings(entries: readonly SettingEntry[]): string[] {
     warnings.push(
       'GST rate and SAC code are placeholders until your CA confirms them. Quotes and invoices show a warning until then.',
     );
-  }
-  const terms = get('quote.cancellation_terms');
-  if (terms && (typeof terms.value !== 'string' || terms.value.trim() === '')) {
-    warnings.push('Default cancellation terms are empty. Add them before sending quotes.');
   }
   return warnings;
 }

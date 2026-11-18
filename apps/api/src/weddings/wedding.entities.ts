@@ -1,4 +1,10 @@
-import type { AircraftCategory, LeadSource, LegStatus, WeddingStatus } from '@shubhjets/shared';
+import type {
+  AircraftCategory,
+  CancellationSchedule,
+  LeadSource,
+  LegStatus,
+  WeddingStatus,
+} from '@shubhjets/shared';
 import {
   Column,
   CreateDateColumn,
@@ -103,6 +109,8 @@ export class RateResponse {
   @Column('text', { nullable: true }) inclusions!: string | null;
   @Column('text', { nullable: true }) exclusions!: string | null;
   @Column('text', { name: 'cancellation_terms', nullable: true }) cancellationTerms!: string | null;
+  @Column('jsonb', { name: 'cancellation_schedule', nullable: true })
+  cancellationSchedule!: CancellationSchedule | null;
   @Column('timestamptz', { name: 'valid_until', nullable: true }) validUntil!: Date | null;
   @Column('timestamptz', { name: 'received_at' }) receivedAt!: Date;
   @Column('text', { name: 'raw_text', nullable: true }) rawText!: string | null;

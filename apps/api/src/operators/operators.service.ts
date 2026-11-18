@@ -84,6 +84,7 @@ const PLAIN_FIELDS = [
   'dgcaRankCheckedOn',
   'dgcaRankSource',
   'cancellationTerms',
+  'cancellationSchedule',
   'notes',
 ] as const;
 
@@ -103,7 +104,7 @@ export class OperatorsService {
     return toIstDate(this.now());
   }
 
-  private async find(id: string, m: EntityManager = this.ds.manager): Promise<Operator> {
+  async find(id: string, m: EntityManager = this.ds.manager): Promise<Operator> {
     const op = await m.getRepository(Operator).findOne({ where: { id, deletedAt: IsNull() } });
     if (!op) throw new NotFoundException('Operator not found');
     return op;
@@ -275,6 +276,7 @@ export class OperatorsService {
       dgcaRankCheckedOn: op.dgcaRankCheckedOn,
       dgcaRankSource: op.dgcaRankSource,
       cancellationTerms: op.cancellationTerms,
+      cancellationSchedule: op.cancellationSchedule,
       notes: op.notes,
       status: op.status,
       statusReason: deriveOperatorStatus(input, today).reason,

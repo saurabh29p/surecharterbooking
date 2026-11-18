@@ -1,6 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
-import { GST_KEYS, settingDef, settingsWarnings, validateSetting } from '@shubhjets/shared';
+import {
+  GST_KEYS,
+  normaliseSetting,
+  settingDef,
+  settingsWarnings,
+  validateSetting,
+} from '@shubhjets/shared';
 import type { DataSource, Repository } from 'typeorm';
 import { Setting } from './setting.entity.js';
 
@@ -61,7 +67,7 @@ export class SettingsService {
       const value = typeof raw === 'string' ? raw.trim() : raw;
       const problem = validateSetting(def, value);
       if (problem) fields[key] = problem;
-      else values[key] = value;
+      else values[key] = normaliseSetting(def, value);
     }
     if (Object.keys(fields).length) throw fieldErrors(fields);
 
@@ -81,8 +87,6 @@ export class SettingsService {
         if (JSON.stringify(row.value) === JSON.stringify(value)) continue;
         row.value = value;
         row.updatedBy = userId;
-        if (key === 'quote.cancellation_terms')
-          row.confirmed = typeof value === 'string' && value !== '';
         await repo.save(row);
       }
       if (input.confirmGst !== undefined || gstTouched) {

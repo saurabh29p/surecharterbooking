@@ -449,10 +449,15 @@ export class WeddingsService {
     await this.ds.transaction(async (m) => {
       const leg = await this.findLeg(m, legId);
       this.assertEditable(await this.find(leg.weddingId, m));
+      // Drafts just lose the leg; an issued quote keeps it for the record.
+      await m.query(
+        `DELETE FROM quote_line ql USING quote q WHERE ql.quote_id = q.id AND q.status = 'DRAFT' AND ql.leg_id = $1`,
+        [legId],
+      );
       const [quoted] = await m.query(`SELECT 1 FROM quote_line WHERE leg_id = $1 LIMIT 1`, [legId]);
       if (quoted)
         throw new ConflictException(
-          'This leg is on a quote. Make a new quote version without it first.',
+          'This leg is on an issued quote, so it is kept for the record. Mark it cancelled instead.',
         );
       const covering = await m.getRepository(RateResponseLeg).find({ where: { legId } });
       await m.getRepository(LegChoice).delete({ legId });

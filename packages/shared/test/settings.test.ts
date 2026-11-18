@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { SETTING_DEFS, settingDef, settingsWarnings, validateSetting } from '../src/index.js';
+import {
+  SETTING_DEFS,
+  normaliseSetting,
+  settingDef,
+  settingsWarnings,
+  validateSetting,
+} from '../src/index.js';
 
 const def = (k: string) => settingDef(k)!;
 
@@ -56,18 +62,38 @@ describe('setting definitions', () => {
 });
 
 describe('settingsWarnings', () => {
-  it('warns until GST is confirmed and cancellation terms exist', () => {
+  it('warns until GST is confirmed', () => {
     const entries = [
       { key: 'gst.rate_bps', value: 1800, confirmed: false },
       { key: 'gst.sac', value: '', confirmed: false },
       { key: 'quote.cancellation_terms', value: ' ', confirmed: false },
     ];
-    expect(settingsWarnings(entries)).toHaveLength(2);
+    expect(settingsWarnings(entries)).toHaveLength(1);
     const fixed = [
       { key: 'gst.rate_bps', value: 1800, confirmed: true },
       { key: 'gst.sac', value: '996412', confirmed: true },
       { key: 'quote.cancellation_terms', value: 'More than 7 days: 10%…', confirmed: true },
     ];
     expect(settingsWarnings(fixed)).toEqual([]);
+  });
+});
+
+describe('cancellation schedule setting', () => {
+  const def = settingDef('quote.cancellation_schedule')!;
+
+  it('checks the charges and stores them furthest from departure first', () => {
+    expect(validateSetting(def, 'ten percent')).toBe('Add the cancellation charges');
+    expect(validateSetting(def, [{ minDays: 7, chargeBps: 1000 }])).toBe(
+      'Add a line for cancellations close to departure (0 days)',
+    );
+    const value = [
+      { minDays: 0, chargeBps: 10000 },
+      { minDays: 7, chargeBps: 1000 },
+    ];
+    expect(validateSetting(def, value)).toBeNull();
+    expect(normaliseSetting(def, value)).toEqual([
+      { minDays: 7, chargeBps: 1000 },
+      { minDays: 0, chargeBps: 10000 },
+    ]);
   });
 });

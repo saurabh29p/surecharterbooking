@@ -1,6 +1,7 @@
 import type {
   AircraftCategory,
   BlockKind,
+  CancellationSchedule,
   OperatorDocKind,
   OperatorStatus,
 } from '@shubhjets/shared';
@@ -41,6 +42,9 @@ export class Operator {
   bankDetailsEnc!: Buffer | null;
   @Column('text', { name: 'bank_hint', nullable: true }) bankHint!: string | null;
   @Column('text', { name: 'cancellation_terms', nullable: true }) cancellationTerms!: string | null;
+  /** Their usual cancellation charges; new replies start with these. */
+  @Column('jsonb', { name: 'cancellation_schedule', nullable: true })
+  cancellationSchedule!: CancellationSchedule | null;
   @Column('text') status!: OperatorStatus;
   @Column('text', { name: 'blocked_reason', nullable: true }) blockedReason!: string | null;
   @Column('text', { name: 'block_kind', nullable: true }) blockKind!: BlockKind | null;

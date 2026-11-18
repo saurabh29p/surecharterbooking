@@ -7,7 +7,9 @@
 import {
   addDays,
   computeQuoteTotals,
+  DEFAULT_CANCELLATION_SCHEDULE,
   fakeGstin,
+  type CancellationSchedule,
   toIstDate,
   type IsoDate,
   type QuoteLineInput,
@@ -112,6 +114,13 @@ export interface SeedSummary {
   owner: typeof SEED_OWNER;
   counts: Record<string, number>;
 }
+
+/** Operators A and B: more than 7 days 10%, 7 to 3 days 50%, under 3 days 100%. */
+const OPERATOR_SCHEDULE: CancellationSchedule = [
+  { minDays: 7, chargeBps: 1000 },
+  { minDays: 3, chargeBps: 5000 },
+  { minDays: 0, chargeBps: 10000 },
+];
 
 export async function seed(
   ds: DataSource,
@@ -286,6 +295,8 @@ export async function seed(
         bank_hint: opts.verified ? `Example Bank ••••00${letter.charCodeAt(0)}` : null,
         cancellation_terms:
           'More than 7 days before departure: 10% of the charter price. 7 to 3 days: 50%. Less than 72 hours: 100%.',
+        // A and B have their charges recorded; C and D only as text (shows the "not recorded" warning).
+        cancellation_schedule: 'AB'.includes(letter) ? JSON.stringify(OPERATOR_SCHEDULE) : null,
         status,
         verified_at: opts.verified ? hoursAgo(24 * 30) : null,
         verified_by: opts.verified ? owner : null,
@@ -341,6 +352,7 @@ export async function seed(
       insuranceExpires: 120,
       verified: false,
     });
+    const withSchedule = new Set([opA, opB]);
 
     const aircraft = async (
       op: string,
@@ -431,6 +443,7 @@ export async function seed(
         inclusions: 'Fuel, crew, airport charges, catering for guests',
         exclusions: 'GST, overnight crew stay beyond 2 nights',
         cancellation_terms: 'More than 7 days: 10%. 7 to 3 days: 50%. Under 72 hours: 100%.',
+        cancellation_schedule: withSchedule.has(op) ? JSON.stringify(OPERATOR_SCHEDULE) : null,
         valid_until: new Date(now.getTime() + 48 * 3_600_000),
         received_at: hoursAgo(receivedHoursAgo),
         raw_text: 'Fake operator reply for development.',
@@ -469,8 +482,10 @@ export async function seed(
         gst_sac: null,
         invoicing_model: 'FULL_VALUE',
         place_of_supply_state: '07',
-        cancellation_terms:
-          'Follows the operator terms: more than 7 days 10%, 7 to 3 days 50%, under 72 hours 100%.',
+        cancellation_terms: 'Date changes are subject to aircraft availability.',
+        cancellation_schedule: JSON.stringify(DEFAULT_CANCELLATION_SCHEDULE),
+        validity_hours: 24,
+        issued_at: hoursAgo(22),
         commission_basis: commission?.basis ?? null,
         commission_bps: commission?.bps ?? null,
         totals,
@@ -503,6 +518,9 @@ export async function seed(
       markupType: 'PERCENT',
       markupBps: 1000,
     });
+    /** One quote line per leg a (package) rate covers, at 10% markup on that leg's share. */
+    const perLeg = (rr: string, desc: string, shares: [leg: string, share: number][]) =>
+      shares.map(([leg, share]) => ({ leg, rr, desc, input: tenPct(share) }));
 
     // W-101: new website enquiry, legs drafted, no rates yet.
     const w101 = await wedding({
@@ -620,18 +638,14 @@ export async function seed(
       w103,
       'SHARED',
       [
-        {
-          leg: l103a,
-          rr: r103a,
-          desc: 'Mumbai → Udaipur → Mumbai, Challenger 605 (10 seats), Operator B',
-          input: tenPct(14 * L),
-        },
-        {
-          leg: l103a,
-          rr: r103b,
-          desc: 'Mumbai → Udaipur → Mumbai, Citation XLS (8 seats), Operator B',
-          input: tenPct(12 * L),
-        },
+        ...perLeg(r103a, 'Challenger 605 VT-ZZ4 · Operator B', [
+          [l103a, 7 * L],
+          [l103b, 7 * L],
+        ]),
+        ...perLeg(r103b, 'Citation XLS VT-ZZ3 · Operator B', [
+          [l103a, 6 * L],
+          [l103b, 6 * L],
+        ]),
       ],
       { basis: 'BOOKING_PERCENT', bps: 200 },
       { shared_at: hoursAgo(21), valid_until: new Date(now.getTime() + 3 * 3_600_000) },
@@ -671,12 +685,10 @@ export async function seed(
       w104,
       'ACCEPTED',
       [
-        {
-          leg: l104a,
-          rr: r104,
-          desc: 'Delhi → Udaipur → Delhi, Hawker 800XP (8 seats), Operator A',
-          input: tenPct(9 * L),
-        },
+        ...perLeg(r104, 'Hawker 800XP VT-ZZ1 · Operator A', [
+          [l104a, 4.5 * L],
+          [l104b, 4.5 * L],
+        ]),
         {
           leg: null,
           rr: null,
@@ -740,12 +752,10 @@ export async function seed(
       w105,
       'ACCEPTED',
       [
-        {
-          leg: l105a,
-          rr: r105,
-          desc: 'Delhi → Jodhpur → Delhi, King Air B200 (7 seats), Operator C',
-          input: tenPct(6 * L),
-        },
+        ...perLeg(r105, 'King Air B200 VT-ZZ5 · Operator C', [
+          [l105a, 3 * L],
+          [l105b, 3 * L],
+        ]),
       ],
       { basis: 'MARGIN_SHARE', bps: 2000 },
       { accepted_at: hoursAgo(300), accepted_name: 'Client C5' },
@@ -805,12 +815,10 @@ export async function seed(
       w106,
       'ACCEPTED',
       [
-        {
-          leg: l106a,
-          rr: r106,
-          desc: 'Mumbai → Goa (Mopa) → Mumbai, Citation XLS (8 seats), Operator B',
-          input: tenPct(7 * L),
-        },
+        ...perLeg(r106, 'Citation XLS VT-ZZ3 · Operator B', [
+          [l106a, 3.5 * L],
+          [l106b, 3.5 * L],
+        ]),
       ],
       { basis: 'BOOKING_PERCENT', bps: 200 },
       { accepted_at: hoursAgo(1300), accepted_name: 'Client C6' },

@@ -30,7 +30,7 @@ describe('settings', () => {
     await t.http().get('/api/settings').expect(401);
   });
 
-  it('starts with the defaults from the brief and the GST + cancellation warnings', async () => {
+  it('starts with the defaults from the brief and the GST warning', async () => {
     const res = await get().expect(200);
     expect(entry(res.body, 'markup.default_bps').value).toBe(1000);
     expect(entry(res.body, 'commission.default').value).toEqual({
@@ -40,7 +40,33 @@ describe('settings', () => {
     expect(entry(res.body, 'target.monthly_margin_paise').value).toBe(20_00_000_00);
     expect(entry(res.body, 'today.chase_operator_hours').value).toBe(2);
     expect(entry(res.body, 'gst.rate_bps')).toMatchObject({ value: 1800, confirmed: false });
-    expect(res.body.warnings).toHaveLength(2);
+    expect(entry(res.body, 'quote.cancellation_schedule').value).toEqual([
+      { minDays: 30, chargeBps: 1000 },
+      { minDays: 7, chargeBps: 5000 },
+      { minDays: 0, chargeBps: 10000 },
+    ]);
+    expect(res.body.warnings).toHaveLength(1);
+  });
+
+  it('checks and sorts the default cancellation charges', async () => {
+    const bad = await patch({
+      values: { 'quote.cancellation_schedule': [{ minDays: 5, chargeBps: 1000 }] },
+    }).expect(400);
+    expect(bad.body.fields['quote.cancellation_schedule']).toBe(
+      'Add a line for cancellations close to departure (0 days)',
+    );
+    const res = await patch({
+      values: {
+        'quote.cancellation_schedule': [
+          { minDays: 0, chargeBps: 10000 },
+          { minDays: 14, chargeBps: 2500 },
+        ],
+      },
+    }).expect(200);
+    expect(entry(res.body, 'quote.cancellation_schedule').value).toEqual([
+      { minDays: 14, chargeBps: 2500 },
+      { minDays: 0, chargeBps: 10000 },
+    ]);
   });
 
   it('saves several values at once', async () => {

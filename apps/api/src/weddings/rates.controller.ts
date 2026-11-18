@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { z } from 'zod';
 import { CurrentUser, type AuthUser } from '../auth/public.decorator.js';
-import { optionalText } from '../common/fields.js';
+import { optionalSchedule, optionalText } from '../common/fields.js';
 import { ZodPipe } from '../common/zod.pipe.js';
 import { RatesService } from './rates.service.js';
 
@@ -48,6 +48,7 @@ const ResponseFields = z.object({
   inclusions: optionalText(2000),
   exclusions: optionalText(2000),
   cancellationTerms: optionalText(2000),
+  cancellationSchedule: optionalSchedule,
   validUntil: optionalDateTime,
   receivedAt: optionalDateTime,
   rawText: optionalText(10_000),

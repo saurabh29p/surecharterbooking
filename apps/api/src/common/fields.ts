@@ -1,4 +1,10 @@
-import { checkGstin, checkIfsc, normalizePhone } from '@shubhjets/shared';
+import {
+  checkGstin,
+  checkIfsc,
+  normaliseSchedule,
+  normalizePhone,
+  scheduleProblem,
+} from '@shubhjets/shared';
 import { z } from 'zod';
 
 /** Optional text: trimmed; "" clears it (null); absent leaves it unchanged (undefined). */
@@ -90,3 +96,19 @@ export const BankDetailsInput = z.object({
   bankName: z.string().trim().min(1, 'Enter the bank name').max(100),
   branch: z.string().trim().max(100).nullable().optional(),
 });
+
+/** A cancellation schedule (tiers), checked and sorted; null clears it, absent leaves it unchanged. */
+export const scheduleSchema = z
+  .array(
+    z.object({
+      minDays: z.number().int('Days must be a whole number'),
+      chargeBps: z.number().int('Use a percentage like 10 or 12.5'),
+    }),
+  )
+  .superRefine((tiers, ctx) => {
+    const problem = scheduleProblem(tiers);
+    if (problem) ctx.addIssue({ code: 'custom', message: problem });
+  })
+  .transform((tiers) => normaliseSchedule(tiers));
+
+export const optionalSchedule = scheduleSchema.nullable().optional();

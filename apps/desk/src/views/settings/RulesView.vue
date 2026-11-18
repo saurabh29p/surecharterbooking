@@ -34,7 +34,9 @@ const errors = reactive<Record<string, string>>({});
 const saving = ref<SettingGroup | null>(null);
 const gstConfirmed = ref(false);
 
-const defsFor = (g: SettingGroup) => SETTING_DEFS.filter((d) => d.group === g);
+// Cancellation charges get their own editor in the quote step.
+const defsFor = (g: SettingGroup) =>
+  SETTING_DEFS.filter((d) => d.group === g && d.kind !== 'schedule');
 const gstSavedConfirmed = computed(() => settings.row('gst.rate_bps')?.confirmed === true);
 /** Most recent change to any setting in the group. */
 function lastChanged(g: SettingGroup): string | null {

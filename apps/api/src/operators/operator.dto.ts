@@ -6,6 +6,7 @@ import {
   optionalEmail,
   optionalGstin,
   optionalPhone,
+  optionalSchedule,
   optionalText,
   optionalUrl,
 } from '../common/fields.js';
@@ -35,6 +36,7 @@ const OperatorFields = z.object({
   dgcaRankCheckedOn: optionalDate,
   dgcaRankSource: optionalText(200),
   cancellationTerms: optionalText(2000),
+  cancellationSchedule: optionalSchedule,
   notes: optionalText(4000),
   /** Home airports (where its aircraft are based), e.g. ["DEL", "UDR"]. */
   bases: z.array(iata).max(20).optional(),

@@ -10,6 +10,7 @@ import {
   rankOperatorsForLeg,
   rateRequestMessage,
   splitPackage,
+  type CancellationSchedule,
   type AircraftCategory,
   type RankOperator,
 } from '@shubhjets/shared';
@@ -44,6 +45,7 @@ export interface ResponseInput {
   inclusions?: string | null;
   exclusions?: string | null;
   cancellationTerms?: string | null;
+  cancellationSchedule?: CancellationSchedule | null;
   validUntil?: Date | null;
   receivedAt?: Date | null;
   rawText?: string | null;
@@ -65,6 +67,16 @@ export class RatesService {
     private readonly settings: SettingsService,
     private readonly audit: AuditService,
   ) {}
+
+  private async operatorSchedule(
+    m: EntityManager,
+    operatorId: string,
+  ): Promise<CancellationSchedule | null> {
+    const [o] = await m.query(`SELECT cancellation_schedule FROM operator WHERE id = $1`, [
+      operatorId,
+    ]);
+    return (o?.cancellation_schedule as CancellationSchedule | null) ?? null;
+  }
 
   private async legsOf(m: EntityManager, weddingId: string): Promise<Leg[]> {
     return m.getRepository(Leg).find({ where: { weddingId }, order: { seq: 'ASC' } });
@@ -348,6 +360,11 @@ export class RatesService {
           inclusions: input.inclusions ?? null,
           exclusions: input.exclusions ?? null,
           cancellationTerms: input.cancellationTerms ?? null,
+          // Without a schedule of its own, a reply starts with the operator's usual terms.
+          cancellationSchedule:
+            input.cancellationSchedule === undefined
+              ? await this.operatorSchedule(m, input.operatorId)
+              : input.cancellationSchedule,
           validUntil: input.validUntil ?? null,
           receivedAt: input.receivedAt ?? this.now(),
           rawText: input.rawText ?? null,
@@ -371,7 +388,8 @@ export class RatesService {
       const r = await repo.findOneBy({ id: responseId });
       if (!r) throw new NotFoundException('Rate not found');
       const [quoted] = await m.query(
-        `SELECT 1 FROM quote_line WHERE rate_response_id = $1 LIMIT 1`,
+        `SELECT 1 FROM quote_line ql JOIN quote q ON q.id = ql.quote_id
+          WHERE ql.rate_response_id = $1 AND q.status <> 'DRAFT' LIMIT 1`,
         [responseId],
       );
       if (
@@ -419,6 +437,7 @@ export class RatesService {
         'inclusions',
         'exclusions',
         'cancellationTerms',
+        'cancellationSchedule',
         'validUntil',
         'rawText',
       ] as const) {
@@ -447,10 +466,16 @@ export class RatesService {
       const r = await m.getRepository(RateResponse).findOneBy({ id: responseId });
       if (!r) throw new NotFoundException('Rate not found');
       const [quoted] = await m.query(
-        `SELECT 1 FROM quote_line WHERE rate_response_id = $1 LIMIT 1`,
+        `SELECT 1 FROM quote_line ql JOIN quote q ON q.id = ql.quote_id
+          WHERE ql.rate_response_id = $1 AND q.status <> 'DRAFT' LIMIT 1`,
         [responseId],
       );
-      if (quoted) throw new ConflictException('This rate is on a quote and must be kept');
+      if (quoted) throw new ConflictException('This rate is on an issued quote and must be kept');
+      // A draft just loses the line; it is rebuilt from the chosen jets.
+      await m.query(
+        `DELETE FROM quote_line ql USING quote q WHERE ql.quote_id = q.id AND q.status = 'DRAFT' AND ql.rate_response_id = $1`,
+        [responseId],
+      );
       const legs = (
         await m.getRepository(RateResponseLeg).find({ where: { rateResponseId: responseId } })
       ).map((x) => x.legId);
@@ -471,9 +496,15 @@ export class RatesService {
       const leg = await m.getRepository(Leg).findOneBy({ id: legId });
       if (!leg) throw new NotFoundException('Leg not found');
       if (!['OPEN', 'RATES_REQUESTED', 'RATES_IN', 'CHOSEN'].includes(leg.status)) {
-        throw new ConflictException(
-          'This leg is already on a quote; change it with a new quote version',
+        // A quoted leg's jets change only while a new quote version is being drafted.
+        const [draft] = await m.query(
+          `SELECT 1 FROM quote WHERE wedding_id = $1 AND status = 'DRAFT'`,
+          [leg.weddingId],
         );
+        if (leg.status !== 'QUOTED' || !draft)
+          throw new ConflictException(
+            'This leg is already on a quote; start a new quote version to change its jets',
+          );
       }
       const ids = [...new Set(responseIds)];
       const before = (await m.getRepository(LegChoice).find({ where: { legId } }))
