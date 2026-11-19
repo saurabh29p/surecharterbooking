@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RouterLink, RouterView, useRoute } from 'vue-router';
+import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router';
 import SjBanner from './components/SjBanner.vue';
 import SjToasts from './components/SjToasts.vue';
 
@@ -11,6 +11,15 @@ const tabs: { to: string; label: string; also?: string[] }[] = [
   { to: '/partners', label: 'Partners', also: ['/clients'] },
   { to: '/settings', label: 'Settings' },
 ];
+
+// Start loading a screen's code the moment a finger touches its tab (about 100 ms before the tap ends).
+const router = useRouter();
+function warm(to: string) {
+  for (const m of router.resolve(to).matched) {
+    const c = m.components?.default;
+    if (typeof c === 'function') void (c as () => Promise<unknown>)();
+  }
+}
 /** A tab stays highlighted on its sub-pages (e.g. Settings → a business profile). */
 const isActive = (to: string) => {
   if (to === '/') return route.path === '/';
@@ -65,6 +74,7 @@ const isActive = (to: string) => {
         exact-active-class=""
         :class="{ 'router-link-active': isActive(t.to) }"
         :aria-current="isActive(t.to) ? 'page' : undefined"
+        @pointerdown="warm(t.to)"
       >
         <span class="sj-tabbar__icon" aria-hidden="true" />
         {{ t.label }}

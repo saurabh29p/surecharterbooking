@@ -77,7 +77,7 @@ export function useToday() {
 let prefetched = false;
 /**
  * Once Today is on screen, quietly load the code and data of the next likely screens, so switching
- * tabs shows content at once. Runs once per session, when the phone is idle.
+ * tabs shows content at once. Runs once per session, just after Today has painted.
  */
 function schedulePrefetch() {
   if (prefetched) return;
@@ -89,10 +89,8 @@ function schedulePrefetch() {
     void import('../views/settings/SettingsView.vue');
     for (const path of ['/weddings?', '/partners?', '/operators?']) void prefetchApi(path);
   };
-  const idle = (globalThis as { requestIdleCallback?: (cb: () => void, o?: object) => void })
-    .requestIdleCallback;
-  if (idle) idle(run, { timeout: 2000 });
-  else setTimeout(run, 300);
+  // Right after Today has painted: tabs are often the very next tap.
+  setTimeout(run, 50);
 }
 onSessionChange((s) => {
   if (!s) prefetched = false;
