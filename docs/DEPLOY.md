@@ -52,8 +52,8 @@ Each step lists who does it. "You" means only you can do it: an account, a payme
    headers.
 2. Add the domain `app.shubhjets.com` (Vercel shows a CNAME record for step 4).
 
-Until `api.shubhjets.com` works, the forwarding in `vercel.json` can point at the Railway address
-(`https://<service>.up.railway.app`) for a first test.
+**For now (testing, before the domain)** the forwarding in `vercel.json` points at the Railway test address
+`https://api-production-e90b9fa3.up.railway.app`. Switch it to `https://api.shubhjets.com` once that domain works.
 
 ### 4. DNS records (you, or me if the DNS is on Vercel and you connect it)
 | Record | Name | Value |
