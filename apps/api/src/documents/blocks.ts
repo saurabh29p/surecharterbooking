@@ -2,6 +2,7 @@ import {
   describeSchedule,
   formatDate,
   formatINR,
+  outwardRoute,
   type CancellationSchedule,
   type OutwardQuote,
   type PaymentPart,
@@ -38,7 +39,7 @@ export function itineraryTable(
       l.lines.map(
         (x, i) => `<tr>
           <td>${i === 0 ? `<strong>${l.seq}</strong>` : ''}</td>
-          <td>${i === 0 ? `${esc(l.from.city)} (${esc(l.from.iata)}) → ${esc(l.to.city)} (${esc(l.to.iata)})<br><span style="color:#5d584f">${esc(formatDate(l.date))}, departure ${esc(window(l.windowFrom, l.windowTo))}, ${l.pax} passengers</span>` : ''}</td>
+          <td>${i === 0 ? `${l.service ? `${esc(l.service)}: ` : ''}${esc(outwardRoute(l, true))}<br><span style="color:#5d584f">${esc(formatDate(l.date))}, departure ${esc(window(l.windowFrom, l.windowTo))}, ${l.pax} passengers</span>` : ''}</td>
           <td>${esc(x.aircraft)}${x.seats ? `, ${x.seats} seats` : ''}<br><span style="color:#5d584f">${esc(x.operator)}${x.operatorPermit ? `, NSOP ${esc(x.operatorPermit)}` : ''}</span></td>
           <td class="num">${esc(formatINR(x.price))}</td>
         </tr>`,

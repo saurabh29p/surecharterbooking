@@ -122,7 +122,7 @@ describe('CSV import and export', () => {
       const row = (await preview('operators', csv).expect(200)).body.rows[0];
       expect(row.problems).toEqual([
         'Bases: unknown airport code ZZZ',
-        'Aircraft 1: category "blimp" should be turboprop, light, midsize, super-midsize or heavy',
+        'Aircraft 1: category "blimp" should be turboprop, light, midsize, super-midsize, heavy, helicopter or twin helicopter',
         'Aircraft 2: At least 1 seat',
         'Contact 1: Enter a 10-digit mobile number, or + and the country code',
       ]);

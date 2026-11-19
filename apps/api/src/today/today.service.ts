@@ -6,6 +6,7 @@ import {
   WEDDING_STATUSES,
   addDays,
   buildTodayActions,
+  heliChecksMissing,
   istToInstant,
   monthRange,
   monthTracker,
@@ -16,6 +17,8 @@ import {
   toIstDate,
   type AircraftCategory,
   type Contact,
+  type HeliChecks,
+  type HeliService,
   type TodayFacts,
 } from '@shubhjets/shared';
 import type { DataSource } from 'typeorm';
@@ -139,6 +142,7 @@ export class TodayService {
       commissions,
       followUps,
       verifiedDocs,
+      heliLegs,
       profile,
     ] = await Promise.all([
       q(`SELECT w.id, w.code, w.venue_city, w.created_at,
@@ -234,6 +238,12 @@ export class TodayService {
                                WHERE operator_id = o.id ORDER BY is_primary DESC, created_at LIMIT 1) oc ON true
           WHERE o.deleted_at IS NULL AND o.verified_at IS NOT NULL
           GROUP BY o.id, o.brand, o.legal_name, oc.name, oc.phone`),
+      // Helicopter legs still to fly on live weddings: their permissions stay on Today until complete.
+      q(`SELECT w.id AS wedding_id, w.code, l.id AS leg_id, l.seq, l.flight_date, l.service_type, l.heli_checks
+           FROM leg l JOIN wedding w ON w.id = l.wedding_id
+          WHERE w.deleted_at IS NULL AND w.status NOT IN ('DONE', 'LOST')
+            AND l.status NOT IN ('CANCELLED', 'FLOWN') AND l.category LIKE 'HELICOPTER%'
+          ORDER BY l.flight_date, l.seq`),
       this.profiles.getDefault(),
     ]);
 
@@ -296,6 +306,18 @@ export class TodayService {
         })),
       })),
       confirmations,
+      heliPermissions: heliLegs.map((r) => ({
+        weddingId: r.wedding_id as string,
+        code: r.code as string,
+        legId: r.leg_id as string,
+        seq: r.seq as number,
+        flightDate: iso(r.flight_date)!,
+        service: r.service_type as HeliService | null,
+        missing: heliChecksMissing(
+          r.service_type as HeliService | null,
+          r.heli_checks as HeliChecks,
+        ),
+      })),
       guestIds: guestIds.map((r) => ({
         weddingId: r.id as string,
         code: r.code as string,

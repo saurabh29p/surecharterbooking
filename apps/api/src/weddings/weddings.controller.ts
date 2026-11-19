@@ -8,13 +8,16 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Put,
   Query,
 } from '@nestjs/common';
 import { CurrentUser, type AuthUser } from '../auth/public.decorator.js';
 import { ZodPipe } from '../common/zod.pipe.js';
 import {
   CreateWeddingBody,
+  HeliCheckBody,
   LegFields,
+  type HeliCheckInput,
   LostBody,
   UpdateLegBody,
   UpdateWeddingBody,
@@ -88,6 +91,15 @@ export class WeddingsController {
     @Body(new ZodPipe(UpdateLegBody)) body: UpdateLegInput,
   ) {
     return this.weddings.updateLeg(legId, body);
+  }
+
+  /** Helicopter permissions checklist: tick or untick one item. */
+  @Put('legs/:legId/heli-checks')
+  setHeliCheck(
+    @Param('legId', uuid()) legId: string,
+    @Body(new ZodPipe(HeliCheckBody)) body: HeliCheckInput,
+  ) {
+    return this.weddings.setHeliCheck(legId, body);
   }
 
   @Delete('legs/:legId')

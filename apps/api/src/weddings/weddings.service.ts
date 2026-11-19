@@ -9,18 +9,27 @@ import {
   MANUAL_WEDDING_MOVES,
   WEDDING_STATUSES,
   WEDDING_STATUS_LABELS,
+  isHelicopter,
   type ConsentSource,
+  type HeliService,
   type LeadSource,
+  type LegSite,
   type LegStatus,
   type WeddingStatus,
 } from '@shubhjets/shared';
 import { IsNull, type DataSource, type EntityManager } from 'typeorm';
+
+/** A venue/helipad from a request, tidied (empty city or link as null). */
+const siteOf = (
+  v: { name: string; city?: string | null; mapUrl?: string | null } | null | undefined,
+): LegSite | null => (v ? { name: v.name, city: v.city ?? null, mapUrl: v.mapUrl ?? null } : null);
 import { AuditService } from '../audit/audit.service.js';
 import { Client } from '../clients/client.entities.js';
 import { ConsentService } from '../clients/consent.service.js';
 import { SettingsService } from '../settings/settings.service.js';
 import type {
   CreateWeddingInput,
+  HeliCheckInput,
   LegInput,
   UpdateLegInput,
   UpdateWeddingInput,
@@ -208,6 +217,10 @@ export class WeddingsService {
         category: (leg.category as Leg['category']) ?? null,
         status: 'OPEN',
         notes: leg.notes ?? null,
+        fromSite: siteOf(leg.fromSite),
+        toSite: siteOf(leg.toSite),
+        serviceType: (leg.serviceType as HeliService | null | undefined) ?? null,
+        heliChecks: {},
       }),
     );
   }
@@ -416,8 +429,21 @@ export class WeddingsService {
             ? leg.category
             : ((input.category as Leg['category']) ?? null),
         notes: input.notes === undefined ? leg.notes : input.notes,
+        fromSite: input.fromSite === undefined ? leg.fromSite : siteOf(input.fromSite),
+        toSite: input.toSite === undefined ? leg.toSite : siteOf(input.toSite),
+        serviceType:
+          input.serviceType === undefined
+            ? leg.serviceType
+            : ((input.serviceType as HeliService | null) ?? null),
       };
-      if (next.fromIata === next.toIata)
+      if (!isHelicopter(next.category)) {
+        const fields: Record<string, string> = {};
+        if (next.fromSite) fields.fromSite = 'Venues and helipads are for helicopter legs';
+        if (next.toSite) fields.toSite = 'Venues and helipads are for helicopter legs';
+        if (next.serviceType) fields.serviceType = 'Services are for helicopter legs';
+        if (Object.keys(fields).length) throw fieldErrors(fields);
+      }
+      if (next.fromIata === next.toIata && !next.fromSite && !next.toSite)
         throw fieldErrors({ to: 'Arrival must differ from departure' });
       if (next.windowFrom && next.windowTo && next.windowTo <= next.windowFrom)
         throw fieldErrors({ windowTo: 'The window must end after it starts' });
@@ -442,6 +468,26 @@ export class WeddingsService {
         await this.refreshLegStatus(m, legId);
       }
       return m.getRepository(Leg).findOneByOrFail({ id: legId });
+    });
+  }
+
+  /** Tick or untick one helicopter permission (with an optional note). Only on helicopter legs. */
+  async setHeliCheck(legId: string, input: HeliCheckInput): Promise<Leg> {
+    return this.ds.transaction(async (m) => {
+      const leg = await this.findLeg(m, legId);
+      if (!isHelicopter(leg.category))
+        throw new ConflictException('Permissions are for helicopter legs');
+      if (input.key === 'flowerShower' && leg.serviceType !== 'FLOWER_SHOWER')
+        throw new ConflictException('Flower-shower approval is only needed for a flower shower');
+      leg.heliChecks = {
+        ...leg.heliChecks,
+        [input.key]: {
+          done: input.done,
+          note: input.note ?? leg.heliChecks[input.key]?.note ?? null,
+          at: input.done ? new Date().toISOString() : null,
+        },
+      };
+      return m.getRepository(Leg).save(leg);
     });
   }
 

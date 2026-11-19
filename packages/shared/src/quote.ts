@@ -1,4 +1,3 @@
-import type { LegSite } from './helicopter.js';
 /**
  * Quotes: statuses, and the client-safe shape every outward quote document is built from.
  * `OutwardQuote` deliberately has no field for cost, net rate, margin, markup or commission:
@@ -7,6 +6,7 @@ import type { LegSite } from './helicopter.js';
 import type { CancellationSchedule } from './cancellation.js';
 import { formatBps, type Bps, type Paise } from './money.js';
 import { paymentSchedule } from './pricing.js';
+import { siteLabel, type LegSite } from './helicopter.js';
 
 export const QUOTE_STATUSES = [
   'DRAFT',
@@ -91,6 +91,24 @@ export interface OutwardQuoteLeg {
   pax: number;
   lines: OutwardQuoteLine[];
   price: Paise;
+}
+
+/** One end of a leg as the client reads it: the venue or helipad if set, else the city (and code). */
+export function outwardEnd(
+  airport: OutwardAirport,
+  site: LegSite | null | undefined,
+  withCode = false,
+): string {
+  if (site) return siteLabel(site);
+  return withCode ? `${airport.city} (${airport.iata})` : airport.city;
+}
+
+/** "Delhi (DEL) → Taj Lake Palace helipad, Udaipur" */
+export function outwardRoute(
+  l: Pick<OutwardQuoteLeg, 'from' | 'to' | 'fromSite' | 'toSite'>,
+  withCode = false,
+): string {
+  return `${outwardEnd(l.from, l.fromSite, withCode)} → ${outwardEnd(l.to, l.toSite, withCode)}`;
 }
 
 export interface OutwardQuote {

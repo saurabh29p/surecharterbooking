@@ -1,7 +1,11 @@
 import type {
   AircraftCategory,
   CancellationSchedule,
+  HeliChecks,
+  HeliService,
+  HourlyPricing,
   LeadSource,
+  LegSite,
   LegStatus,
   WeddingStatus,
 } from '@shubhjets/shared';
@@ -73,6 +77,12 @@ export class Leg {
   @Column('text', { nullable: true }) category!: AircraftCategory | null;
   @Column('text') status!: LegStatus;
   @Column('text', { nullable: true }) notes!: string | null;
+  /** Helicopter legs: a venue or helipad at either end (the airport stays as the nearest reference). */
+  @Column('jsonb', { name: 'from_site', nullable: true }) fromSite!: LegSite | null;
+  @Column('jsonb', { name: 'to_site', nullable: true }) toSite!: LegSite | null;
+  @Column('text', { name: 'service_type', nullable: true }) serviceType!: HeliService | null;
+  /** Helicopter permissions checklist (landing site, local permission, flower shower, weather backup). */
+  @Column('jsonb', { name: 'heli_checks', default: () => "'{}'" }) heliChecks!: HeliChecks;
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' }) createdAt!: Date;
   @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' }) updatedAt!: Date;
 }
@@ -114,6 +124,8 @@ export class RateResponse {
   @Column('jsonb', { name: 'cancellation_schedule', nullable: true })
   cancellationSchedule!: CancellationSchedule | null;
   @Column('timestamptz', { name: 'valid_until', nullable: true }) validUntil!: Date | null;
+  /** Helicopter replies priced per flying hour; net_rate is their total. Internal only (rule 4). */
+  @Column('jsonb', { nullable: true }) pricing!: HourlyPricing | null;
   @Column('timestamptz', { name: 'received_at' }) receivedAt!: Date;
   @Column('text', { name: 'raw_text', nullable: true }) rawText!: string | null;
   @Column('text') source!: 'MANUAL' | 'AI';

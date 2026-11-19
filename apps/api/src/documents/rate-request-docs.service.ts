@@ -1,6 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { CATEGORY_LABELS, formatDate, type AircraftCategory } from '@shubhjets/shared';
+import {
+  CATEGORY_LABELS,
+  formatDate,
+  HELI_SERVICE_LABELS,
+  siteLabel,
+  type AircraftCategory,
+  type HeliService,
+  type LegSite,
+} from '@shubhjets/shared';
 import type { DataSource } from 'typeorm';
 import { BusinessProfilesService } from '../business-profiles/business-profiles.service.js';
 import { FilesService } from '../files/files.service.js';
@@ -8,6 +16,14 @@ import { PdfService } from '../pdf/pdf.service.js';
 import { longDate } from './agreements.service.js';
 import { documentHtml, esc } from './brand.js';
 import { DocumentRecord, DocumentVersion } from './document.entities.js';
+
+/** Map links for venue / helipad ends, so the operator can check the landing spot. */
+function siteLinks(from: LegSite | null, to: LegSite | null): string {
+  const parts = [from, to]
+    .filter((s): s is LegSite & { mapUrl: string } => !!s?.mapUrl)
+    .map((s) => `${esc(s.name)}: <a href="${esc(s.mapUrl)}">${esc(s.mapUrl)}</a>`);
+  return parts.length ? `<div class="meta map">${parts.join('<br>')}</div>` : '';
+}
 
 const safe = (s: string) => s.replace(/[^A-Za-z0-9-]+/g, '-').replace(/^-|-$/g, '');
 
@@ -45,10 +61,13 @@ export class RateRequestDocsService {
       window_to: string | null;
       pax: number;
       category: AircraftCategory | null;
+      from_site: LegSite | null;
+      to_site: LegSite | null;
+      service_type: HeliService | null;
     }[] = await this.ds.query(
       `SELECT l.seq, fa.city AS from_city, l.from_iata, ta.city AS to_city, l.to_iata, l.flight_date,
               to_char(l.window_from, 'HH24:MI') AS window_from, to_char(l.window_to, 'HH24:MI') AS window_to,
-              l.pax, l.category
+              l.pax, l.category, l.from_site, l.to_site, l.service_type
          FROM rate_request_leg rl JOIN leg l ON l.id = rl.leg_id
          JOIN airport fa ON fa.iata = l.from_iata JOIN airport ta ON ta.iata = l.to_iata
         WHERE rl.rate_request_id = $1 ORDER BY l.seq`,
@@ -59,12 +78,14 @@ export class RateRequestDocsService {
       : await this.profiles.getDefault();
     const brand = profile?.brandName ?? 'ShubhJets';
 
+    const heli = legs.some((l) => l.from_site || l.to_site || l.service_type);
     const rows = legs
       .map(
         (l) => `<div class="leg">
-          <div class="eyebrow">Flight ${l.seq} · ${esc(formatDate(l.flight_date))}</div>
-          <div class="route">${esc(l.from_city)} <span class="arrow">→</span> ${esc(l.to_city)}</div>
-          <div class="meta">${esc(l.from_iata)} → ${esc(l.to_iata)} · departure ${esc(
+          <div class="eyebrow">${l.service_type ? `Leg ${l.seq} · ${esc(HELI_SERVICE_LABELS[l.service_type])}` : `Flight ${l.seq}`} · ${esc(formatDate(l.flight_date))}</div>
+          <div class="route">${esc(l.from_site ? siteLabel(l.from_site) : l.from_city)} <span class="arrow">→</span> ${esc(l.to_site ? siteLabel(l.to_site) : l.to_city)}</div>
+          ${siteLinks(l.from_site, l.to_site)}
+          <div class="meta">${esc(l.from_iata)} → ${esc(l.to_iata)}${l.from_site || l.to_site ? ' (nearest airports)' : ''} · departure ${esc(
             l.window_from && l.window_to
               ? `${l.window_from}–${l.window_to}`
               : l.window_from
@@ -90,6 +111,7 @@ export class RateRequestDocsService {
         <li>What is included and not included (positioning, crew stay, catering, airport charges)</li>
         <li>Your cancellation charges, by days before departure</li>
         <li>How long the rate is valid</li>
+        ${heli ? '<li>For helicopters: rate per flying hour, flying time, positioning and waiting charges, and whether you will check the landing site and help with local permissions</li>' : ''}
       </ul>
       <p>Only verified operators with a valid NSOP and insurance are considered. Thank you.</p>
       <p class="sign">${esc(profile?.signatoryName ?? brand)}<br><span>${esc(profile?.legalName ?? brand)}</span></p>`;
@@ -105,6 +127,7 @@ export class RateRequestDocsService {
         .route { font-family: 'Bodoni Moda', serif; font-weight: 600; font-size: 13.5pt; margin-top: .6mm; }
         .arrow { color: var(--gold); font-family: 'Manrope', sans-serif; font-weight: 400; }
         .meta { font-size: 8.2pt; color: var(--muted); }
+        .map a { color: var(--ink); word-break: break-all; }
         .facts { display: flex; gap: 4mm; margin-top: 1.4mm; font-size: 9pt; }
         p { text-align: left; }
         .sign { margin-top: 5mm; font-weight: 700; }

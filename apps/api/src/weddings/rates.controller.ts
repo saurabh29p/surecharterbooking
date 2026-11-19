@@ -10,6 +10,7 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
+import { hourlyNet, type HourlyPricing } from '@shubhjets/shared';
 import { z } from 'zod';
 import { CurrentUser, type AuthUser } from '../auth/public.decorator.js';
 import { optionalSchedule, optionalText } from '../common/fields.js';
@@ -32,17 +33,34 @@ const optionalDateTime = z
     message: 'Choose a date and time',
   });
 
-const ResponseFields = z.object({
+/** Helicopter replies: per flying hour plus positioning and waiting (all paise, ex-GST). */
+const Pricing = z
+  .object({
+    hourlyRate: z.number().int().positive('Enter the rate per flying hour'),
+    flyingMinutes: z
+      .number()
+      .int()
+      .min(1, 'Enter the flying time')
+      .max(24 * 60),
+    positioning: z.number().int().min(0).default(0),
+    waiting: z.number().int().min(0).default(0),
+  })
+  .nullable()
+  .optional();
+
+const ResponseBase = z.object({
   operatorId: z.string().uuid({ message: 'Choose an operator' }),
   rateRequestId: z.string().uuid().nullable().optional(),
   aircraftId: z.string().uuid().nullable().optional(),
   aircraftText: optionalText(120),
   seats: z.number().int().min(1, 'At least 1 seat').max(400).nullable().optional(),
-  /** Paise, ex-GST, for everything the reply covers. */
+  /** Paise, ex-GST, for everything the reply covers. With hourly pricing it is worked out from it. */
   netRate: z
     .number({ message: 'Enter the net rate in rupees' })
     .int()
-    .positive('Enter the net rate in rupees'),
+    .positive('Enter the net rate in rupees')
+    .optional(),
+  pricing: Pricing,
   legIds: z.array(z.string().uuid()).min(1, 'Choose which leg(s) this rate covers'),
   costShares: z.array(z.number().int().min(0)).nullable().optional(),
   inclusions: optionalText(2000),
@@ -53,8 +71,33 @@ const ResponseFields = z.object({
   receivedAt: optionalDateTime,
   rawText: optionalText(10_000),
 });
-type ResponseBody = z.infer<typeof ResponseFields>;
-const UpdateResponseFields = ResponseFields.omit({ operatorId: true }).partial();
+
+/** With hourly pricing the net rate is rate × time + positioning + waiting; a different total is refused. */
+function withNet<T extends { netRate?: number; pricing?: HourlyPricing | null }>(
+  v: T,
+  ctx: z.RefinementCtx,
+  required: boolean,
+): T {
+  if (v.pricing) {
+    const net = hourlyNet(v.pricing);
+    if (v.netRate !== undefined && v.netRate !== net)
+      ctx.addIssue({
+        code: 'custom',
+        path: ['netRate'],
+        message: 'The net rate must equal rate × flying time + positioning + waiting',
+      });
+    return { ...v, netRate: net };
+  }
+  if (required && v.netRate === undefined)
+    ctx.addIssue({ code: 'custom', path: ['netRate'], message: 'Enter the net rate in rupees' });
+  return v;
+}
+
+const ResponseFields = ResponseBase.transform((v, ctx) => withNet(v, ctx, true));
+type ResponseBody = z.infer<typeof ResponseFields> & { netRate: number };
+const UpdateResponseFields = ResponseBase.omit({ operatorId: true })
+  .partial()
+  .transform((v, ctx) => withNet(v, ctx, false));
 const ChoiceBody = z.object({ rateResponseIds: z.array(z.string().uuid()).max(6) });
 
 @Controller()

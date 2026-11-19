@@ -1,6 +1,9 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import {
+  HELI_SERVICE_LABELS,
+  hourlyInternalAmounts,
+  type HourlyPricing,
   computeQuoteTotals,
   describeGap,
   formatDateTime,
@@ -71,6 +74,8 @@ interface LineInfo {
   rateTerms: string | null;
   operatorTerms: string | null;
   netRate: number | null;
+  /** Helicopter replies priced per flying hour (internal only). */
+  pricing: HourlyPricing | null;
 }
 
 interface ChoiceRow {
@@ -407,7 +412,8 @@ export class QuotesService {
       ? await m.query(
           `SELECT rr.id, rr.operator_id, coalesce(o.brand, o.legal_name) AS operator_name, o.nsop_no,
                   a.type, a.registration, rr.aircraft_text, rr.seats, rr.valid_until, rr.net_rate,
-                  rr.cancellation_schedule, rr.cancellation_terms, o.cancellation_terms AS op_terms
+                  rr.cancellation_schedule, rr.cancellation_terms, o.cancellation_terms AS op_terms,
+                  rr.pricing
              FROM rate_response rr JOIN operator o ON o.id = rr.operator_id
              LEFT JOIN aircraft a ON a.id = rr.aircraft_id WHERE rr.id = ANY($1)`,
           [ids],
@@ -429,6 +435,7 @@ export class QuotesService {
         rateTerms: (r?.cancellation_terms as string) ?? null,
         operatorTerms: (r?.op_terms as string) ?? null,
         netRate: r?.net_rate !== undefined ? Number(r.net_rate) : null,
+        pricing: (r?.pricing as HourlyPricing | null) ?? null,
       };
     });
   }
@@ -906,6 +913,9 @@ export class QuotesService {
             seq: l.seq,
             from: airport(l.fromIata),
             to: airport(l.toIata),
+            fromSite: l.fromSite,
+            toSite: l.toSite,
+            service: l.serviceType ? HELI_SERVICE_LABELS[l.serviceType] : null,
             date: l.flightDate,
             windowFrom: l.windowFrom,
             windowTo: l.windowTo,
@@ -950,6 +960,10 @@ export class QuotesService {
       const priced = totals.lines[i]!;
       amounts.push({ label: `${who} cost`, paise: priced.cost });
       if (info.netRate !== null) amounts.push({ label: `${who} net rate`, paise: info.netRate });
+      // Helicopters: the hourly rate, positioning and waiting are internal too.
+      if (info.pricing)
+        for (const v of hourlyInternalAmounts(info.pricing))
+          amounts.push({ label: `${who} hourly pricing`, paise: v });
       amounts.push({ label: `Margin on ${who}`, paise: priced.margin });
       if (info.line.markupType === 'PERCENT' && info.line.markupValue)
         percents.push({ label: `Markup on ${who}`, bps: info.line.markupValue });

@@ -2,6 +2,7 @@
 import { formatDate, type IsoDate } from './dates.js';
 import { formatINR, type Paise } from './money.js';
 import { CATEGORY_LABELS, isHelicopter, type AircraftCategory } from './operator.js';
+import { HELI_SERVICE_LABELS, siteLabel, type HeliService, type LegSite } from './helicopter.js';
 
 export type WeddingStatus =
   'ENQUIRY' | 'RATES_REQUESTED' | 'QUOTED' | 'SIGNED_AND_PAID' | 'FLYING' | 'DONE' | 'LOST';
@@ -201,6 +202,19 @@ export interface MessageLeg {
   windowTo: string | null;
   pax: number;
   category: AircraftCategory | null;
+  /** Helicopter legs: venue or helipad ends and the service (the airport stays as the nearest reference). */
+  fromSite?: LegSite | null;
+  toSite?: LegSite | null;
+  service?: HeliService | null;
+}
+
+/** "Taj Lake Palace helipad, Udaipur (map: https://…, nearest airport UDR)" */
+function endText(city: string, iata: string, site: LegSite | null | undefined): string {
+  if (!site) return `${city} (${iata})`;
+  const extra = [site.mapUrl ? `map: ${site.mapUrl}` : '', `nearest airport ${iata}`]
+    .filter(Boolean)
+    .join(', ');
+  return `${siteLabel(site)} (${extra})`;
 }
 
 /** The rate-request message you send to an operator yourself (WhatsApp or email). Plain template, no AI. */
@@ -214,8 +228,10 @@ export function rateRequestMessage(input: {
   const lines = input.legs.map((l) => {
     const time = l.windowFrom ? `, ${l.windowFrom}${l.windowTo ? `–${l.windowTo}` : ''}` : '';
     const size = l.category ? `, ${CATEGORY_LABELS[l.category].toLowerCase()} or larger` : '';
-    return `• Leg ${l.seq}: ${l.fromCity} (${l.from}) → ${l.toCity} (${l.to}), ${formatDate(l.date)}${time}, ${l.pax} passengers${size}`;
+    const service = l.service ? `${HELI_SERVICE_LABELS[l.service]}: ` : '';
+    return `• Leg ${l.seq}: ${service}${endText(l.fromCity, l.from, l.fromSite)} → ${endText(l.toCity, l.to, l.toSite)}, ${formatDate(l.date)}${time}, ${l.pax} passengers${size}`;
   });
+  const heli = input.legs.some((l) => l.category && isHelicopter(l.category));
   return [
     `Hello ${input.operatorName} team,`,
     ``,
@@ -223,6 +239,11 @@ export function rateRequestMessage(input: {
     ...lines,
     ``,
     `Please share for each leg: aircraft type and registration, seats, all-inclusive net rate, what is included and excluded, cancellation terms, and how long the rate is valid.`,
+    ...(heli
+      ? [
+          `For helicopter legs: rate per flying hour, flying time, positioning and waiting charges, and whether you can check the landing site and help with local permissions.`,
+        ]
+      : []),
     ``,
     `Thank you.`,
   ].join('\n');

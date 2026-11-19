@@ -1,12 +1,21 @@
 import {
   AIRCRAFT_CATEGORIES,
   CONSENT_SOURCES,
+  HELI_SERVICES,
   LEAD_SOURCES,
   WEDDING_STATUSES,
+  isHelicopter,
   stateName,
+  type AircraftCategory,
 } from '@shubhjets/shared';
 import { z } from 'zod';
-import { optionalDate, optionalEmail, optionalPhone, optionalText } from '../common/fields.js';
+import {
+  optionalDate,
+  optionalEmail,
+  optionalPhone,
+  optionalText,
+  optionalUrl,
+} from '../common/fields.js';
 
 const iata = z
   .string()
@@ -26,6 +35,55 @@ const time = z
       .optional(),
   );
 
+/** A venue or helipad at one end of a helicopter leg. */
+const Site = z
+  .object({
+    name: z.string().trim().min(2, 'Enter the venue or helipad name').max(120),
+    city: optionalText(80),
+    mapUrl: optionalUrl,
+  })
+  .nullable()
+  .optional();
+const Service = z
+  .enum(HELI_SERVICES as [string, ...string[]], { message: 'Choose what the helicopter is for' })
+  .nullable()
+  .optional();
+
+/** Venues, helipads and services belong to helicopter legs; ends may share an airport only with a venue named. */
+function legShapeIssues(
+  v: {
+    from?: string;
+    to?: string;
+    category?: string | null;
+    fromSite?: unknown;
+    toSite?: unknown;
+    serviceType?: unknown;
+  },
+  ctx: z.RefinementCtx,
+) {
+  const heli = isHelicopter((v.category ?? null) as AircraftCategory | null);
+  if (!heli) {
+    for (const k of ['fromSite', 'toSite', 'serviceType'] as const)
+      if (v[k])
+        ctx.addIssue({
+          code: 'custom',
+          path: [k],
+          message:
+            k === 'serviceType'
+              ? 'Services are for helicopter legs: choose a helicopter category'
+              : 'Venues and helipads are for helicopter legs: choose a helicopter category',
+        });
+  }
+  if (v.from && v.to && v.from === v.to && !v.fromSite && !v.toSite)
+    ctx.addIssue({
+      code: 'custom',
+      path: ['to'],
+      message: heli
+        ? 'Arrival must differ from departure, or name the venue or helipad'
+        : 'Arrival must differ from departure',
+    });
+}
+
 export const LegFields = z
   .object({
     from: iata,
@@ -43,10 +101,12 @@ export const LegFields = z
       .nullable()
       .optional(),
     notes: optionalText(500),
+    fromSite: Site,
+    toSite: Site,
+    serviceType: Service,
   })
   .superRefine((v, ctx) => {
-    if (v.from === v.to)
-      ctx.addIssue({ code: 'custom', path: ['to'], message: 'Arrival must differ from departure' });
+    legShapeIssues(v, ctx);
     if (v.windowFrom && v.windowTo && v.windowTo <= v.windowFrom) {
       ctx.addIssue({
         code: 'custom',
@@ -71,8 +131,20 @@ export const UpdateLegBody = z.object({
     .nullable()
     .optional(),
   notes: optionalText(500),
+  fromSite: Site,
+  toSite: Site,
+  serviceType: Service,
 });
 export type UpdateLegInput = z.infer<typeof UpdateLegBody>;
+
+export const HeliCheckBody = z.object({
+  key: z.enum(['landingSite', 'localPermission', 'flowerShower', 'weatherBackup'], {
+    message: 'Unknown checklist item',
+  }),
+  done: z.boolean(),
+  note: optionalText(300),
+});
+export type HeliCheckInput = z.infer<typeof HeliCheckBody>;
 
 const WeddingFields = z.object({
   partnerId: z.string().uuid().nullable().optional(),

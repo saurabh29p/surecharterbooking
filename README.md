@@ -89,7 +89,7 @@ Templates with the exact headers and one fake example row:
 - **Operators:** only `legal_name` is required. Cells with several values use `;` between items and `|` between parts:
   - `bases`: `DEL;UDR`
   - `aircraft`: `type|registration|category|seats`, e.g. `Citation XLS|VT-ZZ9|midsize|8;King Air B200||turboprop|7`
-    (category: turboprop, light, midsize, super-midsize or heavy)
+    (category: turboprop, light, midsize, super-midsize, heavy, helicopter or twin helicopter)
   - `contacts`: `name|phone|email`
 - **Column names:** they don't have to match exactly. The import matches common alternatives (e.g. "Mobile" →
   phone), and you can change the match before importing.

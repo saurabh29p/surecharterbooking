@@ -1,4 +1,10 @@
-import { formatDate, formatDateTime, formatINR, type OutwardQuote } from '@shubhjets/shared';
+import {
+  formatDate,
+  formatDateTime,
+  formatINR,
+  outwardRoute,
+  type OutwardQuote,
+} from '@shubhjets/shared';
 import { esc } from '../documents/brand.js';
 import { webFonts } from '../pdf/pdf.service.js';
 
@@ -81,8 +87,8 @@ export function renderSharePage(p: SharePageInput): string {
       ${q.validUntil ? `<div class="muted">Valid until ${esc(formatDateTime(new Date(q.validUntil)))}</div>` : ''}
       <div style="margin-top:10px">${q.legs
         .map(
-          (l) => `<div class="leg"><div class="route">${esc(l.from.city)} → ${esc(l.to.city)}</div>
-          <div class="muted">${esc(formatDate(l.date))} · ${l.pax} guests · ${esc(l.lines.map((x) => x.aircraft).join(' + '))}</div></div>`,
+          (l) => `<div class="leg"><div class="route">${esc(outwardRoute(l))}</div>
+          <div class="muted">${l.service ? `${esc(l.service)} · ` : ''}${esc(formatDate(l.date))} · ${l.pax} guests · ${esc(l.lines.map((x) => x.aircraft).join(' + '))}</div></div>`,
         )
         .join('')}</div>
     </section>`;

@@ -62,6 +62,11 @@ describe('value parsing', () => {
       ),
     ).toEqual(['TURBOPROP', 'LIGHT', 'MIDSIZE', 'SUPER_MIDSIZE', 'SUPER_MIDSIZE', 'HEAVY', null]);
     expect(
+      ['helicopter', 'Single-engine helicopter', 'Twin helicopter', 'HELICOPTER_TWIN'].map(
+        parseCategory,
+      ),
+    ).toEqual(['HELICOPTER_SINGLE', 'HELICOPTER_SINGLE', 'HELICOPTER_TWIN', 'HELICOPTER_TWIN']);
+    expect(
       ['planner', 'Wedding Planner', 'Hotel', 'Palace resort', 'other', 'dj'].map(parsePartnerType),
     ).toEqual(['PLANNER', 'PLANNER', 'HOTEL', 'HOTEL', 'OTHER', null]);
   });

@@ -7,11 +7,15 @@ import {
 import { InjectDataSource } from '@nestjs/typeorm';
 import {
   formatDateTime,
+  isHelicopter,
   rankOperatorsForLeg,
   rateRequestMessage,
   splitPackage,
   type CancellationSchedule,
   type AircraftCategory,
+  type HeliService,
+  type HourlyPricing,
+  type LegSite,
   type RankOperator,
 } from '@shubhjets/shared';
 import type { DataSource, EntityManager } from 'typeorm';
@@ -40,6 +44,8 @@ export interface ResponseInput {
   aircraftText?: string | null;
   seats?: number | null;
   netRate: number;
+  /** Helicopter replies priced per flying hour (netRate is their total). */
+  pricing?: HourlyPricing | null;
   legIds: string[];
   costShares?: number[] | null;
   inclusions?: string | null;
@@ -169,9 +175,12 @@ export class RatesService {
       category: AircraftCategory | null;
       from_city: string;
       to_city: string;
+      from_site: LegSite | null;
+      to_site: LegSite | null;
+      service_type: HeliService | null;
     }[] = await m.query(
       `SELECT l.seq, l.from_iata, l.to_iata, l.flight_date, to_char(l.window_from, 'HH24:MI') AS window_from, to_char(l.window_to, 'HH24:MI') AS window_to,
-                l.pax, l.category, af.city AS from_city, at.city AS to_city
+                l.pax, l.category, af.city AS from_city, at.city AS to_city, l.from_site, l.to_site, l.service_type
            FROM leg l JOIN airport af ON af.iata = l.from_iata JOIN airport at ON at.iata = l.to_iata
           WHERE l.id = ANY($1) ORDER BY l.seq`,
       [legIds],
@@ -192,6 +201,9 @@ export class RatesService {
         windowTo: l.window_to,
         pax: l.pax,
         category: l.category,
+        fromSite: l.from_site,
+        toSite: l.to_site,
+        service: l.service_type,
       })),
     });
     const subject = `Rate request ${w.code}`;
@@ -304,6 +316,11 @@ export class RatesService {
     }
     if (!Number.isSafeInteger(input.netRate) || input.netRate <= 0)
       fields.netRate = 'Enter the net rate in rupees';
+    if (
+      input.pricing &&
+      legIds.some((id) => !isHelicopter(legs.find((l) => l.id === id)?.category ?? null))
+    )
+      fields.pricing = 'Hourly pricing is for helicopter legs';
     let shares = input.costShares ?? null;
     if (shares) {
       if (shares.length !== legIds.length || shares.some((s) => !Number.isSafeInteger(s) || s < 0))
@@ -357,6 +374,7 @@ export class RatesService {
           aircraftText: v.aircraftText,
           seats: v.seats,
           netRate: input.netRate,
+          pricing: input.pricing ?? null,
           inclusions: input.inclusions ?? null,
           exclusions: input.exclusions ?? null,
           cancellationTerms: input.cancellationTerms ?? null,
@@ -395,6 +413,7 @@ export class RatesService {
       if (
         quoted &&
         (input.netRate !== undefined ||
+          input.pricing !== undefined ||
           input.legIds !== undefined ||
           input.costShares !== undefined)
       ) {
@@ -412,6 +431,7 @@ export class RatesService {
         aircraftText: input.aircraftText === undefined ? r.aircraftText : input.aircraftText,
         seats: input.seats === undefined ? r.seats : input.seats,
         netRate: input.netRate ?? r.netRate,
+        pricing: input.pricing === undefined ? r.pricing : input.pricing,
         legIds: input.legIds ?? before,
         costShares:
           input.costShares ??
@@ -431,6 +451,7 @@ export class RatesService {
         aircraftText: v.aircraftText,
         seats: v.seats,
         netRate: merged.netRate,
+        pricing: merged.pricing ?? null,
         rateRequestId: v.requestId,
       });
       for (const k of [
@@ -624,6 +645,8 @@ export class RatesService {
         category: (r.aircraft_category as AircraftCategory | null) ?? null,
         seats: (r.seats as number | null) ?? null,
         netRate: Number(r.net_rate),
+        /** Helicopter replies: the hourly breakdown (internal only). */
+        pricing: (r.pricing as HourlyPricing | null) ?? null,
         legs: legsCovered,
         isPackage: legsCovered.length > 1,
         inclusions: r.inclusions as string | null,
@@ -673,6 +696,7 @@ export class RatesService {
             perSeat: r.seats ? Math.round(cost / r.seats) : null,
             isPackage: r.isPackage,
             netRate: r.netRate,
+            pricing: r.pricing,
             validUntil: r.validUntil,
             expired: r.expired,
             replyHours: r.replyHours,

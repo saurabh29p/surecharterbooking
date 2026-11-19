@@ -215,12 +215,25 @@ export function suggestMapping(
   return out;
 }
 
-/** "super-midsize", "Super Midsize", "SUPER_MIDSIZE" → SUPER_MIDSIZE. Null when unknown. */
+/**
+ * "super-midsize", "Super Midsize", "SUPER_MIDSIZE" → SUPER_MIDSIZE; "helicopter" / "single-engine
+ * helicopter" → HELICOPTER_SINGLE; "twin helicopter" → HELICOPTER_TWIN. Null when unknown.
+ */
 export function parseCategory(
   input: string,
-): 'TURBOPROP' | 'LIGHT' | 'MIDSIZE' | 'SUPER_MIDSIZE' | 'HEAVY' | null {
+):
+  | 'TURBOPROP'
+  | 'LIGHT'
+  | 'MIDSIZE'
+  | 'SUPER_MIDSIZE'
+  | 'HEAVY'
+  | 'HELICOPTER_SINGLE'
+  | 'HELICOPTER_TWIN'
+  | null {
   const n = norm(input);
   if (!n) return null;
+  if (n.includes('heli') || n.includes('chopper'))
+    return n.includes('twin') ? 'HELICOPTER_TWIN' : 'HELICOPTER_SINGLE';
   if (n.startsWith('turbo')) return 'TURBOPROP';
   if (n.startsWith('light') || n === 'vlj') return 'LIGHT';
   if (n.startsWith('super')) return 'SUPER_MIDSIZE';

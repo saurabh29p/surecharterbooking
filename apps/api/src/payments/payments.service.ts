@@ -9,6 +9,8 @@ import {
   applyBps,
   confirmationChecklist,
   formatINR,
+  heliChecksMissing,
+  isHelicopter,
   moneyPosition,
   outflow,
   payoutBlocker,
@@ -87,6 +89,20 @@ export class PaymentsService {
     };
   }
 
+  /** Helicopter legs still missing permissions, as "Leg 3: Local permission in hand". */
+  private async heli(m: EntityManager, weddingId: string) {
+    const legs = await m.getRepository(Leg).find({ where: { weddingId }, order: { seq: 'ASC' } });
+    const heli = legs.filter(
+      (l) => l.status !== 'CANCELLED' && l.category && isHelicopter(l.category),
+    );
+    return {
+      hasHelicopter: heli.length > 0,
+      heliPending: heli.flatMap((l) =>
+        heliChecksMissing(l.serviceType, l.heliChecks ?? {}).map((x) => `Leg ${l.seq}: ${x}`),
+      ),
+    };
+  }
+
   private async termsSigned(m: EntityManager, weddingId: string): Promise<boolean> {
     const [d] = await m.query(
       `SELECT 1 FROM document WHERE wedding_id = $1 AND type = 'CLIENT_TERMS' AND status = 'SIGNED' LIMIT 1`,
@@ -141,6 +157,7 @@ export class PaymentsService {
             hasAcceptedQuote: !!quote,
             termsSigned: await this.termsSigned(m, w.id),
             position: pos,
+            ...(await this.heli(m, w.id)),
           })
         : [];
     return {
@@ -398,6 +415,7 @@ export class PaymentsService {
         hasAcceptedQuote: !!quote,
         termsSigned: await this.termsSigned(m, w.id),
         position: pos,
+        ...(await this.heli(m, w.id)),
       });
       const missing = list.filter((c) => !c.done);
       if (missing.length)

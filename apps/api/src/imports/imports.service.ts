@@ -294,7 +294,7 @@ export class ImportsService {
       });
       if (!cat)
         problems.push(
-          `Aircraft ${i + 1}: category "${category}" should be turboprop, light, midsize, super-midsize or heavy`,
+          `Aircraft ${i + 1}: category "${category}" should be turboprop, light, midsize, super-midsize, heavy, helicopter or twin helicopter`,
         );
       else if (!a.success)
         problems.push(...a.error.issues.map((x) => `Aircraft ${i + 1}: ${x.message}`));

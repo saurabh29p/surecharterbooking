@@ -2,6 +2,7 @@ import {
   formatBps,
   formatDate,
   formatINR,
+  outwardRoute,
   rupeesInWords,
   stateName,
   type OutwardQuote,
@@ -41,7 +42,7 @@ export function renderInvoiceHtml(v: InvoiceView): string {
   const items: Array<{ desc: string; amount: number }> = [
     ...q.legs.flatMap((l) =>
       l.lines.map((x) => ({
-        desc: `Charter flight ${l.from.city} (${l.from.iata}) → ${l.to.city} (${l.to.iata}), ${formatDate(l.date)}: ${x.aircraft}${x.seats ? `, ${x.seats} seats` : ''}, operated by ${x.operator}`,
+        desc: `${l.service ?? 'Charter flight'} ${outwardRoute(l, true)}, ${formatDate(l.date)}: ${x.aircraft}${x.seats ? `, ${x.seats} seats` : ''}, operated by ${x.operator}`,
         amount: x.price,
       })),
     ),

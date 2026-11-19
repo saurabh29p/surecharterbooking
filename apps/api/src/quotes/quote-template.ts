@@ -6,6 +6,7 @@ import {
   formatINR,
   type OutwardQuote,
   type OutwardQuoteLeg,
+  siteLabel,
 } from '@shubhjets/shared';
 import { brandFonts } from '../pdf/pdf.service.js';
 
@@ -67,11 +68,11 @@ function legCard(leg: OutwardQuoteLeg): string {
     .join('');
   return `
   <section class="leg">
-    <div class="eyebrow">Flight ${leg.seq} · ${esc(weekdayDate(leg.date))}</div>
-    <div class="route">${esc(leg.from.city)} <span class="arrow">→</span> ${esc(leg.to.city)}</div>
-    <div class="meta">${esc(leg.from.iata)} → ${esc(leg.to.iata)} · ${esc(departure(leg))} · ${leg.pax} guest${leg.pax === 1 ? '' : 's'}</div>
+    <div class="eyebrow">${leg.service ? `${esc(leg.service)} · ` : `Flight ${leg.seq} · `}${esc(weekdayDate(leg.date))}</div>
+    <div class="route">${esc(leg.fromSite ? siteLabel(leg.fromSite) : leg.from.city)} <span class="arrow">→</span> ${esc(leg.toSite ? siteLabel(leg.toSite) : leg.to.city)}</div>
+    <div class="meta">${esc(leg.fromSite ? 'Venue / helipad' : leg.from.iata)} → ${esc(leg.toSite ? 'Venue / helipad' : leg.to.iata)} · ${esc(departure(leg))} · ${leg.pax} guest${leg.pax === 1 ? '' : 's'}</div>
     ${jets}
-    ${leg.lines.length > 1 ? `<div class="leg-total"><span>Flight ${leg.seq}, ${leg.lines.length} jets</span><span>${money(leg.price)}</span></div>` : ''}
+    ${leg.lines.length > 1 ? `<div class="leg-total"><span>${leg.service ? esc(leg.service) : `Flight ${leg.seq}`}, ${leg.lines.length} aircraft</span><span>${money(leg.price)}</span></div>` : ''}
   </section>`;
 }
 
