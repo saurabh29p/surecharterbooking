@@ -10,6 +10,7 @@ import {
 } from '@shubhjets/shared';
 import { computed, defineAsyncComponent, onMounted, reactive, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { cachedApi } from '../../api/cache';
 import { api, ApiError } from '../../api/client';
 import SjButton from '../../components/SjButton.vue';
 import SjConfirm from '../../components/SjConfirm.vue';
@@ -65,7 +66,9 @@ const setTab = (t: string) =>
 
 async function load() {
   try {
-    w.value = await api<WeddingDetail>(`/weddings/${id}`);
+    // First open shows the last saved copy at once; reloads after an edit always fetch fresh.
+    if (w.value) w.value = await api<WeddingDetail>(`/weddings/${id}`);
+    else await cachedApi<WeddingDetail>(`/weddings/${id}`, (v) => (w.value = v));
   } catch (e) {
     toast.error(e instanceof ApiError ? e.message : "Couldn't load this wedding");
   }

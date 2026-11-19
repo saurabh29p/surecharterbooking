@@ -9,6 +9,18 @@ describe('health', () => {
   });
   afterAll(() => t.close());
 
+  it('compresses larger answers, but never login or session answers', async () => {
+    // A public endpoint with a large enough body: the not-found page for a share link.
+    const page = await t.http().get('/api/s/no-such-token').set('accept-encoding', 'gzip, br');
+    expect(page.headers['content-encoding']).toMatch(/gzip|br/);
+    const login = await t
+      .http()
+      .post('/api/auth/login')
+      .set('accept-encoding', 'gzip, br')
+      .send({ email: 'nobody@example.com', password: 'x'.repeat(2000) });
+    expect(login.headers['content-encoding']).toBeUndefined();
+  });
+
   it('GET /api/health is public and reports the database and IST time', async () => {
     const res = await t.http().get('/api/health').expect(200);
     expect(res.body).toMatchObject({ status: 'ok', database: 'ok' });

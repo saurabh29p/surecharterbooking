@@ -26,6 +26,7 @@
     "@nestjs/typeorm": "^12.0.3",
     "@node-rs/argon2": "^2.2.2",
     "@shubhjets/shared": "workspace:*",
+    "compression": "1.8.1",
     "cookie-parser": "^1.4.7",
     "csv-parse": "^7.0.3",
     "csv-stringify": "^6.9.0",
@@ -43,6 +44,7 @@
   "devDependencies": {
     "@nestjs/testing": "^12.5.1",
     "@swc/core": "^1.16.22",
+    "@types/compression": "1.8.1",
     "@types/cookie-parser": "^1.4.10",
     "@types/express": "^5.0.6",
     "@types/multer": "^2.3.0",

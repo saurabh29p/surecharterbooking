@@ -8,7 +8,8 @@ import {
 } from '@shubhjets/shared';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { api, ApiError } from '../../api/client';
+import { cachedApi } from '../../api/cache';
+import { ApiError } from '../../api/client';
 import SjButton from '../../components/SjButton.vue';
 import SjSkeleton from '../../components/SjSkeleton.vue';
 import WeddingStatusBadge from '../../components/wedding/WeddingStatusBadge.vue';
@@ -29,7 +30,7 @@ async function load() {
   const params = new URLSearchParams();
   if (q.value.trim()) params.set('q', q.value.trim());
   try {
-    board.value = await api<WeddingBoard>(`/weddings?${params}`);
+    await cachedApi<WeddingBoard>(`/weddings?${params}`, (v) => (board.value = v));
   } catch (e) {
     toast.error(e instanceof ApiError ? e.message : "Couldn't load weddings");
   }

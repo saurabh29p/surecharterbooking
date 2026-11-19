@@ -7,7 +7,8 @@ import type {
   WeddingStatus,
 } from '@shubhjets/shared';
 import { ref } from 'vue';
-import { api, onSessionChange } from '../api/client';
+import { cachedApi, prefetchApi } from '../api/cache';
+import { onSessionChange } from '../api/client';
 
 export interface TodayData {
   today: string;
@@ -47,8 +48,8 @@ export interface TodayData {
 }
 
 /**
- * Kept in memory for the session, so going back to Today shows the last view at once while it
- * refreshes (UX.md §4). Nothing is written to the phone's storage.
+ * Today opens with what it showed last time (memory, then this phone's cache) while it refreshes
+ * (UX.md §4). The cache is wiped when the session ends; see api/cache.ts.
  */
 const cached = ref<TodayData | null>(null);
 onSessionChange((s) => {
@@ -61,8 +62,9 @@ export function useToday() {
   async function load() {
     loading.value = true;
     try {
-      cached.value = await api<TodayData>('/today');
-      failed.value = false;
+      const { fromCacheOnly } = await cachedApi<TodayData>('/today', (v) => (cached.value = v));
+      failed.value = fromCacheOnly;
+      if (!fromCacheOnly) schedulePrefetch();
     } catch {
       failed.value = true;
     } finally {
@@ -71,3 +73,27 @@ export function useToday() {
   }
   return { data: cached, loading, failed, load };
 }
+
+let prefetched = false;
+/**
+ * Once Today is on screen, quietly load the code and data of the next likely screens, so switching
+ * tabs shows content at once. Runs once per session, when the phone is idle.
+ */
+function schedulePrefetch() {
+  if (prefetched) return;
+  prefetched = true;
+  const run = () => {
+    void import('../views/weddings/WeddingsView.vue');
+    void import('../views/partners/PartnersView.vue');
+    void import('../views/operators/OperatorsView.vue');
+    void import('../views/settings/SettingsView.vue');
+    for (const path of ['/weddings?', '/partners?', '/operators?']) void prefetchApi(path);
+  };
+  const idle = (globalThis as { requestIdleCallback?: (cb: () => void, o?: object) => void })
+    .requestIdleCallback;
+  if (idle) idle(run, { timeout: 2000 });
+  else setTimeout(run, 300);
+}
+onSessionChange((s) => {
+  if (!s) prefetched = false;
+});

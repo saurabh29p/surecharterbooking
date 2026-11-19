@@ -13,6 +13,7 @@ import {
 import { computed, onMounted, reactive, ref } from 'vue';
 import AgreementCard from '../../components/AgreementCard.vue';
 import { useRoute } from 'vue-router';
+import { cachedApi } from '../../api/cache';
 import { api, ApiError } from '../../api/client';
 import SjButton from '../../components/SjButton.vue';
 import SjConfirm from '../../components/SjConfirm.vue';
@@ -45,7 +46,9 @@ const today = toIstDate(new Date());
 
 async function load() {
   try {
-    op.value = await api<OperatorDetail>(`/operators/${id}`);
+    // First open shows the last saved copy at once; reloads after an edit always fetch fresh.
+    if (op.value) op.value = await api<OperatorDetail>(`/operators/${id}`);
+    else await cachedApi<OperatorDetail>(`/operators/${id}`, (v) => (op.value = v));
   } catch (e) {
     toast.error(e instanceof ApiError ? e.message : "Couldn't load this operator");
   }

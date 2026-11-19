@@ -2,7 +2,8 @@
 import { AIRCRAFT_CATEGORIES, CATEGORY_LABELS } from '@shubhjets/shared';
 import { onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import { api, ApiError } from '../../api/client';
+import { cachedApi } from '../../api/cache';
+import { ApiError } from '../../api/client';
 import SjButton from '../../components/SjButton.vue';
 import SjSkeleton from '../../components/SjSkeleton.vue';
 import StatusBadge from '../../components/operator/StatusBadge.vue';
@@ -36,8 +37,9 @@ async function load() {
   if (category.value) params.set('category', category.value);
   if (q.value.trim()) params.set('q', q.value.trim());
   try {
-    const res = await api<OperatorListItem[]>(`/operators?${params}`);
-    if (mine === seq) items.value = res;
+    await cachedApi<OperatorListItem[]>(`/operators?${params}`, (res) => {
+      if (mine === seq) items.value = res;
+    });
   } catch (e) {
     if (mine === seq) items.value = [];
     toast.error(e instanceof ApiError ? e.message : "Couldn't load operators");

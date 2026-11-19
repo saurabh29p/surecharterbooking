@@ -1,4 +1,5 @@
 import type { NestExpressApplication } from '@nestjs/platform-express';
+import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import type { AppConfig } from './config.js';
 
@@ -9,6 +10,15 @@ import type { AppConfig } from './config.js';
  */
 export function configureApp(app: NestExpressApplication, config: AppConfig): void {
   app.setGlobalPrefix('api');
+  // Gzip/brotli-sized JSON for phones on 4G. Login and session answers are left uncompressed, so a
+  // token never shares a compressed response with anything the sender typed (BREACH-style guessing).
+  app.use(
+    compression({
+      threshold: 1024,
+      filter: (req, res) =>
+        !(req.url ?? '').startsWith('/api/auth/') && compression.filter(req, res),
+    }),
+  );
   app.use(cookieParser());
   app.useBodyParser('json', { limit: '3mb' });
   // The website sends tap events with navigator.sendBeacon (text/plain JSON).

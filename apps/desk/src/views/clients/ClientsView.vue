@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import { api, ApiError } from '../../api/client';
+import { cachedApi } from '../../api/cache';
+import { ApiError } from '../../api/client';
 import SjButton from '../../components/SjButton.vue';
 import SjSkeleton from '../../components/SjSkeleton.vue';
 import PeopleTabs from '../../components/partner/PeopleTabs.vue';
@@ -24,8 +25,9 @@ const items = ref<ClientRow[] | null>(null);
 
 async function load() {
   try {
-    items.value = await api<ClientRow[]>(
+    await cachedApi<ClientRow[]>(
       `/clients${q.value.trim() ? `?q=${encodeURIComponent(q.value.trim())}` : ''}`,
+      (v) => (items.value = v),
     );
   } catch (e) {
     items.value = [];

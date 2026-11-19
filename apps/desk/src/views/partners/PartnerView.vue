@@ -13,6 +13,7 @@ import {
 import { onMounted, ref } from 'vue';
 import AgreementCard from '../../components/AgreementCard.vue';
 import { useRoute } from 'vue-router';
+import { cachedApi } from '../../api/cache';
 import { api, ApiError } from '../../api/client';
 import ConsentPanel from '../../components/ConsentPanel.vue';
 import PrivacyPanel from '../../components/PrivacyPanel.vue';
@@ -40,7 +41,9 @@ const busy = ref<string | null>(null);
 
 async function load() {
   try {
-    p.value = await api<PartnerDetail>(`/partners/${id}`);
+    // First open shows the last saved copy at once; reloads after an edit always fetch fresh.
+    if (p.value) p.value = await api<PartnerDetail>(`/partners/${id}`);
+    else await cachedApi<PartnerDetail>(`/partners/${id}`, (v) => (p.value = v));
   } catch (e) {
     toast.error(e instanceof ApiError ? e.message : "Couldn't load this partner");
   }

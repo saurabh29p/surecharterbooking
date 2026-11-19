@@ -10,6 +10,7 @@ import {
 } from '@shubhjets/shared';
 import { onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { cachedApi } from '../../api/cache';
 import { api, ApiError } from '../../api/client';
 import SjButton from '../../components/SjButton.vue';
 import SjSkeleton from '../../components/SjSkeleton.vue';
@@ -42,8 +43,9 @@ async function load() {
   if (dueOnly.value) params.set('followUpDue', 'true');
   if (q.value.trim()) params.set('q', q.value.trim());
   try {
-    const res = await api<PartnerList>(`/partners?${params}`);
-    if (mine === seq) data.value = res;
+    await cachedApi<PartnerList>(`/partners?${params}`, (res) => {
+      if (mine === seq) data.value = res;
+    });
   } catch (e) {
     toast.error(e instanceof ApiError ? e.message : "Couldn't load partners");
   }

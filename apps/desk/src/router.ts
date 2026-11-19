@@ -6,6 +6,7 @@ import {
   type RouterHistory,
 } from 'vue-router';
 import { restoreSession, useAuth } from './composables/auth';
+import TodayView from './views/TodayView.vue';
 
 export const routes: RouteRecordRaw[] = [
   {
@@ -20,7 +21,8 @@ export const routes: RouteRecordRaw[] = [
     component: () => import('./views/SetupView.vue'),
     meta: { bare: true },
   },
-  { path: '/', name: 'today', component: () => import('./views/TodayView.vue') },
+  // Home is loaded with the app (no extra download before the first screen).
+  { path: '/', name: 'today', component: TodayView },
   {
     path: '/weddings',
     name: 'weddings',

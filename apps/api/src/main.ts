@@ -11,6 +11,11 @@ async function bootstrap() {
   configureApp(app, config);
   app.enableShutdownHooks();
   await app.listen(config.API_PORT);
+  // Keep connections from Railway's edge (and Vercel) open between requests, longer than their own
+  // idle timeouts, so each tap doesn't pay for a new connection (and never hits a closed one).
+  const server = app.getHttpServer() as import('node:http').Server;
+  server.keepAliveTimeout = 65_000;
+  server.headersTimeout = 66_000;
   console.log(`API listening on http://localhost:${config.API_PORT}`);
 }
 

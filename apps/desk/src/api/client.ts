@@ -76,10 +76,15 @@ async function rawFetch(path: string, init: RequestInit = {}): Promise<Response>
 export function refreshSession(): Promise<Session | null> {
   refreshing ??= (async () => {
     try {
-      const res = await rawFetch('/auth/refresh', {
-        method: 'POST',
-        headers: { 'x-sj-client': 'desk' },
-      });
+      // The first refresh may already be on its way (started by index.html before this code loaded).
+      const early = (globalThis as { __sjRefresh?: Promise<Response | null> }).__sjRefresh;
+      (globalThis as { __sjRefresh?: unknown }).__sjRefresh = undefined;
+      const res =
+        (early && (await early)) ||
+        (await rawFetch('/auth/refresh', {
+          method: 'POST',
+          headers: { 'x-sj-client': 'desk' },
+        }));
       if (!res.ok) {
         setSession(null);
         return null;
