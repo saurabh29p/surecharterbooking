@@ -11,6 +11,9 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { DataSource, IsNull, MoreThan, type EntityManager, type Repository } from 'typeorm';
 import { AuditService } from '../audit/audit.service.js';
 import { isDemoEmail } from '../db/seed-data.js';
+
+/** The automated test account is recognised by this name (see TEST_ACCOUNT_EMAIL). */
+export const TEST_ACCOUNT_NAME = 'Automated test account';
 import { APP_CONFIG, type AppConfig } from '../config.js';
 import { LoginLimiter } from './login-limiter.js';
 import { dummyPasswordHash, hashPassword, passwordProblem, verifyPassword } from './password.js';
@@ -359,6 +362,58 @@ export class AuthService {
       });
     }
     return demo.map((u) => u.email);
+  }
+
+  /**
+   * The automated test account (TEST_ACCOUNT_EMAIL / TEST_ACCOUNT_PASSWORD): created or refreshed
+   * when both are set, disabled (with its sessions ended) when they are not. Never touches the owner.
+   */
+  async syncTestAccount(email?: string, password?: string): Promise<'ready' | 'disabled' | 'none'> {
+    const existing = await this.users.find({ where: { name: TEST_ACCOUNT_NAME } });
+    if (email && password) {
+      const problem = passwordProblem(password, email);
+      if (problem) throw new Error(`TEST_ACCOUNT_PASSWORD is not acceptable: ${problem}`);
+      // Never on a database without its owner: the test account must not become the first user.
+      if (!(await this.users.count({ where: { role: 'OWNER' } })))
+        throw new Error('TEST_ACCOUNT_EMAIL needs the owner account to exist first');
+      const clash = await this.users.findOne({ where: { email: email.trim() } });
+      if (clash && clash.name !== TEST_ACCOUNT_NAME)
+        throw new Error('TEST_ACCOUNT_EMAIL belongs to a real account; use a separate address');
+      const user =
+        existing.find((u) => u.email === email.trim()) ??
+        this.users.create({
+          email: email.trim(),
+          name: TEST_ACCOUNT_NAME,
+          role: 'STAFF',
+          tokenVersion: 0,
+        });
+      user.passwordHash = await hashPassword(password);
+      user.disabledAt = null;
+      user.setupCompletedAt ??= this.now();
+      const saved = await this.users.save(user);
+      await this.audit.record({
+        actorType: 'SYSTEM',
+        entity: 'user',
+        entityId: saved.id,
+        action: 'TEST_ACCOUNT_READY',
+      });
+      return 'ready';
+    }
+    const active = existing.filter((u) => !u.disabledAt);
+    for (const u of active) {
+      await this.users.update(u.id, { disabledAt: this.now(), tokenVersion: u.tokenVersion + 1 });
+      await this.tokens.update(
+        { userId: u.id, revokedAt: IsNull() },
+        { revokedAt: this.now(), revokedReason: 'TEST_ACCOUNT_OFF' },
+      );
+      await this.audit.record({
+        actorType: 'SYSTEM',
+        entity: 'user',
+        entityId: u.id,
+        action: 'TEST_ACCOUNT_DISABLED',
+      });
+    }
+    return active.length ? 'disabled' : 'none';
   }
 
   /**

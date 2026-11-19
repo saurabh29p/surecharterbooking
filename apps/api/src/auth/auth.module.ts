@@ -30,9 +30,15 @@ export class AuthModule implements OnApplicationBootstrap {
       if (disabled.length)
         this.log.error(`Demo accounts found in production and disabled: ${disabled.join(', ')}`);
     }
-    const { ADMIN_EMAIL, ADMIN_PASSWORD } = this.config;
-    if (!ADMIN_EMAIL || !ADMIN_PASSWORD || this.config.NODE_ENV === 'test') return;
-    const result = await this.auth.bootstrapAdmin(ADMIN_EMAIL, ADMIN_PASSWORD);
-    if (result === 'created') this.log.log(`Created the owner account for ${ADMIN_EMAIL}`);
+    if (this.config.NODE_ENV === 'test') return;
+    const { ADMIN_EMAIL, ADMIN_PASSWORD, TEST_ACCOUNT_EMAIL, TEST_ACCOUNT_PASSWORD } = this.config;
+    if (ADMIN_EMAIL && ADMIN_PASSWORD) {
+      const result = await this.auth.bootstrapAdmin(ADMIN_EMAIL, ADMIN_PASSWORD);
+      if (result === 'created') this.log.log(`Created the owner account for ${ADMIN_EMAIL}`);
+    }
+    const test = await this.auth.syncTestAccount(TEST_ACCOUNT_EMAIL, TEST_ACCOUNT_PASSWORD);
+    if (test === 'ready') this.log.log('Automated test account is ready');
+    if (test === 'disabled')
+      this.log.log('Automated test account disabled (TEST_ACCOUNT_* not set)');
   }
 }

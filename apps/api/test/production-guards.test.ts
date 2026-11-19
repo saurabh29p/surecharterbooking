@@ -2,7 +2,14 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from
 import { APP_CONFIG, type AppConfig } from '../src/config.js';
 import { EncryptionService } from '../src/crypto/encryption.service.js';
 import { SEED_OWNER, assertSeedAllowed, isDemoEmail, seed } from '../src/db/seed-data.js';
-import { authService, createOwner, createTestApp, resetLimits, type TestApp } from './app.js';
+import {
+  OWNER_EMAIL,
+  authService,
+  createOwner,
+  createTestApp,
+  resetLimits,
+  type TestApp,
+} from './app.js';
 import { resetDb } from './db.js';
 
 describe('production guards', () => {
@@ -92,6 +99,48 @@ describe('production guards', () => {
       await expect(
         authService(t).bootstrapAdmin('owner@shubhjets.test', 'a perfectly fine passphrase'),
       ).rejects.toThrow(/real email/);
+    });
+  });
+
+  describe('automated test account (TEST_ACCOUNT_*)', () => {
+    const EMAIL = 'checks@example.com';
+    const PASS = 'robot flight rehearsal 2026';
+    const login = (password = PASS) =>
+      t.http().post('/api/auth/login').send({ email: EMAIL, password });
+
+    it('is never created before the owner exists', async () => {
+      await expect(authService(t).syncTestAccount(EMAIL, PASS)).rejects.toThrow(/owner account/);
+    });
+
+    it('is created as a separate STAFF login, refreshed, and disabled when the settings go', async () => {
+      const ownerId = await createOwner(t.ds, { setupDone: true });
+      expect(await authService(t).syncTestAccount(EMAIL, PASS)).toBe('ready');
+      const ok = await login().expect(200);
+      expect(ok.body.user).toMatchObject({ email: EMAIL, role: 'STAFF' });
+      // A new password replaces the old one; still the same single account.
+      expect(await authService(t).syncTestAccount(EMAIL, `${PASS} two`)).toBe('ready');
+      await login().expect(401);
+      await login(`${PASS} two`).expect(200);
+      expect(
+        await t.ds.query(`SELECT count(*)::int AS n FROM app_user WHERE email = $1`, [EMAIL]),
+      ).toEqual([{ n: 1 }]);
+
+      // Settings removed: disabled, and its session can't be refreshed.
+      expect(await authService(t).syncTestAccount()).toBe('disabled');
+      await login(`${PASS} two`).expect(401);
+      expect(await authService(t).syncTestAccount()).toBe('none');
+      // The owner is never touched.
+      const [owner] = await t.ds.query(`SELECT disabled_at, role FROM app_user WHERE id = $1`, [
+        ownerId,
+      ]);
+      expect(owner).toEqual({ disabled_at: null, role: 'OWNER' });
+    });
+
+    it('refuses an email that belongs to the owner', async () => {
+      await createOwner(t.ds, { setupDone: true });
+      await expect(authService(t).syncTestAccount(OWNER_EMAIL, PASS)).rejects.toThrow(
+        /real account/,
+      );
     });
   });
 });

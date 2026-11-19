@@ -64,6 +64,15 @@ const EnvSchema = z
     /** Creates the owner account on a fresh database. Ignored once any user exists. */
     ADMIN_EMAIL: z.preprocess((v) => (v === '' ? undefined : v), z.string().email().optional()),
     ADMIN_PASSWORD: z.preprocess((v) => (v === '' ? undefined : v), z.string().optional()),
+    /**
+     * Optional automated test account (a STAFF login for end-to-end checks on a deployed test stack).
+     * Set both to create or refresh it at start; remove them and the account is disabled at the next start.
+     */
+    TEST_ACCOUNT_EMAIL: z.preprocess(
+      (v) => (v === '' ? undefined : v),
+      z.string().email().optional(),
+    ),
+    TEST_ACCOUNT_PASSWORD: z.preprocess((v) => (v === '' ? undefined : v), z.string().optional()),
     /** Where uploaded files go: local disk (development) or an S3-compatible bucket (production, Railway). */
     /** Run background jobs (daily operator expiry check). Off in tests, which run jobs directly. */
     JOBS_ENABLED: bool.default(true),
