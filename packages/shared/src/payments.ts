@@ -111,10 +111,14 @@ export interface ConfirmationInput {
   hasAcceptedQuote: boolean;
   termsSigned: boolean;
   position: MoneyPosition;
+  /** Helicopter legs whose permissions aren't complete, e.g. ["Leg 3: Local permission in hand"]. */
+  heliPending?: string[];
+  /** Whether the wedding has any helicopter leg (shows the item at all). */
+  hasHelicopter?: boolean;
 }
 
 export interface ConfirmationItem {
-  key: 'quote' | 'terms' | 'payment';
+  key: 'quote' | 'terms' | 'payment' | 'helicopter';
   label: string;
   done: boolean;
   hint: string | null;
@@ -145,6 +149,18 @@ export function confirmationChecklist(input: ConfirmationInput): ConfirmationIte
           ? `${formatINR(p.dueToConfirm, { paise: 'never' })} more to receive`
           : null,
     },
+    ...(input.hasHelicopter
+      ? [
+          {
+            key: 'helicopter' as const,
+            label: 'Helicopter permissions complete',
+            done: !(input.heliPending?.length ?? 0),
+            hint: input.heliPending?.length
+              ? `Still open: ${input.heliPending.join('; ')} (Overview tab)`
+              : null,
+          },
+        ]
+      : []),
   ];
 }
 

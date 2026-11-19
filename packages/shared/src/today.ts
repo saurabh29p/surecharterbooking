@@ -13,6 +13,7 @@ import {
 } from './dates.js';
 import { formatINR, formatINRShort, type Paise } from './money.js';
 import type { ConfirmationItem } from './payments.js';
+import type { HeliPermissionFact } from './helicopter.js';
 import { whatsappUrl } from './sharing.js';
 
 export type ActionUrgency = 'NOW' | 'TODAY' | 'SOON';
@@ -28,6 +29,7 @@ export type ActionKind =
   | 'QUOTE_EXPIRING'
   | 'MARK_FLOWN'
   | 'GUEST_IDS'
+  | 'HELI_PERMISSIONS'
   | 'CONFIRM'
   | 'OPERATOR_EXPIRY'
   | 'CHASE_OPERATOR'
@@ -50,6 +52,7 @@ const KIND_ORDER: ActionKind[] = [
   'QUOTE_EXPIRING',
   'MARK_FLOWN',
   'GUEST_IDS',
+  'HELI_PERMISSIONS',
   'CONFIRM',
   'OPERATOR_EXPIRY',
   'CHASE_OPERATOR',
@@ -147,6 +150,8 @@ export interface TodayFacts {
     dueToConfirm: Paise;
     firstFlight: IsoDate | null;
   }>;
+  /** Helicopter legs whose permissions checklist isn't complete. */
+  heliPermissions?: HeliPermissionFact[];
   /** Weddings flying soon with guest IDs still missing. */
   guestIds: Array<{
     weddingId: string;
@@ -431,7 +436,8 @@ export function buildTodayActions(f: TodayFacts, r: TodayRules): TodayAction[] {
         dueAt: c.firstFlight,
       });
     }
-    const other = missing.find((i) => i.key !== 'payment');
+    // Helicopter permissions get their own action per leg (below), so they aren't repeated here.
+    const other = missing.find((i) => i.key !== 'payment' && i.key !== 'helicopter');
     if (other) {
       out.push({
         key: `confirm-step:${c.weddingId}:${other.key}`,
@@ -468,6 +474,22 @@ export function buildTodayActions(f: TodayFacts, r: TodayRules): TodayAction[] {
         { type: 'OPEN', label: 'Open guests', to: wedding(g.weddingId, 'guests') },
       ),
       dueAt: g.firstFlight,
+    });
+  }
+
+  // Helicopter permissions: on Today until every item is ticked; the wedding can't be confirmed before.
+  for (const h of f.heliPermissions ?? []) {
+    if (!h.missing.length) continue;
+    const days = daysBetween(r.today, h.flightDate);
+    out.push({
+      key: `heli:${h.legId}`,
+      kind: 'HELI_PERMISSIONS',
+      urgency: days <= 7 ? 'NOW' : days <= 30 ? 'TODAY' : 'SOON',
+      title: `${h.code}: helicopter leg ${h.seq} needs ${h.missing.length} permission${h.missing.length === 1 ? '' : 's'}`,
+      detail: `${h.missing.join(' · ')}. Flies ${inDays(r.today, h.flightDate)}.`,
+      to: wedding(h.weddingId),
+      button: { type: 'OPEN', label: 'Open checklist', to: wedding(h.weddingId) },
+      dueAt: h.flightDate,
     });
   }
 

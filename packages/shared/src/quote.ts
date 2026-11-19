@@ -1,3 +1,4 @@
+import type { LegSite } from './helicopter.js';
 /**
  * Quotes: statuses, and the client-safe shape every outward quote document is built from.
  * `OutwardQuote` deliberately has no field for cost, net rate, margin, markup or commission:
@@ -78,6 +79,11 @@ export interface OutwardQuoteLeg {
   seq: number;
   from: OutwardAirport;
   to: OutwardAirport;
+  /** Helicopter legs: the venue or helipad at each end, when it isn't the airport itself. */
+  fromSite?: LegSite | null;
+  toSite?: LegSite | null;
+  /** Helicopter service shown to the client ("Bride/groom helicopter entry"); null for jets. */
+  service?: string | null;
   date: string;
   /** "09:00" – "12:00", either may be missing. */
   windowFrom: string | null;

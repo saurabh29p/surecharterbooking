@@ -1,7 +1,7 @@
 /** Weddings, legs and rates (BRIEF.md §2, §4): labels and the pure rules the API and desk share. */
 import { formatDate, type IsoDate } from './dates.js';
 import { formatINR, type Paise } from './money.js';
-import { CATEGORY_LABELS, type AircraftCategory } from './operator.js';
+import { CATEGORY_LABELS, isHelicopter, type AircraftCategory } from './operator.js';
 
 export type WeddingStatus =
   'ENQUIRY' | 'RATES_REQUESTED' | 'QUOTED' | 'SIGNED_AND_PAID' | 'FLYING' | 'DONE' | 'LOST';
@@ -74,12 +74,15 @@ export const MANUAL_WEDDING_MOVES: Partial<Record<WeddingStatus, readonly Weddin
   LOST: ['ENQUIRY'],
 };
 
+/** Size within a family: fixed-wing (turboprop … heavy jet) or helicopters (single, twin). */
 const SIZE: Record<AircraftCategory, number> = {
   TURBOPROP: 0,
   LIGHT: 1,
   MIDSIZE: 2,
   SUPER_MIDSIZE: 3,
   HEAVY: 4,
+  HELICOPTER_SINGLE: 0,
+  HELICOPTER_TWIN: 1,
 };
 
 export interface RankAircraft {
@@ -127,8 +130,10 @@ export function rankOperatorsForLeg(
   const out: RankedOperator[] = [];
   for (const op of operators) {
     const wanted = leg.category ? SIZE[leg.category] : -1;
+    // A helicopter leg needs helicopters; a jet leg (or one with no category yet) never gets one.
+    const heliLeg = isHelicopter(leg.category);
     const fit = op.aircraft
-      .filter((a) => SIZE[a.category] >= wanted)
+      .filter((a) => isHelicopter(a.category) === heliLeg && SIZE[a.category] >= wanted)
       .sort((a, b) => b.seats - a.seats);
     if (!fit.length) continue;
     // Greedy: biggest suitable jets first until everyone has a seat.
@@ -149,7 +154,7 @@ export function rankOperatorsForLeg(
         `Has ${exact.length} ${CATEGORY_LABELS[leg.category].toLowerCase()}${exact.length === 1 ? '' : 's'}`,
       );
     } else if (leg.category) {
-      reasons.push(`Larger jets than asked (${CATEGORY_LABELS[fit[0]!.category].toLowerCase()})`);
+      reasons.push(`Larger than asked (${CATEGORY_LABELS[fit[0]!.category].toLowerCase()})`);
     }
     if (jets === 1) {
       score += 10;

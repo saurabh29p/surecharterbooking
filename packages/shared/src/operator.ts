@@ -9,7 +9,14 @@ import { daysBetween, formatDate, type IsoDate } from './dates.js';
 export type OperatorStatus = 'FOUND' | 'VERIFIED' | 'EXPIRING_SOON' | 'BLOCKED';
 export type OperatorDocKind = 'NSOP' | 'INSURANCE' | 'OPERATOR_AGREEMENT';
 export type BlockKind = 'MANUAL' | 'EXPIRED';
-export type AircraftCategory = 'TURBOPROP' | 'LIGHT' | 'MIDSIZE' | 'SUPER_MIDSIZE' | 'HEAVY';
+export type AircraftCategory =
+  | 'TURBOPROP'
+  | 'LIGHT'
+  | 'MIDSIZE'
+  | 'SUPER_MIDSIZE'
+  | 'HEAVY'
+  | 'HELICOPTER_SINGLE'
+  | 'HELICOPTER_TWIN';
 
 export const EXPIRY_WARNING_DAYS = 30;
 /** The daily job alerts once at each of these (days before expiry). */
@@ -34,7 +41,13 @@ export const CATEGORY_LABELS: Record<AircraftCategory, string> = {
   MIDSIZE: 'Midsize jet',
   SUPER_MIDSIZE: 'Super-midsize jet',
   HEAVY: 'Heavy jet',
+  HELICOPTER_SINGLE: 'Helicopter (single engine)',
+  HELICOPTER_TWIN: 'Helicopter (twin engine)',
 };
+
+/** Helicopters can land at a venue or helipad and are priced per flying hour. */
+export const isHelicopter = (c: AircraftCategory | null | undefined): boolean =>
+  c === 'HELICOPTER_SINGLE' || c === 'HELICOPTER_TWIN';
 export const AIRCRAFT_CATEGORIES = Object.keys(CATEGORY_LABELS) as AircraftCategory[];
 
 export interface VerificationDoc {
