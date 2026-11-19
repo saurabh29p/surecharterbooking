@@ -32,11 +32,22 @@ Use this look; do NOT use a generic template or default theme.
 1. **Home**: hero ("Arrive as if the celebration has already begun." + subline + "Plan guest flights" and "Talk on WhatsApp"), trust strip (DGCA-licensed operators only · options and quote within the hour · one coordinator · GST invoice), wedding routes, how it works (3 steps), for planners, safety, final call to action, footer.
 2. **For planners & hotels** (most important page): what they get (commission on every booking, paid after the client pays; quotes in 1 hour under their name; backup aircraft; we never go around them), how it works, partner form.
 3. **Route pages (5)**: Delhi→Udaipur, Mumbai→Udaipur, Delhi→Jaipur, Delhi→Jodhpur, Mumbai→Goa. Each: approximate flight time, suitable jet categories and seats, how many guests per jet, typical wedding timings, FAQ, enquiry form. Price shown only as "quote within the hour" unless I provide real ranges.
-4. **Safety**: only DGCA NSOP-licensed operators; how we verify (permit, insurance, aircraft and crew details shared before you confirm); the pilot's decision is final.
-5. **How it works / FAQ**: pricing, payment (bank transfer), cancellation, guest IDs, luggage, how early to book, multi-city legs.
-6. **About**: ShubhJets is a service of Indicgems Exim LLP; GSTIN; registered address; real phone; who we are.
-7. **Contact**: WhatsApp, phone, email, form.
-8. **Privacy policy** (DPDP Act 2023) and **Terms**.
+4. **Helicopter arrivals**: see §4a. Linked from the home page ("Arrive by helicopter") and the route pages.
+5. **Safety**: only DGCA NSOP-licensed operators; how we verify (permit, insurance, aircraft and crew details shared before you confirm); the pilot's decision is final.
+6. **How it works / FAQ**: pricing, payment (bank transfer), cancellation, guest IDs, luggage, how early to book, multi-city legs.
+7. **About**: ShubhJets is a service of Indicgems Exim LLP; GSTIN; registered address; real phone; who we are.
+8. **Contact**: WhatsApp, phone, email, form.
+9. **Privacy policy** (DPDP Act 2023) and **Terms**.
+
+## 4a. Helicopter arrivals
+A page for the moment guests remember: the couple or family arriving at the venue by helicopter.
+- **Services:** venue transfer from the nearest airport, bride/groom helicopter entry, flower shower over the ceremony, and short joyrides for guests.
+- **How it works:** tell us the venue and date → we check the landing spot with a licensed operator → you get one price per service → we arrange the operator's landing-site check and help with local permissions → a weather backup plan is agreed before you confirm.
+- **Be honest about limits:** landing needs a suitable, cleared spot and the local permissions (district administration, police, venue); flower showers need separate approval; helicopters fly in daylight and good weather only, and the pilot's decision is final. Say "subject to permissions and weather" wherever a helicopter service is offered.
+- **Prices:** "quote within the hour", one price per service. Never show hourly rates.
+- **Imagery:** only helicopter photos we have rights to (operator photos with written permission and credit, or licensed stock); no registrations or operator logos without permission. Until then, an SVG illustration in the night-wedding style.
+- **Form:** the standard enquiry form plus a "Helicopter service" choice (transfer / entry / flower shower / joyrides) and the venue name, sent in the form's message (e.g. "Helicopter: flower shower at <venue>"); it reaches the desk with lead source and UTM like every other form, and I add the helicopter leg on the call.
+- **SEO:** target "helicopter for wedding entry", "helicopter flower shower wedding <city>", "helicopter transfer to <venue city>". FAQ schema for the honest-limits questions.
 
 ## 5. Conversion
 - Sticky WhatsApp button on every page (`https://wa.me/<number>?text=<pre-filled wedding enquiry>`), plus a click-to-call button on mobile.
@@ -60,7 +71,7 @@ Use this look; do NOT use a generic template or default theme.
 WhatsApp number, phone, email, GSTIN, registered address, domain (shubhjets.com / shubhjets.in), real photos/videos, real testimonials, Google Ads conversion ID.
 
 ## 9. Done when
-- [ ] All 8 pages built, responsive from 360 px to 1440 px, matching the look in §3.
+- [ ] All 9 pages built, responsive from 360 px to 1440 px, matching the look in §3.
 - [ ] Animations work and switch off with reduced motion.
 - [ ] Enquiry form and WhatsApp taps reach the desk API with lead source + UTM.
 - [ ] Lighthouse targets in §2 met on mobile.

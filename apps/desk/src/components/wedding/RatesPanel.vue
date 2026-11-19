@@ -1,10 +1,17 @@
 <script setup lang="ts">
-import { CATEGORY_LABELS, formatDateTime, formatDayMonth, formatINR } from '@shubhjets/shared';
+import {
+  CATEGORY_LABELS,
+  formatDateTime,
+  formatDayMonth,
+  formatINR,
+  siteLabel,
+} from '@shubhjets/shared';
 import { computed, onMounted, reactive, ref } from 'vue';
 import { api, ApiError } from '../../api/client';
 import { useAirports } from '../../composables/airports';
 import {
   blocker,
+  hourlyBreakdown,
   hoursText,
   type ComparisonRow,
   type LegComparison,
@@ -27,6 +34,12 @@ const props = defineProps<{ wedding: WeddingDetail }>();
 const emit = defineEmits<{ changed: [] }>();
 const toast = useToast();
 const { label: airportLabel } = useAirports();
+/** The venue or helipad when the leg has one, else the airport. */
+function endOf(legId: string, end: 'from' | 'to', iata: string): string {
+  const l = props.wedding.legs.find((x) => x.id === legId);
+  const site = end === 'from' ? l?.fromSite : l?.toSite;
+  return site ? siteLabel(site) : airportLabel(iata);
+}
 
 const data = ref<RatesOverview | null>(null);
 const requestOpen = ref(false);
@@ -214,11 +227,13 @@ const multiBlocker = (leg: LegComparison) => {
       >
         <div class="card-body">
           <h2 class="h3 mb-1">
-            Leg {{ leg.seq }}: {{ airportLabel(leg.from) }} → {{ airportLabel(leg.to) }}
+            Leg {{ leg.seq }}: {{ endOf(leg.legId, 'from', leg.from) }} →
+            {{ endOf(leg.legId, 'to', leg.to) }}
           </h2>
           <p class="small text-secondary mb-2">
             {{ formatDayMonth(leg.date) }} · {{ leg.pax }} guests<template v-if="leg.category">
-              · {{ CATEGORY_LABELS[leg.category].toLowerCase() }} or larger</template
+              · {{ CATEGORY_LABELS[leg.category].toLowerCase()
+              }}{{ leg.category.startsWith('HELICOPTER') ? '' : ' or larger' }}</template
             >
             <template v-if="leg.chosenSeats">
               ·
@@ -253,7 +268,8 @@ const multiBlocker = (leg: LegComparison) => {
                 <div class="small">
                   {{ row.aircraft || 'Aircraft not given'
                   }}<template v-if="row.seats"> · {{ row.seats }} seats</template>
-                  <template v-if="row.perSeat">
+                  <template v-if="row.pricing"> · {{ hourlyBreakdown(row.pricing) }}</template>
+                  <template v-else-if="row.perSeat">
                     · {{ formatINR(row.perSeat, { paise: 'never' }) }}/seat</template
                   >
                 </div>

@@ -1,4 +1,9 @@
-import type { AircraftCategory } from '@shubhjets/shared';
+import {
+  flyingTimeText,
+  formatINR,
+  type AircraftCategory,
+  type HourlyPricing,
+} from '@shubhjets/shared';
 
 export interface RateRequestRow {
   id: string;
@@ -21,6 +26,8 @@ export interface ReplyRow {
   category: AircraftCategory | null;
   seats: number | null;
   netRate: number;
+  /** Helicopter replies priced per flying hour (internal). */
+  pricing: HourlyPricing | null;
   legs: { legId: string; costShare: number }[];
   isPackage: boolean;
   inclusions: string | null;
@@ -43,6 +50,7 @@ export interface ComparisonRow {
   perSeat: number | null;
   isPackage: boolean;
   netRate: number;
+  pricing: HourlyPricing | null;
   validUntil: string | null;
   expired: boolean;
   replyHours: number | null;
@@ -103,4 +111,16 @@ export function blocker(row: ComparisonRow): string | null {
   if (row.expired) return 'Rate expired: ask them to confirm it';
   if (!row.seats) return 'Add the seats first';
   return null;
+}
+
+/** "₹2,40,000/hr × 30 min + positioning ₹60,000 + waiting ₹25,000" (internal only). */
+export function hourlyBreakdown(p: HourlyPricing): string {
+  const r = (v: number) => formatINR(v, { paise: 'never' });
+  return [
+    `${r(p.hourlyRate)}/hr × ${flyingTimeText(p.flyingMinutes)}`,
+    p.positioning ? `positioning ${r(p.positioning)}` : '',
+    p.waiting ? `waiting ${r(p.waiting)}` : '',
+  ]
+    .filter(Boolean)
+    .join(' + ');
 }

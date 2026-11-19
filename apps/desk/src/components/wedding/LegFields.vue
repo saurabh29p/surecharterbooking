@@ -1,22 +1,41 @@
 <script setup lang="ts">
-import { AIRCRAFT_CATEGORIES, CATEGORY_LABELS } from '@shubhjets/shared';
-import { useId } from 'vue';
+import {
+  AIRCRAFT_CATEGORIES,
+  CATEGORY_LABELS,
+  HELI_SERVICE_LABELS,
+  HELI_SERVICES,
+  isHelicopter,
+} from '@shubhjets/shared';
+import { computed, useId } from 'vue';
 import { useAirports } from '../../composables/airports';
 import type { LegDraft } from '../../composables/weddings';
 
-/** One leg's inputs: route, date, departure window (IST), passengers and aircraft size. */
+/**
+ * One leg's inputs: route, date, departure window (IST), passengers and aircraft size.
+ * Helicopter legs add the service and an optional venue or helipad at either end; the airport
+ * then stays as the nearest reference for the operator.
+ */
 const props = defineProps<{ errors?: Record<string, string>; prefix?: string }>();
 const leg = defineModel<LegDraft>('leg', { required: true });
 const { airports } = useAirports();
 const id = useId();
 const err = (k: string) => props.errors?.[`${props.prefix ?? ''}${k}`] ?? null;
+const heli = computed(() => !!leg.value.category && isHelicopter(leg.value.category));
+const JETS = AIRCRAFT_CATEGORIES.filter((c) => !isHelicopter(c));
+const HELIS = AIRCRAFT_CATEGORIES.filter((c) => isHelicopter(c));
+const ends = [
+  { key: 'fromSite', label: 'Starts at a venue or helipad' },
+  { key: 'toSite', label: 'Lands at a venue or helipad' },
+] as const;
 </script>
 
 <template>
   <div class="sj-leg">
     <div class="sj-leg__route">
       <div>
-        <label class="form-label small" :for="`${id}-from`">From</label>
+        <label class="form-label small" :for="`${id}-from`">{{
+          heli ? 'From (nearest airport)' : 'From'
+        }}</label>
         <select
           :id="`${id}-from`"
           v-model="leg.from"
@@ -30,7 +49,9 @@ const err = (k: string) => props.errors?.[`${props.prefix ?? ''}${k}`] ?? null;
       </div>
       <span class="sj-leg__arrow" aria-hidden="true">→</span>
       <div>
-        <label class="form-label small" :for="`${id}-to`">To</label>
+        <label class="form-label small" :for="`${id}-to`">{{
+          heli ? 'To (nearest airport)' : 'To'
+        }}</label>
         <select
           :id="`${id}-to`"
           v-model="leg.to"
@@ -91,12 +112,79 @@ const err = (k: string) => props.errors?.[`${props.prefix ?? ''}${k}`] ?? null;
     <div class="mt-2">
       <label class="form-label small" :for="`${id}-cat`">Aircraft size</label>
       <select :id="`${id}-cat`" v-model="leg.category" class="form-select">
-        <option value="">Any (let operators suggest)</option>
-        <option v-for="c in AIRCRAFT_CATEGORIES" :key="c" :value="c">
-          {{ CATEGORY_LABELS[c] }} or larger
-        </option>
+        <option value="">Any jet (let operators suggest)</option>
+        <optgroup label="Jets">
+          <option v-for="c in JETS" :key="c" :value="c">{{ CATEGORY_LABELS[c] }} or larger</option>
+        </optgroup>
+        <optgroup label="Helicopters">
+          <option v-for="c in HELIS" :key="c" :value="c">{{ CATEGORY_LABELS[c] }}</option>
+        </optgroup>
       </select>
     </div>
+    <template v-if="heli">
+      <div class="mt-2">
+        <label class="form-label small" :for="`${id}-svc`">What the helicopter is for</label>
+        <select
+          :id="`${id}-svc`"
+          v-model="leg.serviceType"
+          class="form-select"
+          :class="{ 'is-invalid': err('serviceType') }"
+        >
+          <option value="">Choose</option>
+          <option v-for="s in HELI_SERVICES" :key="s" :value="s">
+            {{ HELI_SERVICE_LABELS[s] }}
+          </option>
+        </select>
+        <div v-if="err('serviceType')" class="invalid-feedback d-block">
+          {{ err('serviceType') }}
+        </div>
+      </div>
+      <div v-for="e in ends" :key="e.key" class="sj-leg__site mt-2">
+        <label class="form-check mb-0">
+          <input v-model="leg[e.key].on" type="checkbox" class="form-check-input" />
+          <span class="form-check-label">{{ e.label }}</span>
+        </label>
+        <div v-if="leg[e.key].on" class="sj-leg__grid mt-2">
+          <div class="sj-leg__wide">
+            <label class="form-label small" :for="`${id}-${e.key}-name`"
+              >Venue or helipad name</label
+            >
+            <input
+              :id="`${id}-${e.key}-name`"
+              v-model="leg[e.key].name"
+              class="form-control"
+              placeholder="e.g. Palace lawn helipad"
+              :class="{ 'is-invalid': err(`${e.key}.name`) }"
+            />
+            <div v-if="err(`${e.key}.name`)" class="invalid-feedback d-block">
+              {{ err(`${e.key}.name`) }}
+            </div>
+          </div>
+          <div>
+            <label class="form-label small" :for="`${id}-${e.key}-city`">City</label>
+            <input :id="`${id}-${e.key}-city`" v-model="leg[e.key].city" class="form-control" />
+          </div>
+          <div>
+            <label class="form-label small" :for="`${id}-${e.key}-map`">Map link</label>
+            <input
+              :id="`${id}-${e.key}-map`"
+              v-model="leg[e.key].mapUrl"
+              type="url"
+              inputmode="url"
+              class="form-control"
+              placeholder="https://maps…"
+              :class="{ 'is-invalid': err(`${e.key}.mapUrl`) }"
+            />
+          </div>
+          <div v-if="err(`${e.key}.mapUrl`)" class="invalid-feedback d-block sj-leg__wide">
+            {{ err(`${e.key}.mapUrl`) }}
+          </div>
+        </div>
+      </div>
+      <p class="small text-secondary mt-2 mb-0">
+        The client sees one price for this service. Permissions are ticked on the wedding page.
+      </p>
+    </template>
   </div>
 </template>
 
@@ -116,5 +204,12 @@ const err = (k: string) => props.errors?.[`${props.prefix ?? ''}${k}`] ?? null;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 8px;
+}
+.sj-leg__wide {
+  grid-column: 1 / -1;
+}
+.sj-leg__site {
+  border-top: 1px solid var(--tblr-border-color);
+  padding-top: 8px;
 }
 </style>

@@ -55,8 +55,8 @@ Every morning the **Today** screen tells me exactly what to do next.
 - **Partner**: type (`PLANNER`, `HOTEL`, `OTHER`), firm, city, contact person, phone, email, website, Instagram, source link, status (`IMPORTED → CONTACTED → CALL_DONE → ACTIVE → INACTIVE`), commission basis (`MARGIN_SHARE` default 20% | `BOOKING_PERCENT`), referral agreement signed (y/n + file), next follow-up date, notes, activity log (called / no answer / sent deck / call booked / met). Computed: weddings this season, bookings value, commission owed.
 - **Client**: name, contact, linked partner (if any), consent record.
 - **Wedding**: code (W-101…), partner, client, venue city, wedding dates, lead source (`PARTNER`, `NETWORK`, `HOTEL`, `WEBSITE`, `GOOGLE_ADS`, `INSTAGRAM`, `OTHER` + UTM fields), status (`ENQUIRY → RATES_REQUESTED → QUOTED → SIGNED_AND_PAID → FLYING → DONE`, or `LOST` + reason), notes. Computed: total sell, total cost, margin ₹ and %, commission.
-- **Leg**: wedding, from, to, date, time window, passengers, aircraft category (turboprop / light / midsize / super-midsize / heavy), status, chosen operator + aircraft, net rate, sell price.
-- **RateResponse**: leg, operator, aircraft, net rate, inclusions/exclusions, validity, received at, raw text.
+- **Leg**: wedding, from, to, date, time window, passengers, aircraft category (turboprop / light / midsize / super-midsize / heavy, or helicopter single / twin engine), status, chosen operator + aircraft, net rate, sell price. Helicopter legs also have: a venue or helipad at either end (name, city, map link; the airport stays as the nearest reference), the service (transfer, bride/groom entry, flower shower, guest joyrides) and a permissions checklist (see 5.9).
+- **RateResponse**: leg, operator, aircraft, net rate, inclusions/exclusions, validity, received at, raw text. Helicopter replies may be priced per flying hour: rate per hour, flying time, positioning and waiting charges; the net rate is worked out from them.
 - **Operator**: legal name, brand, CIN, GSTIN, NSOP permit no. + issue/expiry, insurance expiry, bases, website, safety-disclosure URL, DGCA safety rank (+ checked date + source), contacts, bank details (encrypted), status (`FOUND → VERIFIED`, `EXPIRING_SOON` ≤30 days, `BLOCKED`), notes. Computed: average reply time, average price vs others, weddings done.
 - **Aircraft**: operator, type, registration, category, seats, year, base.
 - **OperatorDocument**: NSOP permit, insurance, signed operator agreement — file, expiry, "verified by me on <date>".
@@ -73,7 +73,7 @@ Email + password (argon2), rate-limited; admin seeded from env; session/JWT with
 
 ### 5.2 Hard rules (enforced in the API, each one tested)
 1. Only `VERIFIED` operators (permit + insurance verified by me, not expired, not blocked) can be chosen for a leg or quote.
-2. A wedding moves to `SIGNED_AND_PAID` only when client terms are signed AND required payment (default 100%, editable per wedding) is recorded.
+2. A wedding moves to `SIGNED_AND_PAID` only when client terms are signed AND required payment (default 100%, editable per wedding) is recorded AND every helicopter leg's permissions checklist is complete.
 3. Operator payouts and partner commission can be marked payable only after enough client money is received.
 4. Anything shared with a partner or client never contains operator net rates, operator bank details or my margin. Enforce in the PDF and share layer; test it.
 5. GST rates and SAC codes are settings (my CA sets them); warning banner until confirmed. Invoicing model (full-value invoice vs fee-only invoice) is a setting too, default full value; never hard-code tax.
@@ -123,6 +123,14 @@ Every document and draft message has one **Share** button, for partners, clients
 
 ### 5.8 Data protection (DPDP Act 2023 / Rules 2025)
 Consent record for every partner/client contact (notice version, time, source); guest ID files encrypted, access-logged, auto-deleted; export/delete a person's data (logged).
+
+### 5.9 Helicopters for weddings
+- **Categories:** helicopter (single engine) and helicopter (twin engine), next to the jet categories. A helicopter leg is only matched with helicopters, and a jet leg only with jets. Same rules as jets: only verified NSOP operators (rule 1), nothing internal on anything shared (rule 4).
+- **Where it lands:** either end of a helicopter leg can be a venue or helipad (name, city, map link) instead of the airport. The nearest airport is still recorded for the operator. Arrival may equal departure when a venue is named (e.g. Udaipur airport → palace helipad, or a joyride from the venue lawn).
+- **Services:** helicopter transfer, bride/groom helicopter entry, flower shower by helicopter, guest joyrides. The service name is shown on the quote, share page and invoice.
+- **Rates:** operators usually price per flying hour plus positioning (ferrying to the start and back) and waiting on the ground. The reply can be entered that way; the net rate = rate × flying time + positioning + waiting. The comparison shows the breakdown to me only. **The client sees one price per service**; the hourly rate, flying time, positioning and waiting are scanned for and blocked like every other internal figure.
+- **Rate request:** names the venue or helipad, the map link and nearest airport, and asks for the hourly rate, flying time, positioning and waiting, and whether the operator will check the landing site and help with local permissions.
+- **Permissions checklist** per helicopter leg: landing site confirmed with the operator; local permission in hand (district administration / police / venue); flower-shower approval (only for a flower shower); weather backup plan agreed. Each tick is saved and audited. Until a leg's list is complete it stays on **Today** (more urgent as the flight nears: within 7 days "Now", within 30 days "Today") and the wedding **cannot be confirmed**.
 
 ## 6. AI (Phase B, OpenRouter)
 

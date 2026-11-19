@@ -1,4 +1,13 @@
-import type { AircraftCategory, LeadSource, LegStatus, WeddingStatus } from '@shubhjets/shared';
+import {
+  isHelicopter,
+  type AircraftCategory,
+  type HeliChecks,
+  type HeliService,
+  type LeadSource,
+  type LegSite,
+  type LegStatus,
+  type WeddingStatus,
+} from '@shubhjets/shared';
 
 export interface WeddingCard {
   id: string;
@@ -37,6 +46,11 @@ export interface LegRow {
   category: AircraftCategory | null;
   status: LegStatus;
   notes: string | null;
+  /** Helicopter legs only. */
+  fromSite: LegSite | null;
+  toSite: LegSite | null;
+  serviceType: HeliService | null;
+  heliChecks: HeliChecks;
 }
 
 export interface WeddingDetail {
@@ -66,6 +80,14 @@ export interface WeddingDetail {
   legs: LegRow[];
 }
 
+/** A venue or helipad end as typed in a form. */
+export interface SiteDraft {
+  on: boolean;
+  name: string;
+  city: string;
+  mapUrl: string;
+}
+
 /** One leg as typed in a form (strings, so inputs can be empty while editing). */
 export interface LegDraft {
   from: string;
@@ -75,7 +97,16 @@ export interface LegDraft {
   windowTo: string;
   pax: string;
   category: AircraftCategory | '';
+  serviceType: HeliService | '';
+  fromSite: SiteDraft;
+  toSite: SiteDraft;
 }
+
+const noSite = (): SiteDraft => ({ on: false, name: '', city: '', mapUrl: '' });
+const siteDraft = (s: LegSite | null): SiteDraft =>
+  s ? { on: true, name: s.name, city: s.city ?? '', mapUrl: s.mapUrl ?? '' } : noSite();
+const siteBody = (s: SiteDraft): LegSite | null =>
+  s.on ? { name: s.name, city: s.city || null, mapUrl: s.mapUrl || null } : null;
 
 export const emptyLeg = (prev?: LegDraft): LegDraft => ({
   // A return leg is the usual next step: swap the route and keep the passengers.
@@ -86,6 +117,9 @@ export const emptyLeg = (prev?: LegDraft): LegDraft => ({
   windowTo: '',
   pax: prev?.pax ?? '',
   category: prev?.category ?? '',
+  serviceType: prev?.serviceType ?? '',
+  fromSite: prev ? { ...prev.toSite } : noSite(),
+  toSite: prev ? { ...prev.fromSite } : noSite(),
 });
 
 export const legToDraft = (l: LegRow): LegDraft => ({
@@ -96,17 +130,27 @@ export const legToDraft = (l: LegRow): LegDraft => ({
   windowTo: l.windowTo ?? '',
   pax: String(l.pax),
   category: l.category ?? '',
+  serviceType: l.serviceType ?? '',
+  fromSite: siteDraft(l.fromSite),
+  toSite: siteDraft(l.toSite),
 });
 
-export const legBody = (d: LegDraft) => ({
-  from: d.from,
-  to: d.to,
-  date: d.date,
-  windowFrom: d.windowFrom,
-  windowTo: d.windowTo,
-  pax: d.pax === '' ? undefined : Number(d.pax),
-  category: d.category || null,
-});
+export const legBody = (d: LegDraft) => {
+  // Venues, helipads and services only travel with a helicopter leg; switching to a jet clears them.
+  const heli = !!d.category && isHelicopter(d.category);
+  return {
+    from: d.from,
+    to: d.to,
+    date: d.date,
+    windowFrom: d.windowFrom,
+    windowTo: d.windowTo,
+    pax: d.pax === '' ? undefined : Number(d.pax),
+    category: d.category || null,
+    serviceType: heli ? d.serviceType || null : null,
+    fromSite: heli ? siteBody(d.fromSite) : null,
+    toSite: heli ? siteBody(d.toSite) : null,
+  };
+};
 
 /** Statuses shown as columns on the board, in order. */
 export const BOARD_COLUMNS: WeddingStatus[] = [

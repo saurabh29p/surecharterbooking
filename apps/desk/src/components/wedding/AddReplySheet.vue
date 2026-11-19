@@ -1,10 +1,15 @@
 <script setup lang="ts">
 import {
   CATEGORY_LABELS,
+  flyingTimeText,
   formatDayMonth,
   formatINR,
+  hourlyNet,
+  isHelicopter,
   istToInstant,
   parseRupees,
+  pricingProblem,
+  type HourlyPricing,
 } from '@shubhjets/shared';
 import { computed, reactive, ref, watch } from 'vue';
 import { api, ApiError } from '../../api/client';
@@ -16,7 +21,11 @@ import SjButton from '../SjButton.vue';
 import SjField from '../SjField.vue';
 import SjSheet from '../SjSheet.vue';
 
-/** Record an operator's reply: aircraft, net rate, the legs it covers (a package is split across them), validity. */
+/**
+ * Record an operator's reply: aircraft, net rate, the legs it covers (a package is split across
+ * them), validity. Helicopter replies can be entered as the operator prices them: per flying hour,
+ * plus positioning and waiting; the net rate is then worked out (and stays internal).
+ */
 const props = defineProps<{
   open: boolean;
   weddingId: string;
@@ -45,6 +54,7 @@ const form = reactive({
   cancellationTerms: '',
   rawText: '',
 });
+const hourly = reactive({ on: false, rate: '', minutes: '', positioning: '', waiting: '' });
 
 watch(
   () => props.open,
@@ -65,6 +75,7 @@ watch(
       cancellationTerms: '',
       rawText: '',
     });
+    Object.assign(hourly, { on: false, rate: '', minutes: '', positioning: '', waiting: '' });
     if (!operators.value.length) {
       try {
         operators.value = await api<OperatorListItem[]>(
@@ -109,6 +120,33 @@ watch(
   },
 );
 
+/** Any chosen leg a helicopter leg? Then hourly pricing is offered (and switched on by default). */
+const heliReply = computed(() =>
+  props.legs.some((l) => form.legIds.includes(l.id) && l.category && isHelicopter(l.category)),
+);
+watch(heliReply, (h) => (hourly.on = h), { immediate: true });
+
+const rupees = (v: string) => (v.trim() ? parseRupees(v) : 0);
+/** The hourly pricing as typed, or an error message. */
+const pricing = computed((): HourlyPricing | string => {
+  try {
+    const p = {
+      hourlyRate: rupees(hourly.rate),
+      flyingMinutes: Number(hourly.minutes) || 0,
+      positioning: rupees(hourly.positioning),
+      waiting: rupees(hourly.waiting),
+    };
+    return pricingProblem(p) ?? p;
+  } catch {
+    return 'Enter amounts in rupees, e.g. 2,40,000';
+  }
+});
+const hourlyText = computed(() =>
+  typeof pricing.value === 'string'
+    ? null
+    : `${flyingTimeText(pricing.value.flyingMinutes)} flying → net ${formatINR(hourlyNet(pricing.value), { paise: 'never' })}`,
+);
+
 const preview = computed(() => {
   try {
     const net = parseRupees(form.netRate);
@@ -121,12 +159,21 @@ const preview = computed(() => {
 
 async function save() {
   errors.value = {};
-  let netRate: number;
-  try {
-    netRate = parseRupees(form.netRate);
-  } catch {
-    errors.value = { netRate: 'Enter the net rate in rupees, e.g. 9,50,000' };
-    return;
+  let netRate: number | undefined;
+  let hourlyPricing: HourlyPricing | null = null;
+  if (hourly.on && heliReply.value) {
+    if (typeof pricing.value === 'string') {
+      errors.value = { pricing: pricing.value };
+      return;
+    }
+    hourlyPricing = pricing.value;
+  } else {
+    try {
+      netRate = parseRupees(form.netRate);
+    } catch {
+      errors.value = { netRate: 'Enter the net rate in rupees, e.g. 9,50,000' };
+      return;
+    }
   }
   saving.value = true;
   try {
@@ -138,6 +185,7 @@ async function save() {
         aircraftText: form.aircraftId ? null : form.aircraftText,
         seats: form.seats ? Number(form.seats) : null,
         netRate,
+        pricing: hourlyPricing,
         legIds: form.legIds,
         validUntil: form.validDate
           ? istToInstant(form.validDate, form.validTime || '23:59').toISOString()
@@ -212,7 +260,7 @@ async function save() {
             :server-error="errors.seats"
           />
         </div>
-        <div class="flex-fill">
+        <div v-if="!(hourly.on && heliReply)" class="flex-fill">
           <SjField
             v-model="form.netRate"
             label="Net rate (₹, before GST)"
@@ -222,14 +270,58 @@ async function save() {
           />
         </div>
       </div>
+      <fieldset v-if="heliReply" class="mb-3 sj-hourly">
+        <label class="form-check">
+          <input v-model="hourly.on" type="checkbox" class="form-check-input" />
+          <span class="form-check-label">Priced per flying hour</span>
+        </label>
+        <div v-if="hourly.on" class="sj-hourly__grid">
+          <SjField
+            v-model="hourly.rate"
+            label="Rate per flying hour (₹)"
+            inputmode="decimal"
+            placeholder="e.g. 2,40,000"
+          />
+          <SjField
+            v-model="hourly.minutes"
+            label="Flying time (minutes)"
+            inputmode="numeric"
+            placeholder="e.g. 45"
+          />
+          <SjField
+            v-model="hourly.positioning"
+            label="Positioning (₹)"
+            inputmode="decimal"
+            optional
+            placeholder="Ferry to the start and back"
+          />
+          <SjField
+            v-model="hourly.waiting"
+            label="Waiting (₹)"
+            inputmode="decimal"
+            optional
+            placeholder="Standby on the ground"
+          />
+        </div>
+        <div
+          v-if="hourly.on && (errors.pricing || errors.netRate)"
+          class="invalid-feedback d-block"
+        >
+          {{ errors.pricing ?? errors.netRate }}
+        </div>
+        <div v-else-if="hourly.on && hourlyText" class="form-hint">{{ hourlyText }}</div>
+        <div v-if="hourly.on" class="form-hint">
+          The client sees one price for the service; these figures stay internal.
+        </div>
+      </fieldset>
 
       <fieldset class="mb-3">
         <legend class="form-label">Legs this rate covers</legend>
         <label v-for="l in legs" :key="l.id" class="form-check">
           <input v-model="form.legIds" class="form-check-input" type="checkbox" :value="l.id" />
           <span class="form-check-label"
-            >Leg {{ l.seq }}: {{ l.fromIata }} → {{ l.toIata }},
-            {{ formatDayMonth(l.flightDate) }}</span
+            >Leg {{ l.seq }}: {{ l.fromSite?.name ?? l.fromIata }} →
+            {{ l.toSite?.name ?? l.toIata }}, {{ formatDayMonth(l.flightDate) }}</span
           >
         </label>
         <div v-if="errors.legIds || errors.costShares" class="invalid-feedback d-block">
@@ -300,3 +392,12 @@ async function save() {
     </form>
   </SjSheet>
 </template>
+
+<style scoped>
+.sj-hourly__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  column-gap: 8px;
+  margin-top: 8px;
+}
+</style>

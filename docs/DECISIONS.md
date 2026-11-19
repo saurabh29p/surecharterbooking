@@ -212,3 +212,21 @@ Measured on the deployed test app as a mid-range Android on 4G (Lighthouse's mob
 - **Uploads are checked by their real bytes** (PDF, PNG, JPEG, WebP only; SVG refused because it can carry scripts), with a size limit per purpose. Each file is fingerprinted (SHA-256).
 - **Guest ID files are encrypted by the app before upload**, so even the bucket never holds them in readable form. They are served only through the API, and every opening is logged.
 - **Download links expire after 5 minutes.**
+
+## Helicopters (Part 3, Nov 2026)
+- **A helicopter leg keeps its airports.** `from`/`to` stay as the nearest airports (the operator plans from them);
+  a venue or helipad at either end is stored next to them (name, city, map link). Same airport at both ends is
+  allowed only when a venue is named.
+- **Helicopter and jet legs never mix:** suggestions for a helicopter leg list only operators with a helicopter of at
+  least that type (twin engine is "larger" than single), and jet legs never get helicopters.
+- **Hourly pricing is stored with the reply** (rate per hour, flying minutes, positioning, waiting, all paise ex-GST);
+  the net rate is worked out on the server and a different total is refused. These four figures are added to the
+  rule-4 scan, so the quote PDF, share page, client terms and invoice are blocked if any of them would appear.
+- **The client sees one price per service**, labelled with the service ("Bride/groom helicopter entry") and the
+  venue or helipad name; the invoice line reads the same way.
+- **Permissions block confirmation** (rule 2 now has a fourth condition) and stay on Today until done. They can still
+  be ticked after the wedding is confirmed (e.g. a weather plan agreed later on a second helicopter leg added before
+  confirming); the checklist hides once the leg is flown or cancelled.
+- **Not in the demo seed:** the fake seed still has jets only, so existing tests and the demo stay stable. Add a
+  helicopter to an operator's fleet (Operators → aircraft → Helicopter) to try it.
+

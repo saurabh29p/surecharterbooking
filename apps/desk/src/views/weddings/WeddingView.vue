@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import {
   CATEGORY_LABELS,
+  HELI_SERVICE_LABELS,
   LEAD_SOURCES,
   LEAD_SOURCE_LABELS,
   LEG_STATUS_LABELS,
   formatDate,
+  isHelicopter,
+  siteLabel,
   toIstDate,
   type LeadSource,
+  type LegSite,
 } from '@shubhjets/shared';
 import { computed, defineAsyncComponent, onMounted, reactive, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -17,6 +21,7 @@ import SjConfirm from '../../components/SjConfirm.vue';
 import SjField from '../../components/SjField.vue';
 import SjSheet from '../../components/SjSheet.vue';
 import SjSkeleton from '../../components/SjSkeleton.vue';
+import HeliChecklist from '../../components/wedding/HeliChecklist.vue';
 import LegFields from '../../components/wedding/LegFields.vue';
 import WeddingStatusBadge from '../../components/wedding/WeddingStatusBadge.vue';
 import { useAirports } from '../../composables/airports';
@@ -44,6 +49,9 @@ const route = useRoute();
 const router = useRouter();
 const toast = useToast();
 const { label: airportLabel } = useAirports();
+/** A venue or helipad when the leg has one, else the airport. */
+const endLabel = (iata: string, site: LegSite | null) =>
+  site ? siteLabel(site) : airportLabel(iata);
 const id = String(route.params.id);
 const w = ref<WeddingDetail | null>(null);
 const busy = ref<string | null>(null);
@@ -320,46 +328,59 @@ async function reopen() {
             <p v-if="!w.legs.length" class="text-secondary mb-0">
               No legs yet. Add the flights the guests need.
             </p>
-            <div v-for="l in w.legs" :key="l.id" class="sj-row">
-              <button type="button" class="sj-row__main" :disabled="locked" @click="openLeg(l)">
-                <span class="fw-bold d-block"
-                  >Leg {{ l.seq }}: {{ airportLabel(l.fromIata) }} →
-                  {{ airportLabel(l.toIata) }}</span
+            <template v-for="l in w.legs" :key="l.id">
+              <div class="sj-row">
+                <button type="button" class="sj-row__main" :disabled="locked" @click="openLeg(l)">
+                  <span class="fw-bold d-block"
+                    >Leg {{ l.seq }}: {{ endLabel(l.fromIata, l.fromSite) }} →
+                    {{ endLabel(l.toIata, l.toSite) }}</span
+                  >
+                  <span v-if="l.serviceType" class="small d-block">{{
+                    HELI_SERVICE_LABELS[l.serviceType]
+                  }}</span>
+                  <span class="small text-secondary">
+                    {{ formatDate(l.flightDate)
+                    }}<template v-if="l.windowFrom">
+                      · {{ l.windowFrom
+                      }}<template v-if="l.windowTo">–{{ l.windowTo }}</template></template
+                    >
+                    · {{ l.pax }} passengers<template v-if="l.category">
+                      · {{ CATEGORY_LABELS[l.category].toLowerCase() }}</template
+                    >
+                  </span>
+                </button>
+                <SjButton
+                  v-if="l.status === 'CONFIRMED' && l.flightDate <= today"
+                  size="sm"
+                  :loading="busy === `flown-${l.id}`"
+                  loading-label="Saving…"
+                  @click="markFlown(l)"
+                  >Mark flown</SjButton
                 >
-                <span class="small text-secondary">
-                  {{ formatDate(l.flightDate)
-                  }}<template v-if="l.windowFrom">
-                    · {{ l.windowFrom
-                    }}<template v-if="l.windowTo">–{{ l.windowTo }}</template></template
-                  >
-                  · {{ l.pax }} passengers<template v-if="l.category">
-                    · {{ CATEGORY_LABELS[l.category].toLowerCase() }}</template
-                  >
-                </span>
-              </button>
-              <SjButton
-                v-if="l.status === 'CONFIRMED' && l.flightDate <= today"
-                size="sm"
-                :loading="busy === `flown-${l.id}`"
-                loading-label="Saving…"
-                @click="markFlown(l)"
-                >Mark flown</SjButton
-              >
-              <span
-                v-else
-                class="sj-badge"
-                :class="l.status === 'FLOWN' ? 'sj-badge--gold' : 'sj-badge--muted'"
-                >{{ l.status === 'FLOWN' ? '✓ ' : '' }}{{ LEG_STATUS_LABELS[l.status] }}</span
-              >
-              <SjButton
-                v-if="!locked"
-                variant="ghost"
-                size="sm"
-                :aria-label="`Remove leg ${l.seq}`"
-                @click="deleteLeg = l"
-                >✕</SjButton
-              >
-            </div>
+                <span
+                  v-else
+                  class="sj-badge"
+                  :class="l.status === 'FLOWN' ? 'sj-badge--gold' : 'sj-badge--muted'"
+                  >{{ l.status === 'FLOWN' ? '✓ ' : '' }}{{ LEG_STATUS_LABELS[l.status] }}</span
+                >
+                <SjButton
+                  v-if="!locked"
+                  variant="ghost"
+                  size="sm"
+                  :aria-label="`Remove leg ${l.seq}`"
+                  @click="deleteLeg = l"
+                  >✕</SjButton
+                >
+              </div>
+              <HeliChecklist
+                v-if="
+                  l.category &&
+                  isHelicopter(l.category) &&
+                  !['FLOWN', 'CANCELLED'].includes(l.status)
+                "
+                :leg="l"
+              />
+            </template>
           </div>
         </section>
 
