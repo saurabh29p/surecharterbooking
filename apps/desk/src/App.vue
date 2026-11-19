@@ -33,7 +33,9 @@ const isActive = (to: string) => {
   <!-- Nothing until the router has resolved the first route (avoids a flash of the app shell on /login). -->
   <template v-if="!route.matched.length" />
   <template v-else-if="route.meta.bare">
-    <RouterView />
+    <main id="main" tabindex="-1">
+      <RouterView />
+    </main>
   </template>
   <template v-else>
     <header class="sj-topbar">

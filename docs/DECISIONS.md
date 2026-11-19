@@ -106,6 +106,31 @@ Answers to the build questions (17 Nov 2026) and other choices made during the b
 - **Guest IDs** are encrypted by the app, opened only through logged links, and deleted by a daily job (03:30 IST)
   N days after the last flight (Settings, default 30). "ID received" stays as a fact after the file is gone.
 
+## Speed on a phone (after the first deploy)
+Measured on the deployed test app as a mid-range Android on 4G (Lighthouse's mobile profile: 150 ms latency,
+1.6 Mbps, CPU 4x slower), before and after:
+
+| | Before | After |
+| --- | --- | --- |
+| Login page (Lighthouse) | perf 96, first paint 1.8 s, LCP 2.3 s, 225 KB (CSS 107 KB) | perf 98, first paint 1.5 s, LCP 2.1 s, 158 KB (CSS 35 KB) |
+| Open the app again → Today on screen | 1.6 s | 0.6–1.3 s |
+| Switch tab: Weddings / Partners / Operators | 0.96 / 1.03 / 0.92 s | 0.25 / 0.12 / 0.16 s (after a moment on Today) |
+| Tap response (INP) | 64 ms | 56–104 ms |
+
+- **Screens open from the last saved copy** (memory, then this phone's IndexedDB) and refresh in the background:
+  Today, the boards and lists, and the first paint of a wedding, partner or operator page. Only those views are
+  kept; nothing like bank details or guest IDs. Everything is wiped when the session ends.
+- **Prefetch:** right after Today paints, the main tabs' code and data load; touching a tab starts loading its
+  code before the tap ends.
+- **Parallel start:** the login check starts from `index.html` while the app's code downloads; Today's screen
+  ships with the app.
+- **CSS:** production builds keep only the Tabler rules the desk uses (our own styles are never trimmed). All 31
+  screens were compared before/after at 360 px: identical apart from changing data.
+- **API:** gzip/brotli for answers over 1 KB (never login or session answers, so a token never shares a
+  compressed response with user input), 65 s keep-alive, and the Railway service never sleeps.
+- A service worker for offline opening was left out on purpose: hashed files are cached for a year by the
+  browser already, and a stale cached app after a deploy is a worse failure than one extra request.
+
 ## Build choices (step 14)
 - **DPDP requests** are on each client and partner page ("Their data"). **Download their data** gives a JSON file
   of everything held about them: details, consents, enquiries, documents sent and acceptances, their weddings,
