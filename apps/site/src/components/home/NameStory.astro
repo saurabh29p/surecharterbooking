@@ -1,0 +1,74 @@
+---
+/** Why "Vaanika": the name story with the lotus mark (mockup). */
+import mark from '../../assets/logo/vaanika-mark-colour-for-dark-bg.svg?url';
+---
+
+<section class="name" aria-labelledby="name-h">
+  <div class="container name__inner reveal">
+    <img src={mark} width="150" height="150" alt="" class="name__mark" loading="lazy" />
+    <p class="eyebrow name__eyebrow">Why “Vaanika”</p>
+    <h2 id="name-h" class="name__title display">
+      The vaani of Saraswati, the shakti of Kalika, and the gold of Lakshmi.
+    </h2>
+    <p class="lead name__lead">
+      Three petals in our lotus, one for each. Clear words, a protected journey, and an auspicious
+      beginning to a new life together.
+    </p>
+    <a class="name__link" href="/about/">
+      The story behind the name
+    </a>
+  </div>
+</section>
+
+<style>
+  .name {
+    padding: 130px 0;
+  }
+
+  .name__inner {
+    max-width: 980px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .name__mark {
+    width: 140px;
+    height: 140px;
+  }
+
+  .name__eyebrow {
+    margin-top: 34px;
+  }
+
+  .name__title {
+    margin-top: 16px;
+    font-size: clamp(28px, 3.6vw, 48px);
+    line-height: 1.25;
+    text-wrap: balance;
+  }
+
+  .name__lead {
+    margin-top: 22px;
+    max-width: 640px;
+    font-size: 17px;
+  }
+
+  .name__link {
+    margin-top: 22px;
+    font-weight: 600;
+    font-size: 15px;
+  }
+
+  @media (max-width: 767px) {
+    .name {
+      padding: 80px 0;
+    }
+
+    .name__mark {
+      width: 104px;
+      height: 104px;
+    }
+  }
+</style>

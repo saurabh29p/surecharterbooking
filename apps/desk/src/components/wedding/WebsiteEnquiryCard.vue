@@ -24,6 +24,7 @@ interface Enquiry {
   message: string | null;
   page: string | null;
   gclid: boolean;
+  marketing: boolean;
 }
 
 /** What the website form sent, exactly as typed, so the first call starts from their words. */
@@ -72,6 +73,14 @@ onMounted(async () => {
           <dt>Message</dt>
           <dd class="sj-web__msg">{{ e.message }}</dd>
         </template>
+        <dt>Messages</dt>
+        <dd>
+          {{
+            e.marketing
+              ? 'Agreed to news and offers too'
+              : 'About this enquiry only (no news or offers)'
+          }}
+        </dd>
         <template v-if="e.page">
           <dt>Page</dt>
           <dd>

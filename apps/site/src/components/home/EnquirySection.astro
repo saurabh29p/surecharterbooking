@@ -1,0 +1,129 @@
+---
+/** "Your wedding, from above." with the enquiry form over the fairy-lights photo (mockup). */
+import { Image } from 'astro:assets';
+import photo from '../../assets/photos/fairy-lights.jpg';
+import { whatsappLink } from '../../config/site';
+import EnquiryForm from '../EnquiryForm.astro';
+import Icon from '../Icon.astro';
+
+interface Props {
+  pageName: string;
+}
+
+const { pageName } = Astro.props;
+---
+
+<section id="enquire" class="enquire" aria-labelledby="enquire-h">
+  <div class="enquire__photo" aria-hidden="true">
+    <Image src={photo} alt="" widths={[640, 1024, 1600]} sizes="100vw" loading="lazy" />
+  </div>
+  <div class="enquire__shade" aria-hidden="true"></div>
+  <div class="container enquire__inner">
+    <div class="enquire__text reveal">
+      <h2 id="enquire-h" class="enquire__title display">
+        Your wedding, from above.
+      </h2>
+      <p class="enquire__lead">
+        Tell us the date and the cities. A coordinator replies with options and one clear price.
+      </p>
+      <a
+        class="btn btn--gold btn--lg enquire__wa"
+        href={whatsappLink(pageName)}
+        data-tap="WHATSAPP"
+      >
+        <Icon name="chat" size={20} stroke={2} />
+        Chat on WhatsApp
+      </a>
+    </div>
+    <div class="enquire__form">
+      <EnquiryForm id="home-enquiry" pageName={pageName} />
+    </div>
+  </div>
+</section>
+
+<style>
+  .enquire {
+    position: relative;
+    padding: 150px 0;
+    overflow: hidden;
+  }
+
+  .enquire__photo,
+  .enquire__shade {
+    position: absolute;
+    inset: 0;
+  }
+
+  .enquire__photo :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .enquire__shade {
+    background: linear-gradient(
+      90deg,
+      rgba(11, 16, 32, 0.9) 0%,
+      rgba(11, 16, 32, 0.74) 50%,
+      rgba(11, 16, 32, 0.58) 100%
+    );
+  }
+
+  .enquire__inner {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 56px;
+    align-items: center;
+  }
+
+  .enquire__text {
+    flex: 1 1 440px;
+    min-width: 0;
+  }
+
+  .enquire__title {
+    font-size: clamp(40px, 5.4vw, 80px);
+    line-height: 1.02;
+  }
+
+  .enquire__lead {
+    margin-top: 24px;
+    max-width: 480px;
+    font-size: 18px;
+    line-height: 1.7;
+    color: var(--text-2);
+  }
+
+  .enquire__wa {
+    margin-top: 32px;
+  }
+
+  .enquire__form {
+    flex: 1 1 460px;
+    min-width: 0;
+  }
+
+  @media (max-width: 767px) {
+    .enquire {
+      padding: 80px 0;
+    }
+
+    .enquire__inner {
+      gap: 32px;
+    }
+
+    .enquire__text,
+    .enquire__form {
+      flex-basis: 100%;
+    }
+
+    .enquire__lead {
+      font-size: 16.5px;
+    }
+
+    .enquire__shade {
+      background: rgba(11, 16, 32, 0.86);
+    }
+  }
+</style>

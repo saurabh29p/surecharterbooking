@@ -1,0 +1,176 @@
+---
+/** Beyond weddings: private & business charters (mockup). No named or pictured clients. */
+import { Image } from 'astro:assets';
+import photo from '../../assets/photos/private-jet-vip.jpg';
+import Icon from '../Icon.astro';
+
+const POINTS = [
+  'Same-day and short notice',
+  'Multi-city and round trips',
+  'Names and plans kept private',
+  'GST invoice for your company',
+];
+---
+
+<section id="private" class="beyond" aria-labelledby="private-h">
+  <div class="beyond__text">
+    <div class="beyond__copy reveal">
+      <p class="eyebrow">Beyond weddings</p>
+      <h2 id="private-h" class="h2 beyond__title">
+        Private &amp; business charters. Discreet by default.
+      </h2>
+      <p class="lead beyond__lead">
+        Business travel, VIP movement, events and private trips — with the same verified operators
+        and one written price.
+      </p>
+      <ul class="beyond__points">
+        {POINTS.map((p) => (
+          <li>{p}</li>
+        ))}
+      </ul>
+      <a class="btn btn--outline btn--lg beyond__btn" href="/private-charter/">
+        <Icon name="lock" size={18} />
+        Talk to us privately
+      </a>
+    </div>
+  </div>
+  <figure class="beyond__photo">
+    <Image
+      src={photo}
+      alt="Tail and engine of a private jet on a runway at dusk"
+      widths={[480, 720, 960, 1400]}
+      sizes="(max-width: 999px) 100vw, 50vw"
+      loading="lazy"
+    />
+    <div class="beyond__shade" aria-hidden="true"></div>
+    <figcaption class="illustrative beyond__ill">Illustrative</figcaption>
+  </figure>
+</section>
+
+<style>
+  .beyond {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    min-height: 540px;
+    background: var(--midnight-deep);
+    border-bottom: 1px solid var(--line-faint);
+    overflow: hidden;
+  }
+
+  .beyond__text {
+    flex: 1 1 520px;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    padding: 96px var(--gutter) 96px
+      max(var(--gutter), calc((100% - var(--container)) / 2 + var(--gutter)));
+  }
+
+  @media (min-width: 1000px) {
+    .beyond__text {
+      padding-left: max(var(--gutter), calc((100vw - var(--container)) / 2 + var(--gutter)));
+    }
+  }
+
+  .beyond__copy {
+    max-width: 540px;
+  }
+
+  .beyond__title {
+    font-size: clamp(32px, 4vw, 54px);
+  }
+
+  .beyond__lead {
+    margin-top: 20px;
+    font-size: 17px;
+  }
+
+  .beyond__points {
+    margin-top: 26px;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 20px;
+    font-size: 15px;
+    color: var(--ivory-2);
+  }
+
+  .beyond__points li {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .beyond__points li::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--gold);
+    flex: none;
+  }
+
+  .beyond__btn {
+    margin-top: 34px;
+  }
+
+  .beyond__photo {
+    flex: 1 1 480px;
+    min-width: 0;
+    position: relative;
+    min-height: 420px;
+  }
+
+  .beyond__photo :global(img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 65% center;
+  }
+
+  .beyond__shade {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      #070a14 0%,
+      rgba(7, 10, 20, 0.35) 30%,
+      rgba(7, 10, 20, 0) 60%
+    );
+  }
+
+  .beyond__ill {
+    position: absolute;
+    right: var(--gutter);
+    bottom: 18px;
+  }
+
+  @media (max-width: 999px) {
+    .beyond {
+      flex-direction: column-reverse;
+    }
+
+    .beyond__text {
+      padding: 56px var(--gutter) 80px;
+    }
+
+    .beyond__photo {
+      flex: none;
+      min-height: 260px;
+    }
+
+    .beyond__shade {
+      background: linear-gradient(0deg, #070a14 0%, rgba(7, 10, 20, 0) 50%);
+    }
+  }
+
+  @media (max-width: 479px) {
+    .beyond__points {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

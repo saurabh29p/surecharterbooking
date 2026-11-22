@@ -3,3 +3,5 @@ dist/
 coverage/
 *.md
 design/
+.astro/
+apps/site/public/video/

@@ -172,6 +172,7 @@ describe('website enquiries (public endpoints)', () => {
       page: '/routes/delhi-to-udaipur',
       gclid: true,
       repeats: 1,
+      marketing: false,
     });
 
     now = new Date(NOW.getTime() + 25 * HOUR);
@@ -181,6 +182,24 @@ describe('website enquiries (public endpoints)', () => {
     // Same family: one client, consent recorded each time.
     expect(new Set(all.map((x: { client_id: string }) => x.client_id)).size).toBe(1);
     expect(await t.ds.query(`SELECT count(*)::int AS n FROM consent`)).toEqual([{ n: 2 }]);
+  });
+
+  it('keeps the separate news-and-offers choice with the enquiry', async () => {
+    await post('enquiries', { ...family, marketingConsent: true }).expect(201);
+    const [e] = await t.ds.query(`SELECT payload FROM enquiry`);
+    expect(e.payload.marketingConsent).toBe(true);
+    const [w] = await weddings();
+    const block = (
+      await t
+        .http()
+        .get(`/api/weddings/${w.id}/enquiry`)
+        .set('authorization', `Bearer ${token}`)
+        .expect(200)
+    ).body.enquiry;
+    expect(block.marketing).toBe(true);
+    // It is its own choice: a non-boolean is refused, not read as consent.
+    const bad = await post('enquiries', { ...family, marketingConsent: 'yes' }).expect(400);
+    expect(bad.body.fields).toHaveProperty('marketingConsent');
   });
 
   it('matches an existing client by phone and fills a missing email', async () => {

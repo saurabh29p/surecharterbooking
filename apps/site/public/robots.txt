@@ -1,0 +1,3 @@
+# Preview: nothing is indexed until launch (WEBSITE.md §4). The launch robots.txt is in WEBSITE.md §9.
+User-agent: *
+Disallow: /

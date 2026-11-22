@@ -1,0 +1,88 @@
+---
+/** FAQ accordion (native <details>, works without JavaScript). Answers come from Markdown. */
+import { render, type CollectionEntry } from 'astro:content';
+
+interface Props {
+  items: CollectionEntry<'faq'>[];
+}
+
+const rendered = await Promise.all(
+  Astro.props.items.map(async (item) => ({ item, Content: (await render(item)).Content })),
+);
+---
+
+<div class="faq">
+  {rendered.map(({ item, Content }) => (
+    <details class="faq__item">
+      <summary class="faq__q">
+        {item.data.question}
+        <span class="faq__plus" aria-hidden="true">
+          +
+        </span>
+      </summary>
+      <div class="faq__a">
+        <Content />
+      </div>
+    </details>
+  ))}
+</div>
+
+<style>
+  .faq {
+    border-top: 1px solid var(--line);
+  }
+
+  .faq__item {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .faq__q {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    min-height: 44px;
+    padding: 20px 0;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+    transition: color 0.15s ease;
+  }
+
+  .faq__q::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq__q:hover {
+    color: var(--gold-light);
+  }
+
+  .faq__plus {
+    font-size: 26px;
+    color: var(--gold);
+    line-height: 1;
+    transition: transform 0.2s ease;
+  }
+
+  details[open] .faq__plus {
+    transform: rotate(45deg);
+  }
+
+  .faq__a {
+    padding: 0 0 22px;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--text-3);
+  }
+
+  .faq__a :global(p + p) {
+    margin-top: 10px;
+  }
+
+  @media (max-width: 767px) {
+    .faq__q {
+      font-size: 16.5px;
+    }
+  }
+</style>

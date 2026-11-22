@@ -1,0 +1,63 @@
+---
+/** For wedding planners band (mockup). Commission described in words, no rate (default). */
+---
+
+<section id="planners" class="planners" aria-labelledby="planners-h">
+  <div class="container planners__inner reveal">
+    <div class="planners__text">
+      <p class="eyebrow">For wedding planners</p>
+      <h2 id="planners-h" class="h2 planners__title">
+        Add a sky arrival to your weddings. You stay the host.
+      </h2>
+      <p class="lead planners__lead">
+        We handle operators, permissions, timings and paperwork, under your name with your client.
+        You earn a commission on every confirmed flight, paid when the client’s payment reaches us.
+      </p>
+    </div>
+    <a class="btn btn--ivory btn--lg" href="/for-planners/">
+      Become a partner planner
+    </a>
+  </div>
+</section>
+
+<style>
+  .planners {
+    padding: 110px 0;
+    background: linear-gradient(135deg, #1a1530, #0e1328 60%);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .planners__inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .planners__text {
+    flex: 1 1 560px;
+    min-width: 0;
+  }
+
+  .planners__title {
+    font-size: clamp(30px, 3.8vw, 52px);
+    line-height: 1.1;
+  }
+
+  .planners__lead {
+    margin-top: 20px;
+    max-width: 620px;
+    font-size: 17px;
+  }
+
+  @media (max-width: 767px) {
+    .planners {
+      padding: 72px 0;
+    }
+
+    .planners__inner {
+      gap: 28px;
+    }
+  }
+</style>

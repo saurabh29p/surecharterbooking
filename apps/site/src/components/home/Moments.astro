@@ -1,0 +1,140 @@
+---
+/** Three moments (mockup: THE ARRIVAL). Stock photos, so each is captioned "Illustrative". */
+import { Image } from 'astro:assets';
+import jet from '../../assets/photos/private-jet-sunset.jpg';
+import cabin from '../../assets/photos/jet-cabin.jpg';
+import marigold from '../../assets/photos/marigold.jpg';
+
+const MOMENTS = [
+  {
+    n: 'I.',
+    title: 'Wheels up, together',
+    text: 'No queues, no family split across flights. Everyone boards together from your city, at the time you choose.',
+    img: jet,
+    alt: 'A private jet on the tarmac at golden hour',
+  },
+  {
+    n: 'II.',
+    title: 'Only your people',
+    text: 'A quiet cabin, just family. Watch the lake and the palace appear from the window as you descend.',
+    img: cabin,
+    alt: 'Cream leather seats inside a private jet cabin',
+  },
+  {
+    n: 'III.',
+    title: 'The entrance',
+    text: 'Marigolds, music and a landing timed to the moment — stepping out where every guest can see.',
+    img: marigold,
+    alt: 'Marigold and jasmine garlands at a wedding',
+  },
+];
+---
+
+<section class="moments" aria-labelledby="moments-h">
+  <div class="container">
+    <div class="reveal">
+      <p class="eyebrow">The arrival</p>
+      <h2 id="moments-h" class="h2 moments__title">
+        Three moments your family will never forget.
+      </h2>
+    </div>
+    <div class="moments__grid">
+      {MOMENTS.map((m, i) => (
+        <article class="moment card-lift reveal">
+          <figure class="moment__photo photo-zoom">
+            <Image
+              src={m.img}
+              alt={m.alt}
+              widths={[400, 600, 900]}
+              sizes="(max-width: 899px) calc(100vw - 40px), 400px"
+              loading="lazy"
+            />
+            <figcaption class="illustrative moment__caption">Illustrative</figcaption>
+          </figure>
+          <div class="moment__body">
+            <p class="moment__n display">{m.n}</p>
+            <h3 class="moment__title display">{m.title}</h3>
+            <p class="moment__text">{m.text}</p>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .moments {
+    padding: 40px 0 120px;
+  }
+
+  .moments__title {
+    max-width: 700px;
+  }
+
+  .moments__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+    margin-top: 56px;
+  }
+
+  .moment {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-big);
+    overflow: hidden;
+    background: var(--panel);
+  }
+
+  .moment__photo {
+    position: relative;
+    height: 300px;
+  }
+
+  .moment__caption {
+    position: absolute;
+    right: 12px;
+    bottom: 10px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(5, 7, 15, 0.55);
+    font-size: 10.5px;
+  }
+
+  .moment__body {
+    padding: 26px 28px 30px;
+  }
+
+  .moment__n {
+    color: var(--gold);
+  }
+
+  .moment__title {
+    margin-top: 6px;
+    font-weight: 500;
+    font-size: 28px;
+    line-height: 1.2;
+  }
+
+  .moment__text {
+    margin-top: 12px;
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--text-3);
+  }
+
+  @media (max-width: 899px) {
+    .moments {
+      padding: 20px 0 80px;
+    }
+
+    .moments__grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-top: 36px;
+    }
+
+    .moment__photo {
+      height: 220px;
+    }
+  }
+</style>

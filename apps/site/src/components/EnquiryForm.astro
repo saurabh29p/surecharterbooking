@@ -1,0 +1,563 @@
+---
+/**
+ * The wedding enquiry form → POST {API}/api/public/enquiries (WEBSITE.md §5).
+ * "compact" is the home page's mockup form (extra fields folded away); "full" shows everything.
+ * Works with the API's own checks and error messages; never loses what was typed.
+ */
+import { company } from '../config/company';
+import { whatsappLink } from '../config/site';
+import { GUEST_RANGES } from '../lib/enquiry';
+import Icon from './Icon.astro';
+
+interface Props {
+  id: string;
+  pageName: string;
+  variant?: 'compact' | 'full';
+  label?: string;
+}
+
+const { id, pageName, variant = 'compact', label = 'Wedding flight enquiry' } = Astro.props;
+const f = (name: string) => `${id}-${name}`;
+const wa = whatsappLink(pageName);
+---
+
+<div class="enq" data-enquiry data-page-name={pageName}>
+  <form
+    class:list={['enq__form', `enq__form--${variant}`]}
+    aria-label={label}
+    novalidate
+    data-enquiry-form
+  >
+    <fieldset class="enq__roles enq__wide">
+      <legend class="enq__legend">I am planning as</legend>
+      <div class="enq__role-options">
+        {[
+          ['FAMILY', 'Family'],
+          ['PLANNER', 'Wedding planner'],
+          ['HOTEL', 'Hotel'],
+        ].map(([value, text], i) => (
+          <label class="enq__role">
+            <input type="radio" name="role" value={value} checked={i === 0} />
+            <span>{text}</span>
+          </label>
+        ))}
+      </div>
+    </fieldset>
+
+    <label class="field enq__wide" data-firm hidden>
+      Firm or hotel name
+      <input
+        id={f('firm')}
+        name="firm"
+        type="text"
+        autocomplete="organization"
+        aria-describedby={f('firm-err')}
+      />
+      <span class="field__error" id={f('firm-err')} data-error="firm"></span>
+    </label>
+
+    <label class="field">
+      Your name
+      <input
+        id={f('name')}
+        name="name"
+        type="text"
+        autocomplete="name"
+        required
+        aria-describedby={f('name-err')}
+      />
+      <span class="field__error" id={f('name-err')} data-error="name"></span>
+    </label>
+    <label class="field">
+      WhatsApp number
+      <input
+        id={f('phone')}
+        name="phone"
+        type="tel"
+        inputmode="tel"
+        autocomplete="tel"
+        placeholder="98123 45678"
+        required
+        aria-describedby={f('phone-err')}
+      />
+      <span class="field__error" id={f('phone-err')} data-error="phone"></span>
+    </label>
+    <label class="field">
+      Wedding date
+      <input id={f('date')} name="weddingDate" type="date" aria-describedby={f('date-err')} />
+      <span class="field__error" id={f('date-err')} data-error="weddingDate"></span>
+    </label>
+    <label class="field">
+      Guests flying
+      <select id={f('guests')} name="guests" aria-describedby={f('guests-err')}>
+        <option value="">Choose</option>
+        {GUEST_RANGES.map((r) => (
+          <option value={r.value}>{r.label}</option>
+        ))}
+      </select>
+      <span class="field__error" id={f('guests-err')} data-error="guests"></span>
+    </label>
+    <label class="field">
+      Flying from
+      <input
+        id={f('from')}
+        name="guestsFrom"
+        type="text"
+        placeholder="e.g. Delhi, Mumbai"
+        aria-describedby={f('from-err')}
+      />
+      <span class="field__error" id={f('from-err')} data-error="guestsFrom"></span>
+    </label>
+    <label class="field">
+      Venue or city
+      <input
+        id={f('city')}
+        name="weddingCity"
+        type="text"
+        placeholder="e.g. Udaipur"
+        aria-describedby={f('city-err')}
+      />
+      <span class="field__error" id={f('city-err')} data-error="weddingCity"></span>
+    </label>
+
+    {variant === 'compact' ? (
+      <details class="enq__more enq__wide">
+        <summary>Add an email or a note (optional)</summary>
+        <div class="enq__more-body">
+          <label class="field">
+            Email (optional)
+            <input
+              name="email"
+              type="email"
+              autocomplete="email"
+              aria-describedby={f('email-err')}
+            />
+            <span class="field__error" id={f('email-err')} data-error="email" />
+          </label>
+          <label class="field">
+            Anything else? (optional)
+            <textarea name="message" maxlength="1000" rows="3" />
+          </label>
+        </div>
+      </details>
+    ) : (
+      <>
+        <label class="field enq__wide">
+          Email (optional)
+          <input name="email" type="email" autocomplete="email" aria-describedby={f('email-err')} />
+          <span class="field__error" id={f('email-err')} data-error="email" />
+        </label>
+        <label class="field enq__wide">
+          Tell us more (optional)
+          <textarea
+            name="message"
+            maxlength="1000"
+            rows="4"
+            placeholder="e.g. a helicopter entry for the groom, guests from two cities, return flights"
+          />
+        </label>
+      </>
+    )}
+
+    <div class="enq__trap" aria-hidden="true">
+      <label>
+        Company website <input name="companyWebsite" type="text" tabindex="-1" autocomplete="off" />
+      </label>
+    </div>
+
+    <div class="enq__wide enq__checks">
+      <label class="check">
+        <input type="checkbox" name="consent" aria-describedby={f('consent-err')} />
+        <span>
+          I agree that Vaanika may contact me about this enquiry. My details are used only for this,
+          as the <a href="/legal/privacy/">privacy notice</a> explains.
+        </span>
+      </label>
+      <span class="field__error" id={f('consent-err')} data-error="consent"></span>
+      <label class="check">
+        <input type="checkbox" name="marketingConsent" />
+        <span>Also send me occasional news and offers from Vaanika (optional).</span>
+      </label>
+    </div>
+
+    <p class="enq__alert enq__wide" role="alert" data-alert hidden></p>
+
+    <button class="btn btn--ivory btn--lg btn--block enq__wide enq__submit" type="submit">
+      <span class="spinner" data-spinner hidden></span>
+      <span data-label>Send my enquiry</span>
+    </button>
+    <p class="enq__note enq__wide">A coordinator replies {company.replyTime}. No spam, ever.</p>
+  </form>
+
+  <div class="enq__done" data-done hidden tabindex="-1">
+    <span class="enq__tick" aria-hidden="true">
+      <Icon name="check" size={28} stroke={2.4} />
+    </span>
+    <h3 class="enq__done-title display">Thank you. Your enquiry is with us.</h3>
+    <p class="enq__done-text">
+      A coordinator will reply on WhatsApp {company.replyTime}. If it’s urgent, message us now.
+    </p>
+    <a class="btn btn--gold btn--lg" href={wa} data-tap="WHATSAPP" data-done-wa>
+      <Icon name="chat" size={18} stroke={2} />
+      Message us on WhatsApp
+    </a>
+  </div>
+</div>
+
+<style>
+  .enq__form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    padding: 36px;
+    border-radius: 26px;
+    background: rgba(14, 19, 40, 0.94);
+    border: 1px solid #2a3050;
+  }
+
+  .enq__wide {
+    grid-column: 1 / -1;
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+
+  .enq__roles {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-width: 0;
+  }
+
+  .enq__legend {
+    padding: 0;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--label);
+  }
+
+  .enq__role-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .enq__role {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .enq__role input {
+    position: absolute;
+    opacity: 0;
+    inset: 0;
+    margin: 0;
+    cursor: pointer;
+  }
+
+  .enq__role span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 18px;
+    border-radius: 999px;
+    border: 1px solid var(--field-line);
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--text-3);
+    transition:
+      border-color 0.15s ease,
+      background-color 0.15s ease,
+      color 0.15s ease,
+      transform 0.05s ease;
+  }
+
+  .enq__role:hover span {
+    border-color: var(--gold-dark);
+    color: var(--ivory);
+  }
+
+  .enq__role input:checked + span {
+    border-color: var(--gold);
+    background: rgba(212, 178, 106, 0.14);
+    color: var(--gold-light);
+  }
+
+  .enq__role input:focus-visible + span {
+    outline: 2px solid var(--gold-light);
+    outline-offset: 3px;
+  }
+
+  .enq__role:active span {
+    transform: scale(0.97);
+  }
+
+  .enq__more {
+    border-top: 1px solid var(--line);
+    padding-top: 14px;
+  }
+
+  .enq__more summary {
+    min-height: 32px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gold);
+    cursor: pointer;
+  }
+
+  .enq__more summary:hover {
+    color: var(--gold-light);
+  }
+
+  .enq__more-body {
+    display: grid;
+    gap: 14px;
+    margin-top: 12px;
+  }
+
+  .enq__trap {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .enq__checks {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .enq__alert {
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 155, 138, 0.5);
+    background: rgba(255, 155, 138, 0.08);
+    color: #ffd2c9;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .enq__alert :global(a) {
+    color: var(--gold-light);
+    font-weight: 700;
+  }
+
+  .enq__submit {
+    min-height: 58px;
+  }
+
+  .enq__note {
+    font-size: 12.5px;
+    color: var(--faint);
+    text-align: center;
+  }
+
+  .enq__done {
+    padding: 44px 36px;
+    border-radius: 26px;
+    background: rgba(14, 19, 40, 0.96);
+    border: 1px solid var(--gold-dark);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    outline: none;
+  }
+
+  .enq__tick {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--gold-gradient);
+    color: var(--midnight);
+    animation: tick-in 0.5s var(--ease-out);
+  }
+
+  @keyframes tick-in {
+    from {
+      transform: scale(0.6);
+      opacity: 0;
+    }
+  }
+
+  .enq__done-title {
+    font-size: 30px;
+    line-height: 1.2;
+  }
+
+  .enq__done-text {
+    max-width: 420px;
+    color: var(--text-3);
+  }
+
+  @media (max-width: 599px) {
+    .enq__form {
+      grid-template-columns: 1fr;
+      padding: 24px 18px;
+      border-radius: 20px;
+      gap: 14px;
+    }
+
+    .enq__done {
+      padding: 36px 20px;
+    }
+  }
+</style>
+
+<script>
+  import { API_URL } from '../config/site';
+  import { currentAttribution, gtagConversion } from '../scripts/site';
+  import {
+    enquiryBody,
+    enquiryProblems,
+    whatsappFallbackText,
+    type EnquiryFormValues,
+    type Role,
+  } from '../lib/enquiry';
+
+  const openedAt = performance.now();
+
+  function values(form: HTMLFormElement): EnquiryFormValues {
+    const d = new FormData(form);
+    const s = (k: string) => (d.get(k) as string | null) ?? '';
+    return {
+      name: s('name'),
+      phone: s('phone'),
+      email: s('email'),
+      role: (s('role') || 'FAMILY') as Role,
+      firm: s('firm'),
+      weddingCity: s('weddingCity'),
+      weddingDate: s('weddingDate'),
+      guests: s('guests'),
+      guestsFrom: s('guestsFrom'),
+      message: s('message'),
+      consent: d.get('consent') === 'on',
+      marketingConsent: d.get('marketingConsent') === 'on',
+      companyWebsite: s('companyWebsite'),
+    };
+  }
+
+  function showErrors(form: HTMLFormElement, errors: Record<string, string>) {
+    form.querySelectorAll<HTMLElement>('[data-error]').forEach((el) => {
+      const key = el.dataset.error!;
+      el.textContent = errors[key] ?? '';
+      const input = form.querySelector<HTMLInputElement>(`[name="${key}"]`);
+      if (input) input.setAttribute('aria-invalid', errors[key] ? 'true' : 'false');
+    });
+  }
+
+  function setBusy(form: HTMLFormElement, busy: boolean) {
+    const btn = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+    btn.disabled = busy;
+    btn.setAttribute('aria-busy', String(busy));
+    form.querySelector<HTMLElement>('[data-spinner]')!.hidden = !busy;
+    form.querySelector<HTMLElement>('[data-label]')!.textContent = busy
+      ? 'Sending…'
+      : 'Send my enquiry';
+  }
+
+  function fallback(form: HTMLFormElement, message: string) {
+    const alert = form.querySelector<HTMLElement>('[data-alert]')!;
+    const text = whatsappFallbackText(values(form));
+    const wa = document.querySelector<HTMLAnchorElement>('[data-tap="WHATSAPP"]');
+    const base = wa?.href.split('?')[0] ?? 'https://wa.me/';
+    alert.innerHTML = '';
+    alert.append(`${message} `);
+    const link = document.createElement('a');
+    link.href = `${base}?text=${encodeURIComponent(text)}`;
+    link.dataset.tap = 'WHATSAPP';
+    link.textContent = 'Send the same details on WhatsApp';
+    alert.append(link);
+    alert.hidden = false;
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-enquiry]').forEach((root) => {
+    const form = root.querySelector<HTMLFormElement>('[data-enquiry-form]')!;
+    const firm = form.querySelector<HTMLElement>('[data-firm]')!;
+    const touched = new Set<string>();
+
+    // Planners and hotels also give their firm's name.
+    form.querySelectorAll<HTMLInputElement>('input[name="role"]').forEach((r) =>
+      r.addEventListener('change', () => {
+        firm.hidden = values(form).role === 'FAMILY';
+      }),
+    );
+
+    // Inline checks as soon as a field is left (UX.md §2), only for fields already touched.
+    form.addEventListener('focusout', (e) => {
+      const name = (e.target as HTMLInputElement).name;
+      if (!name || name === 'role') return;
+      touched.add(name);
+      const all = enquiryProblems(values(form));
+      const shown: Record<string, string> = {};
+      for (const k of touched) if (all[k]) shown[k] = all[k]!;
+      showErrors(form, shown);
+    });
+    form.addEventListener('change', (e) => {
+      const name = (e.target as HTMLInputElement).name;
+      if (name === 'consent' && touched.has('consent')) {
+        const all = enquiryProblems(values(form));
+        showErrors(form, all.consent ? { consent: all.consent } : {});
+      }
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const alert = form.querySelector<HTMLElement>('[data-alert]')!;
+      alert.hidden = true;
+      const v = values(form);
+      const problems = enquiryProblems(v);
+      ['name', 'phone', 'email', 'weddingDate', 'firm', 'consent'].forEach((k) => touched.add(k));
+      showErrors(form, problems);
+      if (Object.keys(problems).length) {
+        form.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
+        return;
+      }
+      setBusy(form, true);
+      const body = enquiryBody(v, performance.now() - openedAt, currentAttribution());
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 20_000);
+      try {
+        const res = await fetch(`${API_URL}/api/public/enquiries`, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(body),
+          signal: ctrl.signal,
+        });
+        if (res.ok) {
+          form.hidden = true;
+          const done = root.querySelector<HTMLElement>('[data-done]')!;
+          done.hidden = false;
+          done.focus();
+          gtagConversion('enquiry_sent');
+          return;
+        }
+        const data = (await res.json().catch(() => ({}))) as {
+          message?: string;
+          fields?: Record<string, string>;
+        };
+        if (res.status === 400 && data.fields && Object.keys(data.fields).length) {
+          showErrors(form, data.fields);
+          form.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
+        } else if (res.status === 429) {
+          fallback(form, 'Too many enquiries from this connection just now.');
+        } else {
+          fallback(form, data.message ?? 'Sorry, we couldn’t send your enquiry.');
+        }
+      } catch {
+        fallback(form, 'Sorry, we couldn’t reach our system. Nothing you typed is lost.');
+      } finally {
+        clearTimeout(timer);
+        setBusy(form, false);
+      }
+    });
+  });
+</script>

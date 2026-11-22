@@ -1,0 +1,148 @@
+---
+/** Home: built in the approved mockup's order (WEBSITE.md §6). */
+import { getImage } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import poster from '../assets/photos/hero-poster.jpg';
+import FaqList from '../components/FaqList.astro';
+import Icon from '../components/Icon.astro';
+import Beyond from '../components/home/Beyond.astro';
+import Destinations from '../components/home/Destinations.astro';
+import EnquirySection from '../components/home/EnquirySection.astro';
+import Fleet from '../components/home/Fleet.astro';
+import Hero from '../components/home/Hero.astro';
+import HowItWorks from '../components/home/HowItWorks.astro';
+import Moments from '../components/home/Moments.astro';
+import NameStory from '../components/home/NameStory.astro';
+import Planners from '../components/home/Planners.astro';
+import Shreeji from '../components/home/Shreeji.astro';
+import Standard from '../components/home/Standard.astro';
+import TrustMarquee from '../components/home/TrustMarquee.astro';
+import { organizationJsonLd } from '../lib/jsonld';
+import Base from '../layouts/Base.astro';
+
+const faqs = (await getCollection('faq', (f) => f.data.home !== undefined)).sort(
+  (a, b) => (a.data.home ?? 0) - (b.data.home ?? 0),
+);
+
+// Preload the hero poster (the LCP image) in the format the browser will pick first.
+const lcp = await getImage({ src: poster, format: 'avif', widths: [480, 768, 1024, 1280] });
+---
+
+<Base
+  title="Private jets & helicopters for Indian weddings | Vaanika"
+  description="Vaanika arranges private jets and helicopters for Indian destination weddings, as your agent, with DGCA-approved NSOP operators and one written, all-in price."
+  pageName="home"
+  planHref="#enquire"
+  jsonLd={organizationJsonLd()}
+>
+  <link
+    slot="head"
+    rel="preload"
+    as="image"
+    type="image/avif"
+    imagesrcset={lcp.srcSet.attribute}
+    imagesizes="100vw"
+    fetchpriority="high"
+  />
+
+  <Hero planHref="#enquire" />
+  <TrustMarquee />
+
+  <!-- Phones: the hero's buttons sit under the strip, as in home-mobile.html. -->
+  <div class="container mobile-cta">
+    <a class="btn btn--gold btn--lg btn--block" href="#enquire">
+      Plan my wedding flight
+    </a>
+    <a class="mobile-cta__film" href="/video/vaanika-film-720p.mp4" data-film-open>
+      <Icon name="arrow" size={16} /> Watch the film · 27s
+    </a>
+  </div>
+
+  <Standard />
+  <Moments />
+  <Destinations />
+  <Fleet />
+  <Shreeji />
+  <HowItWorks />
+  <Beyond />
+  <Planners />
+  <NameStory />
+
+  <section class="home-faq" aria-labelledby="faq-h">
+    <div class="container home-faq__inner">
+      <h2 id="faq-h" class="h2 home-faq__title">
+        Questions families ask
+      </h2>
+      <div class="home-faq__list">
+        <FaqList items={faqs} />
+      </div>
+      <p class="home-faq__more">
+        <a href="/faq/">All questions and answers</a>
+      </p>
+    </div>
+  </section>
+
+  <EnquirySection pageName="home" />
+</Base>
+
+<style>
+  .mobile-cta {
+    display: none;
+  }
+
+  @media (max-width: 767px) {
+    .mobile-cta {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding-top: 18px;
+    }
+
+    .mobile-cta__film {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 44px;
+      font-size: 14.5px;
+      font-weight: 600;
+      color: var(--gold-light);
+      text-decoration: none;
+    }
+  }
+
+  .home-faq {
+    padding: 20px 0 120px;
+  }
+
+  .home-faq__inner {
+    max-width: 880px;
+  }
+
+  .home-faq__title {
+    margin: 0;
+    text-align: center;
+    font-size: clamp(30px, 3.6vw, 48px);
+  }
+
+  .home-faq__list {
+    margin-top: 44px;
+  }
+
+  .home-faq__more {
+    margin-top: 22px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 15px;
+  }
+
+  @media (max-width: 767px) {
+    .home-faq {
+      padding: 0 0 80px;
+    }
+
+    .home-faq__list {
+      margin-top: 28px;
+    }
+  }
+</style>

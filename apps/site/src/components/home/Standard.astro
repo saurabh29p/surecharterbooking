@@ -1,0 +1,141 @@
+---
+/** The Vaanika Standard: the four checks (mockup). Card 04 uses the exact §7 wording. */
+import { HELI_PERMISSIONS_LINE } from '../../config/company';
+
+const CHECKS = [
+  {
+    title: 'Operator permit',
+    text: 'A valid DGCA Non-Scheduled Operator Permit, checked against the operator’s papers.',
+  },
+  {
+    title: 'The aircraft itself',
+    text: 'Registration and airworthiness papers for the exact aircraft in your quote.',
+  },
+  {
+    title: 'Insurance',
+    text: 'Current passenger and aircraft insurance, in date for your flight.',
+  },
+  { title: 'Landing permissions', text: HELI_PERMISSIONS_LINE },
+];
+---
+
+<section id="standard" class="standard" aria-labelledby="standard-h">
+  <div class="container standard__inner">
+    <div class="standard__intro reveal">
+      <p class="eyebrow">The Vaanika Standard</p>
+      <h2 id="standard-h" class="h2 standard__title">
+        We check the operator before we quote. Every time.
+      </h2>
+      <p class="lead standard__lead">
+        Your quote names the operator and the aircraft, so you know exactly who is flying your
+        family. If anything doesn’t check out, we don’t offer it — however good the price.
+      </p>
+      <a class="btn btn--outline standard__btn" href="#how">
+        See a sample quote
+      </a>
+    </div>
+    <ol class="standard__checks">
+      {CHECKS.map((c, i) => (
+        <li class="standard__check reveal">
+          <p class="standard__num num display">{String(i + 1).padStart(2, '0')}</p>
+          <h3 class="standard__check-title">{c.title}</h3>
+          <p class="standard__check-text">{c.text}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .standard {
+    padding: 130px 0 120px;
+  }
+
+  .standard__inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 64px;
+    align-items: flex-start;
+  }
+
+  .standard__intro {
+    flex: 1 1 440px;
+    min-width: 0;
+  }
+
+  .standard__title {
+    font-size: clamp(36px, 4.4vw, 62px);
+    line-height: 1.06;
+  }
+
+  .standard__lead {
+    margin-top: 22px;
+    max-width: 520px;
+  }
+
+  .standard__btn {
+    margin-top: 30px;
+  }
+
+  .standard__checks {
+    flex: 1 1 520px;
+    min-width: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+  }
+
+  .standard__check {
+    padding: 28px;
+    border-radius: var(--radius-card);
+    border: 1px solid var(--line);
+    background: var(--panel);
+  }
+
+  .standard__num {
+    font-size: 34px;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .standard__check-title {
+    margin-top: 16px;
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .standard__check-text {
+    margin-top: 8px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+
+  @media (max-width: 767px) {
+    .standard {
+      padding: 80px 0;
+    }
+
+    .standard__inner {
+      gap: 40px;
+    }
+
+    .standard__intro,
+    .standard__checks {
+      flex-basis: 100%;
+    }
+  }
+
+  @media (max-width: 559px) {
+    .standard__checks {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .standard__check {
+      padding: 22px;
+    }
+  }
+</style>

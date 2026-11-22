@@ -1,0 +1,140 @@
+---
+/**
+ * WhatsApp everywhere (WEBSITE.md §5, UX.md §6): a round button on desktop that pulses once after
+ * 5 s, and a WhatsApp + Call bar on phones (from home-mobile.html).
+ */
+import { telLink, whatsappLink } from '../config/site';
+import Icon from './Icon.astro';
+
+interface Props {
+  pageName: string;
+}
+
+const wa = whatsappLink(Astro.props.pageName);
+---
+
+<a class="wa-fab" href={wa} data-tap="WHATSAPP" aria-label="Chat with Vaanika on WhatsApp">
+  <Icon name="chat" size={26} stroke={2} />
+</a>
+
+<nav class="contact-bar" aria-label="Quick contact">
+  <a class="contact-bar__wa" href={wa} data-tap="WHATSAPP">
+    <Icon name="chat" size={18} stroke={2} />
+    WhatsApp
+  </a>
+  <a class="contact-bar__call" href={telLink} data-tap="CALL">
+    <Icon name="phone" size={18} stroke={2} />
+    Call
+  </a>
+</nav>
+
+<style>
+  .wa-fab {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 30;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--gold-gradient);
+    color: var(--midnight);
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.45);
+    transition:
+      transform 0.18s var(--ease-out),
+      box-shadow 0.18s ease;
+  }
+
+  .wa-fab:hover {
+    color: var(--midnight);
+    transform: translateY(-2px);
+    box-shadow:
+      0 14px 34px rgba(0, 0, 0, 0.45),
+      0 0 0 6px rgba(212, 178, 106, 0.18);
+  }
+
+  .wa-fab:active {
+    transform: scale(0.96);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .wa-fab {
+      animation: wa-pulse 1.4s ease-out 5s 1;
+    }
+  }
+
+  @keyframes wa-pulse {
+    0% {
+      box-shadow:
+        0 14px 34px rgba(0, 0, 0, 0.45),
+        0 0 0 0 rgba(212, 178, 106, 0.55);
+    }
+    100% {
+      box-shadow:
+        0 14px 34px rgba(0, 0, 0, 0.45),
+        0 0 0 22px rgba(212, 178, 106, 0);
+    }
+  }
+
+  .contact-bar {
+    display: none;
+  }
+
+  @media (max-width: 767px) {
+    .wa-fab {
+      display: none;
+    }
+
+    .contact-bar {
+      position: fixed;
+      left: 12px;
+      right: 12px;
+      bottom: max(12px, env(safe-area-inset-bottom));
+      z-index: 30;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 10px;
+      border-radius: 22px;
+      background: rgba(14, 19, 40, 0.95);
+      border: 1px solid #2a3050;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+    }
+
+    .contact-bar a {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: center;
+      min-height: 50px;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: 15px;
+      text-decoration: none;
+      transition: transform 0.05s ease;
+    }
+
+    .contact-bar a:active {
+      transform: scale(0.97);
+    }
+
+    .contact-bar__wa {
+      background: var(--ivory);
+      color: var(--midnight);
+    }
+
+    .contact-bar__wa:hover {
+      color: var(--midnight);
+    }
+
+    .contact-bar__call {
+      border: 1px solid var(--gold);
+      color: var(--gold-light);
+    }
+  }
+</style>

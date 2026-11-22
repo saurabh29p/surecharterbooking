@@ -1,0 +1,254 @@
+---
+/** How it works + sample quote (the light section). Payment safety note under the quote (§7). */
+import { company, PAYMENT_SAFETY } from '../../config/company';
+
+const STEPS = [
+  {
+    title: 'Tell us the plan',
+    text: 'Date, cities, venue and guest count — on WhatsApp or the form below.',
+  },
+  {
+    title: 'Get one written quote',
+    text: 'The operator, the aircraft and the full price in one document.',
+  },
+  {
+    title: 'Sign and confirm',
+    text: 'Accept the terms online; pay by bank transfer to our company account, against a GST invoice.',
+  },
+  {
+    title: 'Fly in',
+    text: 'Your coordinator keeps you and your planner updated until you land.',
+  },
+];
+---
+
+<section id="how" class="how" aria-labelledby="how-h">
+  <div class="container how__inner">
+    <div class="how__steps-col reveal">
+      <p class="eyebrow how__eyebrow">How it works</p>
+      <h2 id="how-h" class="h2">
+        Four steps. One person looking after you.
+      </h2>
+      <ol class="how__steps">
+        {STEPS.map((s, i) => (
+          <li class="how__step">
+            <span class="how__n num display">{i + 1}</span>
+            <div>
+              <h3 class="how__step-title">{s.title}</h3>
+              <p class="how__step-text">{s.text}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+    <div class="quote reveal" aria-labelledby="quote-h">
+      <div class="quote__top">
+        <span class="quote__brand display" aria-hidden="true">
+          V<span>AA</span>NIKA
+        </span>
+        <span class="quote__badge" id="quote-h">
+          Sample quote
+        </span>
+      </div>
+      <p class="quote__intro">Every quote shows these lines.</p>
+      <dl class="quote__lines num">
+        <dt>Route</dt>
+        <dd>Delhi → Udaipur</dd>
+        <dt>Aircraft</dt>
+        <dd>Super-midsize · [REG]</dd>
+        <dt>Operator</dt>
+        <dd>[OPERATOR NAME]</dd>
+        <dt>NSOP permit</dt>
+        <dd class="ok">Checked</dd>
+        <dt>Insurance</dt>
+        <dd class="ok">Checked</dd>
+        <dt class="total">All-in price</dt>
+        <dd class="total display">₹ [YOUR PRICE]</dd>
+      </dl>
+      <p class="quote__foot">Includes GST. Valid for {company.quoteValidity}.</p>
+      <p class="quote__safety">{PAYMENT_SAFETY}</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .how {
+    padding: 120px 0;
+    background: var(--cream);
+    color: var(--navy);
+  }
+
+  .how__inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 64px;
+    align-items: flex-start;
+  }
+
+  .how__steps-col {
+    flex: 1 1 520px;
+    min-width: 0;
+  }
+
+  .how__eyebrow {
+    color: var(--gold-on-light);
+  }
+
+  .how__steps {
+    margin-top: 44px;
+    padding: 0;
+    list-style: none;
+  }
+
+  .how__step {
+    display: flex;
+    gap: 24px;
+    padding: 22px 0;
+    border-top: 1px solid var(--cream-line);
+  }
+
+  .how__step:last-child {
+    border-bottom: 1px solid var(--cream-line);
+  }
+
+  .how__n {
+    font-size: 30px;
+    color: #8c6a2f;
+    line-height: 1.1;
+    width: 36px;
+    flex: none;
+  }
+
+  .how__step-title {
+    font-size: 19px;
+    font-weight: 700;
+  }
+
+  .how__step-text {
+    margin-top: 6px;
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--navy-text);
+  }
+
+  .quote {
+    flex: 1 1 420px;
+    min-width: 0;
+    padding: 36px;
+    border-radius: 26px;
+    background: #fff;
+    border: 1px solid #e6ddcb;
+    box-shadow: 0 40px 90px rgba(11, 26, 58, 0.14);
+  }
+
+  .quote__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .quote__brand {
+    font-size: 21px;
+    letter-spacing: 0.18em;
+  }
+
+  .quote__brand span {
+    color: var(--gold-dark);
+  }
+
+  .quote__badge {
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: var(--navy);
+    color: var(--gold-light);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .quote__intro {
+    margin-top: 20px;
+    font-size: 13.5px;
+    color: var(--navy-muted);
+  }
+
+  .quote__lines {
+    margin-top: 14px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    font-size: 15px;
+  }
+
+  .quote__lines dt,
+  .quote__lines dd {
+    margin: 0;
+    padding: 13px 0;
+    border-top: 1px solid var(--cream-line);
+  }
+
+  .quote__lines dt {
+    color: var(--navy-muted);
+  }
+
+  .quote__lines dd {
+    font-weight: 600;
+    text-align: right;
+  }
+
+  .quote__lines dd.ok {
+    font-weight: 700;
+    color: var(--ok-on-light);
+  }
+
+  .quote__lines .total {
+    padding: 15px 0;
+    border-top: 2px solid var(--navy);
+    color: var(--navy);
+    font-weight: 700;
+  }
+
+  .quote__lines dd.total {
+    font-size: 24px;
+    font-weight: 400;
+  }
+
+  .quote__foot {
+    margin-top: 10px;
+    font-size: 12.5px;
+    color: var(--navy-muted);
+  }
+
+  .quote__safety {
+    margin-top: 18px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: var(--cream);
+    border: 1px solid var(--cream-line);
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--navy-text);
+  }
+
+  @media (max-width: 767px) {
+    .how {
+      padding: 80px 0;
+    }
+
+    .how__inner {
+      gap: 40px;
+    }
+
+    .how__steps-col,
+    .quote {
+      flex-basis: 100%;
+    }
+
+    .quote {
+      padding: 24px 20px;
+      border-radius: 20px;
+    }
+  }
+</style>

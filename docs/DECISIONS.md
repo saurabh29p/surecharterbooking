@@ -230,3 +230,33 @@ Measured on the deployed test app as a mid-range Android on 4G (Lighthouse's mob
 - **Not in the demo seed:** the fake seed still has jets only, so existing tests and the demo stay stable. Add a
   helicopter to an operator's fleet (Operators → aircraft → Helicopter) to try it.
 
+
+## Website (Vaanika, phase 2, Nov 2026)
+Defaults taken while building; each can be changed. Questions sent to the owner on 22 Nov 2026.
+- **Stack:** Astro 7 static site in `apps/site`, no adapter. Fonts are self-hosted from Fontsource through
+  Astro's font API (Bodoni Moda keeps its optical-size axis, so headings match the mockup's display cut;
+  Manrope variable). The fallback fonts are size-matched, so text doesn't jump when the web fonts arrive.
+- **Header links go to the real pages** (`/how-we-work/`, `/destinations/` …), not to anchors on the
+  home page, so every page shares one header. "Plan my flight" goes to the form on the same page, or
+  to `/contact/#enquire`.
+- **Footer agent line uses the exact WEBSITE.md §7 wording**; the mockup's footer line differs slightly.
+- **Reply time:** "within 1 hour, 9 am – 9 pm IST" from WEBSITE.md (the mockup said "[2 working hours]").
+- **Home form:** the mockup's six fields, plus family / planner / hotel (the API needs it), a firm name
+  for planners and hotels, and an optional email and note folded away. The contact page will show
+  everything. "Guests flying" keeps the mockup's ranges; the API gets the top of the range as the number
+  and the range in words in the message ("Guests flying: 7 to 14").
+- **Marketing opt-in:** a separate, unticked box. The API now accepts `marketingConsent` on enquiries and
+  planner sign-ups, stores it with the enquiry, and the desk's "From the website" card shows it.
+- **Phones:** no hero video below 768 px (poster only); the hero buttons move under the trust strip and
+  a WhatsApp + Call bar stays at the bottom, as in `home-mobile.html`. Desktop gets a round WhatsApp
+  button that pulses once after 5 s.
+- **Estimated facts** (flight times, seat counts) carry a small "verify" tag on preview builds and are
+  listed in `apps/site/VERIFY.md`; production shows plain text.
+- **Content security policy:** Astro writes a policy with hashes for every inline script and style; the
+  page may talk only to itself and the API. Vercel adds HSTS, `frame-ancestors 'none'` and `noindex`.
+- **Not indexed until launch:** `noindex` on every page and a `robots.txt` that disallows everything;
+  both switch only on a production build with `PUBLIC_ALLOW_INDEXING=true`.
+- **Brand change in the desk (WEBSITE.md §0) keeps internal names on purpose:** package names
+  (`@shubhjets/*`), the Railway project `shubhjets`, the bucket, database names and the JWT issuer stay.
+  Renaming them buys nothing and risks breaking deploys. Only what clients, planners or the public see
+  becomes Vaanika (phase 5).

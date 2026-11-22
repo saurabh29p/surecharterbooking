@@ -1,0 +1,33 @@
+---
+/** Preview builds only: a reminder that business details are still placeholders (WEBSITE.md §11). */
+import { remainingPlaceholders } from '../config/company';
+import { PREVIEW } from '../config/site';
+
+const left = PREVIEW ? remainingPlaceholders() : [];
+---
+
+{left.length > 0 && (
+  <div class="preview-banner" role="note">
+    <strong>Preview</strong> · not live, not indexed ·{' '}
+    {`${left.length} ${left.length === 1 ? 'placeholder' : 'placeholders'} to fill`}
+    <span class="preview-banner__list">: {left.join(', ')} (apps/site/PLACEHOLDERS.md)</span>
+  </div>
+)}
+
+<style>
+  .preview-banner {
+    padding: 8px var(--gutter);
+    background: #3a2c0c;
+    border-bottom: 1px solid var(--gold-dark);
+    color: var(--gold-light);
+    font-size: 12.5px;
+    line-height: 1.5;
+    text-align: center;
+  }
+
+  @media (max-width: 767px) {
+    .preview-banner__list {
+      display: none;
+    }
+  }
+</style>

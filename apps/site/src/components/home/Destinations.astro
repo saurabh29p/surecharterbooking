@@ -1,0 +1,184 @@
+---
+/** Destination cards with approximate flying times (from the destinations collection). */
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import Icon from '../Icon.astro';
+import Verify from '../Verify.astro';
+
+const items = (await getCollection('destinations')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<section id="destinations" class="dest" aria-labelledby="dest-h">
+  <div class="container">
+    <div class="dest__head reveal">
+      <div class="dest__head-main">
+        <p class="eyebrow">Destinations</p>
+        <h2 id="dest-h" class="h2">
+          From your city to the mandap in hours, not a day.
+        </h2>
+      </div>
+      <p class="dest__note">
+        Approximate flying times by private jet. The exact time depends on the aircraft, the weather
+        and the airports used.
+      </p>
+    </div>
+    <div class="dest__grid">
+      {items.map((d, i) => (
+        <a class="dest__card photo-zoom reveal" href={`/destinations/${d.id}/`}>
+          <Image
+            src={d.data.image}
+            alt={d.data.imageAlt}
+            widths={[400, 600, 900]}
+            sizes="(max-width: 899px) calc(100vw - 40px), 400px"
+            loading="lazy"
+          />
+          <span class="illustrative dest__ill">Illustrative</span>
+          <span class="dest__caption">
+            <span class="dest__name display">
+              {d.data.name}
+              <Icon name="arrow" size={22} class="dest__arrow" />
+            </span>
+            <span class="dest__times num">
+              {d.data.cardTimes.map((t, j) => (
+                <>
+                  {j > 0 && <span aria-hidden="true"> · </span>}
+                  <span class="dest__time">
+                    {t.from} · <Verify>{t.time}</Verify>
+                  </span>
+                </>
+              ))}
+            </span>
+          </span>
+        </a>
+      ))}
+    </div>
+    <p class="dest__all reveal">
+      <a href="/destinations/">All destinations and flying times</a>
+    </p>
+  </div>
+</section>
+
+<style>
+  .dest {
+    padding: 120px 0;
+    background: var(--midnight-deep);
+    border-top: 1px solid var(--line-faint);
+    border-bottom: 1px solid var(--line-faint);
+  }
+
+  .dest__head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 24px;
+    align-items: flex-end;
+  }
+
+  .dest__head-main {
+    flex: 1 1 520px;
+    min-width: 0;
+  }
+
+  .dest__note {
+    flex: 0 1 380px;
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--muted-2);
+  }
+
+  .dest__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+    margin-top: 52px;
+  }
+
+  .dest__card {
+    position: relative;
+    display: block;
+    height: 420px;
+    border-radius: var(--radius-big);
+    border: 1px solid transparent;
+    color: var(--ivory);
+    text-decoration: none;
+    transition:
+      transform 0.3s var(--ease-out),
+      border-color 0.3s ease;
+  }
+
+  .dest__card:hover {
+    color: var(--ivory);
+    transform: translateY(-4px);
+    border-color: var(--gold-dark);
+  }
+
+  .dest__card:hover :global(img) {
+    transform: scale(1.05);
+  }
+
+  .dest__ill {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(5, 7, 15, 0.55);
+    font-size: 10.5px;
+  }
+
+  .dest__caption {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 80px 26px 24px;
+    background: linear-gradient(0deg, rgba(5, 7, 15, 0.92), rgba(5, 7, 15, 0));
+  }
+
+  .dest__name {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 34px;
+    line-height: 1.2;
+  }
+
+  .dest__name :global(.dest__arrow) {
+    color: var(--gold);
+    transition: transform 0.2s var(--ease-out);
+  }
+
+  .dest__card:hover :global(.dest__arrow) {
+    transform: translateX(4px);
+  }
+
+  .dest__times {
+    display: block;
+    margin-top: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gold-soft);
+  }
+
+  .dest__all {
+    margin-top: 28px;
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  @media (max-width: 899px) {
+    .dest {
+      padding: 80px 0;
+    }
+
+    .dest__grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-top: 36px;
+    }
+
+    .dest__card {
+      height: 300px;
+    }
+  }
+</style>

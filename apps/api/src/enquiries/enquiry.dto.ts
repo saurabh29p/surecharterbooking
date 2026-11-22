@@ -24,6 +24,9 @@ const consent = z.literal(true, {
   message: 'Please tick the box so we can contact you about your enquiry',
 });
 
+/** A separate, unticked box for news and offers (DPDP: its own choice, never bundled). */
+const marketingConsent = z.boolean().nullable().optional();
+
 const requiredPhone = optionalPhone.refine((v) => !!v, 'Enter your WhatsApp number');
 
 const role = z.preprocess(
@@ -43,6 +46,7 @@ export const EnquiryBody = z.object({
   guests: z.number().int().min(1, 'At least 1 guest').max(500).nullable().optional(),
   message: optionalText(1000),
   consent,
+  marketingConsent,
   ...Attribution,
   ...Traps,
 });
@@ -62,6 +66,7 @@ export const PartnerSignupBody = z.object({
   weddingsPerYear: z.number().int().min(0).max(1000).nullable().optional(),
   message: optionalText(1000),
   consent,
+  marketingConsent,
   ...Attribution,
   ...Traps,
 });

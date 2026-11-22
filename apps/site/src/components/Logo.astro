@@ -1,0 +1,37 @@
+---
+/**
+ * The Vaanika horizontal lockup from design/logo (never redrawn, recoloured or re-lettered).
+ * The SVG has 30 px padding on a 714 × 200 canvas; the crop below trims it so the mark lines up
+ * with the page edge like the mockup.
+ */
+import dark from '../assets/logo/vaanika-horizontal-colour-transparent-for-dark-bg.svg?url';
+import light from '../assets/logo/vaanika-horizontal-colour-transparent-for-light-bg.svg?url';
+
+interface Props {
+  /** Rendered height of the artwork in px (the visible logo is about 70% of it). */
+  height?: number;
+  onLight?: boolean;
+  class?: string;
+}
+
+const { height = 56, onLight = false, class: className } = Astro.props;
+const width = Math.round((714.061 / 200) * height);
+---
+
+<img
+  class:list={['logo', className]}
+  src={onLight ? light : dark}
+  width={width}
+  height={height}
+  alt="Vaanika"
+  decoding="async"
+/>
+
+<style>
+  /* The artwork has 30/200 of its height as padding on the left: line the mark up with the text. */
+  .logo {
+    display: block;
+    margin-left: -9px;
+    max-width: none;
+  }
+</style>

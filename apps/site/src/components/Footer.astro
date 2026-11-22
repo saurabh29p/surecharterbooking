@@ -1,0 +1,201 @@
+---
+import { AGENT_LINE, company } from '../config/company';
+import { LEGAL_LINKS, MORE_LINKS, NAV, telLink, whatsappLink } from '../config/site';
+import Logo from './Logo.astro';
+
+interface Props {
+  pageName: string;
+}
+
+const { pageName } = Astro.props;
+const year = new Date().getFullYear();
+const a = company.address;
+const socials = Object.entries(company.social).filter(([, url]) => !!url) as Array<
+  [string, string]
+>;
+const SOCIAL_LABELS: Record<string, string> = {
+  instagram: 'Instagram',
+  linkedin: 'LinkedIn',
+  youtube: 'YouTube',
+  googleBusiness: 'Google Business Profile',
+};
+---
+
+<footer class="footer" id="footer">
+  <div class="container footer__grid">
+    <div class="footer__brand">
+      <Logo height={60} />
+      <p class="footer__agent">{AGENT_LINE}</p>
+      <p class="footer__contact">
+        <a href={whatsappLink(pageName)} data-tap="WHATSAPP">
+          WhatsApp {company.whatsapp.display}
+        </a>
+        <a href={telLink} data-tap="CALL">
+          Call {company.phone.display}
+        </a>
+        <a href={`mailto:${company.email.hello}`}>{company.email.hello}</a>
+      </p>
+    </div>
+
+    <div>
+      <h2 class="footer__title">Company</h2>
+      <address class="footer__address">
+        {company.legalName}
+        <br />
+        LLPIN {company.llpin}
+        <br />
+        GSTIN {company.gstin} (Delhi)
+        <br />
+        {a.street}, {a.city} {a.postalCode}
+      </address>
+      <p class="footer__grievance">
+        Grievance officer: {company.grievanceOfficer.name}, {company.grievanceOfficer.designation}·{' '}
+        <a href={`mailto:${company.email.grievance}`}>{company.email.grievance}</a>
+      </p>
+    </div>
+
+    <nav aria-label="Footer">
+      <h2 class="footer__title">Explore</h2>
+      <ul class="footer__links">
+        {[...NAV, ...MORE_LINKS].map((l) => (
+          <li>
+            <a href={l.href}>{l.label}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <nav aria-label="Legal">
+      <h2 class="footer__title">Legal</h2>
+      <ul class="footer__links">
+        {LEGAL_LINKS.map((l) => (
+          <li>
+            <a href={l.href}>{l.label}</a>
+          </li>
+        ))}
+      </ul>
+      {socials.length > 0 && (
+        <>
+          <h2 class="footer__title footer__title--gap">Follow</h2>
+          <ul class="footer__links">
+            {socials.map(([k, url]) => (
+              <li>
+                <a href={url} rel="me noopener">
+                  {SOCIAL_LABELS[k] ?? k}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+    </nav>
+  </div>
+  <div class="container footer__base">
+    <span>
+      © {year} {company.legalName}. {company.brandLine}
+    </span>
+    <span>Photography: illustrative stock images.</span>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    border-top: 1px solid var(--line-soft);
+    background: var(--midnight-deep);
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--muted-2);
+  }
+
+  .footer__grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1.2fr 1fr 1fr;
+    gap: 36px;
+    padding-top: 56px;
+    padding-bottom: 32px;
+  }
+
+  .footer__agent {
+    margin-top: 14px;
+    max-width: 460px;
+    color: var(--text-3);
+  }
+
+  .footer__contact {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .footer__title {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .footer__title--gap {
+    margin-top: 22px;
+  }
+
+  .footer__address {
+    margin-top: 12px;
+    font-style: normal;
+  }
+
+  .footer__grievance {
+    margin-top: 12px;
+    font-size: 13px;
+  }
+
+  .footer__links {
+    margin-top: 12px;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .footer__links a,
+  .footer__contact a {
+    display: inline-block;
+    padding: 3px 0;
+    color: var(--ivory-2);
+    text-decoration: none;
+  }
+
+  .footer__links a:hover,
+  .footer__contact a:hover {
+    color: var(--gold-light);
+    text-decoration: underline;
+  }
+
+  .footer__base {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 10px;
+    padding-top: 18px;
+    padding-bottom: 32px;
+    border-top: 1px solid var(--line-faint);
+    font-size: 12.5px;
+    color: var(--faint);
+  }
+
+  @media (max-width: 1023px) {
+    .footer__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 599px) {
+    .footer__grid {
+      grid-template-columns: 1fr;
+      gap: 28px;
+      padding-top: 44px;
+    }
+  }
+</style>

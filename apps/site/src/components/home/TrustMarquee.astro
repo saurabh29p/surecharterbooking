@@ -1,0 +1,219 @@
+---
+/**
+ * The moving trust strip: nine promises on wide screens, five short ones on phones (mockup).
+ * Pauses on hover or focus; under reduced motion it becomes a static wrap.
+ */
+import Icon, { type IconName } from '../Icon.astro';
+
+const PROMISES: Array<{ icon: IconName; label: string; text: string }> = [
+  { icon: 'shield', label: 'DGCA-approved', text: 'Only licensed NSOP operators' },
+  { icon: 'document', label: 'Checked', text: 'Permit, aircraft papers & insurance' },
+  { icon: 'card', label: 'Transparent', text: 'One written, all-in price' },
+  { icon: 'bank', label: 'GST invoice', text: 'Billed by a registered LLP' },
+  { icon: 'lock', label: 'Safe payment', text: 'To a company account, never a person' },
+  { icon: 'helicopter', label: 'Helicopters', text: 'Landing permissions coordinated' },
+  { icon: 'chat', label: 'One coordinator', text: 'On WhatsApp until you land' },
+  { icon: 'cloud', label: 'Safety first', text: 'The pilot’s call is final' },
+  { icon: 'lock', label: 'DPDP Act', text: 'Your details kept private' },
+];
+
+const SHORT = [
+  'Only DGCA-approved NSOP operators',
+  'Permit & insurance checked',
+  'One all-in price',
+  'GST invoice',
+  'One WhatsApp coordinator',
+];
+---
+
+<section class="marquee marquee--wide" aria-label="Our promises">
+  <div class="marquee__fade marquee__fade--l" aria-hidden="true"></div>
+  <div class="marquee__fade marquee__fade--r" aria-hidden="true"></div>
+  <div class="marquee__track">
+    {[false, true].map((dup) => (
+      <ul aria-hidden={dup ? 'true' : undefined} class:list={['marquee__list', { 'is-dup': dup }]}>
+        {PROMISES.map((p) => (
+          <li class="marquee__item">
+            <span class="marquee__icon">
+              <Icon name={p.icon} size={20} stroke={1.7} />
+            </span>
+            <span class="marquee__text">
+              <span class="marquee__label">{p.label}</span>
+              <span class="marquee__line">{p.text}</span>
+            </span>
+          </li>
+        ))}
+      </ul>
+    ))}
+  </div>
+</section>
+
+<section class="marquee marquee--short" aria-label="Our promises">
+  <div class="marquee__track marquee__track--fast">
+    {[false, true].map((dup) => (
+      <ul aria-hidden={dup ? 'true' : undefined} class:list={['marquee__list', { 'is-dup': dup }]}>
+        {SHORT.map((t) => (
+          <li class="marquee__pill">
+            <span class="marquee__dot" />
+            {t}
+          </li>
+        ))}
+      </ul>
+    ))}
+  </div>
+</section>
+
+<style>
+  .marquee {
+    position: relative;
+    border-top: 1px solid var(--line-strong);
+    border-bottom: 1px solid var(--line-strong);
+    background: linear-gradient(180deg, #0e1328, #0b1020);
+    overflow: hidden;
+  }
+
+  .marquee--short {
+    display: none;
+    background: var(--panel);
+  }
+
+  .marquee__fade {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 120px;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .marquee__fade--l {
+    left: 0;
+    background: linear-gradient(90deg, #0c1124, rgba(12, 17, 36, 0));
+  }
+
+  .marquee__fade--r {
+    right: 0;
+    background: linear-gradient(270deg, #0c1124, rgba(12, 17, 36, 0));
+  }
+
+  .marquee__track {
+    display: flex;
+    width: max-content;
+    animation: marquee 46s linear infinite;
+  }
+
+  .marquee__track--fast {
+    animation-duration: 30s;
+  }
+
+  .marquee:hover .marquee__track,
+  .marquee:focus-within .marquee__track {
+    animation-play-state: paused;
+  }
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  .marquee__list {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .marquee__item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 26px 34px;
+    white-space: nowrap;
+    border-right: 1px solid #222743;
+  }
+
+  .marquee__icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 1px solid var(--gold-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    color: var(--gold-soft);
+    background: radial-gradient(circle at 30% 30%, #1e2546, #0e1328);
+  }
+
+  .marquee__text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.25;
+  }
+
+  .marquee__label {
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold-ink);
+  }
+
+  .marquee__line {
+    margin-top: 4px;
+    font-size: 15.5px;
+    font-weight: 600;
+    color: var(--ivory);
+  }
+
+  .marquee__pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 18px;
+    white-space: nowrap;
+    font-size: 13px;
+    font-weight: 600;
+    border-right: 1px solid #222743;
+  }
+
+  .marquee__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+  }
+
+  @media (max-width: 767px) {
+    .marquee--wide {
+      display: none;
+    }
+
+    .marquee--short {
+      display: block;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .marquee__track {
+      animation: none;
+      width: auto;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .marquee__list {
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .marquee__list.is-dup,
+    .marquee__fade {
+      display: none;
+    }
+  }
+</style>

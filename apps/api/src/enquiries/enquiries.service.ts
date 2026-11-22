@@ -470,6 +470,8 @@ export class EnquiriesService {
       message: pick('message'),
       page: pick('page'),
       gclid: !!pick('gclid'),
+      /** Ticked the separate box for news and offers. */
+      marketing: first.marketingConsent === true,
     };
   }
 

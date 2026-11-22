@@ -1,0 +1,182 @@
+---
+/** Choose your arrival: five aircraft classes (mockup). Seat counts are typical; marked to verify. */
+import Verify from '../Verify.astro';
+
+const CLASSES = [
+  {
+    name: 'Helicopter',
+    seats: 'Up to 5–6 guests',
+    use: 'Airport to venue. The grand entrance.',
+    w: 110,
+    vb: '0 0 200 80',
+    d: 'M40 40 C40 26 70 18 110 18 C150 18 172 30 176 44 C178 54 166 60 140 60 L70 60 C52 60 40 52 40 40 Z M44 38 L4 32 L4 38 L44 46 Z M4 22 L12 22 L14 40 L4 40 Z M106 8 h4 v12 h-4 Z',
+    lines: 'M18 8 H198 M70 60 L66 72 M140 60 L144 72 M56 72 H158',
+  },
+  {
+    name: 'Light jet',
+    seats: 'About 6–7 guests',
+    use: 'The couple and closest family.',
+    w: 110,
+    vb: '0 0 200 60',
+    d: 'M10 34 C30 30 120 26 170 24 C185 23 196 26 198 30 C196 34 186 36 170 36 L40 38 C25 38 14 37 10 34 Z M18 34 L6 8 L20 8 L42 32 Z M90 35 L122 35 L74 54 L62 54 Z',
+  },
+  {
+    name: 'Super-midsize',
+    seats: 'About 8–9 guests',
+    use: 'One family side, coast to coast.',
+    w: 125,
+    vb: '0 0 230 60',
+    d: 'M10 34 C30 30 140 26 200 24 C215 23 226 26 228 30 C226 34 216 36 200 36 L40 38 C25 38 14 37 10 34 Z M18 34 L6 6 L22 6 L44 32 Z M100 35 L136 35 L80 56 L66 56 Z',
+  },
+  {
+    name: 'Heavy jet',
+    seats: 'About 12–14 guests',
+    use: 'The full VIP circle, room to celebrate.',
+    w: 135,
+    vb: '0 0 260 60',
+    d: 'M10 34 C30 30 160 26 230 24 C245 23 256 26 258 30 C256 34 246 36 230 36 L40 38 C25 38 14 37 10 34 Z M18 34 L4 4 L22 4 L46 32 Z M110 35 L150 35 L86 58 L70 58 Z',
+  },
+  {
+    name: 'Group charter',
+    seats: '50 guests and more',
+    use: 'The whole baraat, one departure.',
+    w: 140,
+    vb: '0 0 300 60',
+    d: 'M10 34 C30 28 200 26 270 25 C286 25 296 27 298 30 C296 34 286 36 270 36 L40 39 C25 39 14 37 10 34 Z M18 34 L4 2 L24 2 L50 32 Z M130 36 L176 36 L100 58 L82 58 Z',
+    featured: true,
+  },
+];
+---
+
+<section id="fleet" class="fleet" aria-labelledby="fleet-h">
+  <div class="container">
+    <div class="reveal">
+      <p class="eyebrow">Choose your arrival</p>
+      <h2 id="fleet-h" class="h2 fleet__title">
+        Five ways to fly in. One team for all of it.
+      </h2>
+    </div>
+    <div class="fleet__grid">
+      {CLASSES.map((c, i) => (
+        <a
+          href="/aircraft/"
+          class:list={['fleet__card card-lift reveal', { 'is-featured': c.featured }]}
+        >
+          <svg width={c.w} height="48" viewBox={c.vb} aria-hidden="true" class="fleet__art">
+            <path d={c.d} fill="currentColor" />
+            {c.lines && <path d={c.lines} stroke="currentColor" stroke-width="3" fill="none" />}
+          </svg>
+          <h3 class="fleet__name display">{c.name}</h3>
+          <p class="fleet__seats num">
+            <Verify>{c.seats}</Verify>
+          </p>
+          <p class="fleet__use">{c.use}</p>
+        </a>
+      ))}
+    </div>
+    <p class="fleet__note">
+      Guest numbers are typical for each class; the exact aircraft decides the final count.
+    </p>
+  </div>
+</section>
+
+<style>
+  .fleet {
+    padding: 120px 0;
+  }
+
+  .fleet__title {
+    max-width: 760px;
+  }
+
+  .fleet__grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 52px;
+  }
+
+  .fleet__card {
+    display: block;
+    padding: 28px 22px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-card);
+    background: linear-gradient(180deg, #121833, #0e1328);
+    color: var(--ivory);
+    text-decoration: none;
+  }
+
+  .fleet__card:hover {
+    color: var(--ivory);
+  }
+
+  .fleet__card.is-featured {
+    border-color: var(--gold-dark);
+    background: linear-gradient(180deg, #1a1e38, #0e1328);
+  }
+
+  .fleet__art {
+    display: block;
+    color: var(--gold-soft);
+  }
+
+  .fleet__name {
+    margin-top: 20px;
+    font-weight: 500;
+    font-size: 23px;
+    line-height: 1.2;
+  }
+
+  .fleet__seats {
+    margin-top: 4px;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--gold);
+  }
+
+  .fleet__use {
+    margin-top: 12px;
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+
+  .fleet__note {
+    margin-top: 20px;
+    font-size: 13.5px;
+    color: var(--faint);
+  }
+
+  @media (max-width: 1099px) {
+    .fleet__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 767px) {
+    .fleet {
+      padding: 80px 0;
+    }
+
+    /* Phones: a row to swipe through. */
+    .fleet__grid {
+      grid-template-columns: none;
+      grid-auto-flow: column;
+      grid-auto-columns: 74%;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      margin: 36px calc(var(--gutter) * -1) 0;
+      padding: 4px var(--gutter) 12px;
+      scroll-padding: 0 var(--gutter);
+      scrollbar-width: none;
+    }
+
+    .fleet__grid::-webkit-scrollbar {
+      display: none;
+    }
+
+    .fleet__card {
+      scroll-snap-align: start;
+    }
+  }
+</style>

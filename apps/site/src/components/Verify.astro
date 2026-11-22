@@ -1,0 +1,38 @@
+---
+/**
+ * A fact written as a best estimate (WEBSITE.md §10): flight times, seats, airport details.
+ * Preview builds mark it with a dotted underline and a "verify" tag; every one is listed in
+ * apps/site/VERIFY.md. Production shows the plain text (launch waits until they are confirmed).
+ */
+import { PREVIEW } from '../config/site';
+---
+
+{PREVIEW ? (
+  <span class="verify" title="[VERIFY] best estimate, to confirm before launch">
+    <slot />
+  </span>
+) : (
+  <slot />
+)}
+
+<style>
+  .verify {
+    text-decoration: underline dotted rgba(244, 227, 181, 0.55);
+    text-underline-offset: 4px;
+  }
+
+  .verify::after {
+    content: 'verify';
+    margin-left: 4px;
+    padding: 0 4px;
+    border-radius: 4px;
+    background: rgba(212, 178, 106, 0.18);
+    color: var(--gold-light);
+    font-family: var(--font-body), system-ui, sans-serif;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    vertical-align: 2px;
+  }
+</style>

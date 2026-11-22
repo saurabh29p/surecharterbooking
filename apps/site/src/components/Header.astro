@@ -1,0 +1,393 @@
+---
+import { company } from '../config/company';
+import { NAV, telLink, whatsappLink } from '../config/site';
+import Icon from './Icon.astro';
+import Logo from './Logo.astro';
+
+interface Props {
+  /** Page name used in the pre-filled WhatsApp message. */
+  pageName: string;
+  /** Where "Plan my flight" goes: the form on this page, or the contact page. */
+  planHref: string;
+}
+
+const { pageName, planHref } = Astro.props;
+const path = Astro.url.pathname;
+const wa = whatsappLink(pageName);
+---
+
+<div class="utility">
+  <div class="container utility__inner">
+    <span class="utility__item">
+      <Icon name="shield" size={14} stroke={2} class="gold-text" />
+      Every flight by a DGCA-approved NSOP operator
+    </span>
+    <span class="utility__item">
+      A brand of {company.legalName} · GST-registered · New Delhi ·
+      <a href={wa} data-tap="WHATSAPP" class="utility__wa">
+        WhatsApp {company.whatsapp.display}
+      </a>
+    </span>
+  </div>
+</div>
+
+<header class="header" data-header>
+  <div class="container header__inner">
+    <a href="/" class="header__brand" aria-label="Vaanika home">
+      <Logo height={62} class="header__logo" />
+    </a>
+    <nav class="header__nav" aria-label="Main">
+      {NAV.map((n) => (
+        <a href={n.href} aria-current={path.startsWith(n.href) ? 'page' : undefined}>
+          {n.label}
+        </a>
+      ))}
+    </nav>
+    <div class="header__actions">
+      <a class="btn btn--gold header__cta" href={planHref}>
+        Plan my flight
+      </a>
+      <button
+        type="button"
+        class="header__menu"
+        aria-label="Open menu"
+        aria-haspopup="dialog"
+        aria-controls="site-menu"
+        data-menu-open
+      >
+        <Icon name="menu" size={18} stroke={2} />
+      </button>
+    </div>
+  </div>
+</header>
+
+<dialog class="menu" id="site-menu" aria-label="Menu" data-menu>
+  <div class="menu__top">
+    <Logo height={50} />
+    <button type="button" class="header__menu" aria-label="Close menu" data-menu-close>
+      <Icon name="close" size={18} stroke={2} />
+    </button>
+  </div>
+  <nav aria-label="Main (mobile)" class="menu__nav">
+    {NAV.map((n) => (
+      <a href={n.href} aria-current={path.startsWith(n.href) ? 'page' : undefined}>
+        {n.label}
+        <Icon name="arrow" size={18} />
+      </a>
+    ))}
+    <a href="/weddings/">
+      Wedding flights <Icon name="arrow" size={18} />
+    </a>
+    <a href="/faq/">
+      FAQ <Icon name="arrow" size={18} />
+    </a>
+  </nav>
+  <div class="menu__cta">
+    <a class="btn btn--gold btn--lg btn--block" href={planHref} data-menu-close>
+      Plan my wedding flight
+    </a>
+    <div class="menu__contact">
+      <a class="btn btn--ivory" href={wa} data-tap="WHATSAPP">
+        <Icon name="chat" size={18} stroke={2} />
+        WhatsApp
+      </a>
+      <a class="btn btn--outline" href={telLink} data-tap="CALL">
+        <Icon name="phone" size={18} stroke={2} />
+        Call
+      </a>
+    </div>
+  </div>
+</dialog>
+
+<style>
+  .utility {
+    background: var(--midnight-deep);
+    border-bottom: 1px solid var(--line-faint);
+    font-size: 12.5px;
+    color: var(--muted);
+  }
+
+  .utility__inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 24px;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 9px;
+    padding-bottom: 9px;
+  }
+
+  .utility__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .utility__wa {
+    color: var(--ivory-2);
+  }
+
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    height: var(--header-h);
+    background: var(--midnight);
+    border-bottom: 1px solid var(--line-soft);
+    transition:
+      background-color 0.25s ease,
+      box-shadow 0.25s ease;
+  }
+
+  .header.is-scrolled {
+    background: rgba(11, 16, 32, 0.82);
+    -webkit-backdrop-filter: blur(14px) saturate(1.2);
+    backdrop-filter: blur(14px) saturate(1.2);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  }
+
+  .header__inner {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+  }
+
+  .header__brand {
+    display: flex;
+    align-items: center;
+    border-radius: 8px;
+    transition: transform 0.25s var(--ease-out);
+    transform-origin: left center;
+  }
+
+  .header.is-scrolled .header__brand {
+    transform: scale(0.9);
+  }
+
+  @media (max-width: 767px) {
+    .header__brand :global(.header__logo) {
+      height: 54px;
+      width: auto;
+      margin-left: -8px;
+    }
+  }
+
+  .header__nav {
+    display: flex;
+    gap: 30px;
+    font-size: 14.5px;
+    font-weight: 500;
+  }
+
+  .header__nav a {
+    position: relative;
+    color: var(--ivory-2);
+    text-decoration: none;
+    padding: 10px 0;
+  }
+
+  .header__nav a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 4px;
+    height: 1px;
+    background: var(--gold);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.2s var(--ease-out);
+  }
+
+  .header__nav a:hover,
+  .header__nav a[aria-current='page'] {
+    color: var(--gold-light);
+  }
+
+  .header__nav a:hover::after,
+  .header__nav a[aria-current='page']::after {
+    transform: scaleX(1);
+  }
+
+  .header__actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .header__cta {
+    min-height: 46px;
+    padding: 12px 22px;
+    font-size: 14.5px;
+  }
+
+  .header__menu {
+    display: none;
+    width: 44px;
+    height: 44px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(243, 237, 226, 0.3);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--ivory);
+    cursor: pointer;
+    transition:
+      border-color 0.15s ease,
+      background-color 0.15s ease,
+      transform 0.05s ease;
+  }
+
+  .header__menu:hover {
+    border-color: var(--gold);
+    background: rgba(212, 178, 106, 0.08);
+  }
+
+  .header__menu:active {
+    transform: scale(0.96);
+  }
+
+  @media (max-width: 1199px) {
+    .header__nav {
+      display: none;
+    }
+
+    .header__menu {
+      display: inline-flex;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .utility {
+      display: none;
+    }
+
+    .header__cta {
+      display: none;
+    }
+  }
+
+  /* ---------- Menu sheet ---------- */
+
+  .menu {
+    width: 100%;
+    max-width: 440px;
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0 0 0 auto;
+    padding: 0;
+    border: 0;
+    border-left: 1px solid var(--line);
+    background: var(--midnight);
+    color: var(--ivory);
+    overflow-y: auto;
+  }
+
+  .menu::backdrop {
+    background: rgba(5, 7, 15, 0.7);
+  }
+
+  .menu[open] {
+    display: flex;
+    flex-direction: column;
+    animation: menu-in 0.26s var(--ease-out);
+  }
+
+  @keyframes menu-in {
+    from {
+      transform: translateX(40px);
+      opacity: 0;
+    }
+  }
+
+  .menu__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--header-h);
+    padding: 0 var(--gutter);
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .menu__top .header__menu {
+    display: inline-flex;
+  }
+
+  .menu__nav {
+    display: flex;
+    flex-direction: column;
+    padding: 12px var(--gutter);
+  }
+
+  .menu__nav a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 56px;
+    border-bottom: 1px solid var(--line-faint);
+    color: var(--ivory);
+    font-family: var(--font-display), Georgia, serif;
+    font-size: 22px;
+    text-decoration: none;
+  }
+
+  .menu__nav a :global(svg) {
+    color: var(--gold);
+    transition: transform 0.18s var(--ease-out);
+  }
+
+  .menu__nav a:hover :global(svg) {
+    transform: translateX(3px);
+  }
+
+  .menu__nav a[aria-current='page'] {
+    color: var(--gold-light);
+  }
+
+  .menu__cta {
+    margin-top: auto;
+    padding: 20px var(--gutter) 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .menu__contact {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+</style>
+
+<script>
+  const menu = document.querySelector<HTMLDialogElement>('[data-menu]');
+  const opener = document.querySelector<HTMLButtonElement>('[data-menu-open]');
+  opener?.addEventListener('click', () => menu?.showModal());
+  menu
+    ?.querySelectorAll('[data-menu-close]')
+    .forEach((el) => el.addEventListener('click', () => menu.close()));
+  // Tapping the dim area outside the sheet closes it.
+  menu?.addEventListener('click', (e) => {
+    if (e.target === menu) {
+      const r = menu.getBoundingClientRect();
+      const inside =
+        e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom;
+      if (!inside) menu.close();
+    }
+  });
+  menu?.addEventListener('close', () => opener?.focus());
+
+  // Header gains a blur and a shadow once the page scrolls (no change in height: no layout shift).
+  const header = document.querySelector('[data-header]');
+  if (header) {
+    const sentinel = document.createElement('div');
+    sentinel.setAttribute('aria-hidden', 'true');
+    sentinel.style.cssText = 'position:absolute;top:120px;height:1px;width:1px;';
+    document.body.prepend(sentinel);
+    new IntersectionObserver(([entry]) =>
+      header.classList.toggle('is-scrolled', !entry?.isIntersecting),
+    ).observe(sentinel);
+  }
+</script>
