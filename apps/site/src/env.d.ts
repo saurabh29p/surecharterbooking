@@ -1,8 +1,8 @@
 /// <reference types="astro/client" />
 
-/** True on every build except Vercel production: draft banners and the placeholder warning show. */
+/** True until launch (PUBLIC_LAUNCHED=true on Vercel production): draft banners and placeholder warnings show. */
 declare const __PREVIEW__: boolean;
-/** True only on a production build with PUBLIC_ALLOW_INDEXING=true (after launch). */
+/** True only on the launched production build. */
 declare const __INDEXABLE__: boolean;
 
 interface ImportMetaEnv {

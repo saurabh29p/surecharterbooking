@@ -254,8 +254,9 @@ Defaults taken while building; each can be changed. Questions sent to the owner 
   listed in `apps/site/VERIFY.md`; production shows plain text.
 - **Content security policy:** Astro writes a policy with hashes for every inline script and style; the
   page may talk only to itself and the API. Vercel adds HSTS, `frame-ancestors 'none'` and `noindex`.
-- **Not indexed until launch:** `noindex` on every page and a `robots.txt` that disallows everything;
-  both switch only on a production build with `PUBLIC_ALLOW_INDEXING=true`.
+- **Not indexed until launch:** `noindex` on every page and a `robots.txt` that disallows everything.
+  Launch is an explicit switch, `PUBLIC_LAUNCHED=true` on Vercel production; until then every build,
+  including what Vercel calls "production" (its first deployment went there), behaves as a preview.
 - **Brand change in the desk (WEBSITE.md §0) keeps internal names on purpose:** package names
   (`@shubhjets/*`), the Railway project `shubhjets`, the bucket, database names and the JWT issuer stay.
   Renaming them buys nothing and risks breaking deploys. Only what clients, planners or the public see

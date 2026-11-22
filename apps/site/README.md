@@ -24,7 +24,7 @@ The enquiry form posts to the desk API. Locally, start the API (`pnpm dev` at th
 | `PUBLIC_WHATSAPP_NUMBER` | WhatsApp, digits with country code | `919812345678` |
 | `PUBLIC_PHONE` | Call number, digits with country code | `919812345678` |
 | `PUBLIC_GOOGLE_ADS_ID` | Optional Google Ads conversion ID | `AW-123456789` |
-| `PUBLIC_ALLOW_INDEXING` | `true` only at launch, on production | |
+| `PUBLIC_LAUNCHED` | `true` only on launch day, on Vercel production. Until then every build is a preview: banners, "verify" tags, `noindex` | |
 
 No secrets belong here: everything is public and baked into the HTML.
 

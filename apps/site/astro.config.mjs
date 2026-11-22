@@ -4,14 +4,14 @@ import { defineConfig, fontProviders } from 'astro/config';
 /**
  * Vaanika public site: static pages only (WEBSITE.md §4).
  *
- * Build-time switches (Vercel sets VERCEL_ENV itself):
- * - PREVIEW: anything but Vercel production shows draft banners and the placeholder warning.
- * - INDEXABLE: only a production build with PUBLIC_ALLOW_INDEXING=true may be indexed. Until launch
- *   every page is `noindex` and robots.txt disallows everything.
+ * Launch is an explicit switch, not "whatever Vercel calls production": only a Vercel production
+ * build with PUBLIC_LAUNCHED=true is the live site. Every other build is a preview: draft banners,
+ * the placeholder warning and "verify" tags show, every page is `noindex` and robots.txt disallows all.
  */
 const vercelEnv = process.env.VERCEL_ENV ?? 'development';
-const preview = vercelEnv !== 'production';
-const indexable = !preview && process.env.PUBLIC_ALLOW_INDEXING === 'true';
+const launched = vercelEnv === 'production' && process.env.PUBLIC_LAUNCHED === 'true';
+const preview = !launched;
+const indexable = launched;
 
 const bodoni = '@fontsource-variable/bodoni-moda/files/bodoni-moda-latin-opsz';
 
