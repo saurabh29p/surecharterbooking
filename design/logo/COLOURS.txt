@@ -1,0 +1,16 @@
+Vaanika brand colours
+Midnight  #0B1020  (dark backgrounds)
+Navy      #0B1A3A  (text on light backgrounds)
+Shyama blue  #2C4FB0 -> #16296B gradient on screens, flat #1E3A8A for print  (the Kali petal)
+Gold      #B8924A  (flat gold for print, foil, embroidery)
+Gold gradient  #F4E3B5 -> #D9BC78 -> #B8924A -> #8C6A2F  (screens only)
+Ivory     #F3EDE2  (light backgrounds and the Saraswati petal on dark)
+Fonts: Bodoni Moda 500 (name), Manrope 600 (PRIVATE AVIATION, body). Both are free Google Fonts (SIL Open Font License).
+
+Which file to use
+- Website header, PDF quotes, letterhead: horizontal colour.
+- Business card, brochure cover, video end screen: stacked colour.
+- Gold foil, embroidery (uniform, cap), engraving, stamp: mono gold / mono navy / mono black.
+- On a dark photo or video: mono white.
+- App icon, WhatsApp DP, Instagram DP: the ready square files.
+- Anything smaller than 48 px: the "mark-small" files (thicker lines, no base line).

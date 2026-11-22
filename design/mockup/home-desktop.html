@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- Static copy of the approved Vaanika mockup (fonts load from Google Fonts when opened; the real site self-hosts them). -->
+<title>Vaanika — final landing page</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&amp;family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0B1020}
+a{color:#D4B26A}a:hover{color:#F4E3B5}
+.v-btn{transition:transform .18s ease,box-shadow .18s ease,background-color .18s ease,color .18s ease;cursor:pointer}
+.v-btn:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(212,178,106,.28)}
+.v-btn:active{transform:translateY(0) scale(.98)}
+.v-btn:focus-visible,.v-nav a:focus-visible,summary:focus-visible,input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid #F4E3B5;outline-offset:3px}
+.v-nav a{color:#E8E2D4;text-decoration:none;transition:color .15s}.v-nav a:hover{color:#F4E3B5}
+.v-card{transition:transform .3s ease,border-color .3s ease}
+.v-card:hover{transform:translateY(-4px);border-color:#8C6A2F}
+.v-photo{display:block;width:100%;object-fit:cover;transition:transform .8s ease}
+.v-card:hover .v-photo,.v-dest:hover .v-photo{transform:scale(1.05)}
+.v-track{display:flex;width:max-content;animation:vmarquee 46s linear infinite}
+.v-marquee:hover .v-track{animation-play-state:paused}
+@keyframes vmarquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.v-shreeji{background:url(../photos/shreeji-arrival-composite.jpg) 78% center/cover no-repeat}
+.v-vip{background:url(../photos/private-jet-vip.jpg) 65% center/cover no-repeat}
+.v-lights{background:url(../photos/fairy-lights.jpg) center/cover no-repeat}
+.v-hero-poster{background:url(../video/hero-poster.jpg) center/cover no-repeat}
+summary{cursor:pointer;list-style:none}summary::-webkit-details-marker{display:none}
+details[open] .v-plus{transform:rotate(45deg)}
+.v-plus{transition:transform .2s ease}
+.v-num{font-variant-numeric:tabular-nums lining-nums}
+@media (prefers-reduced-motion: reduce){.v-track{animation:none}.v-hero-video{display:none}}
+</style>
+
+</head>
+<body>
+
+
+<div style="background: #0B1020; color: #F3EDE2; font-family: Manrope, system-ui, sans-serif; font-size: 17px; line-height: 1.65; overflow: hidden">
+
+<!-- UTILITY BAR -->
+<div style="background: #070A14; border-bottom: 1px solid #1B2036; font-size: 12.5px; color: #B5AE9F">
+<div style="max-width: 1280px; margin: 0 auto; padding: 9px 28px; display: flex; flex-wrap: wrap; gap: 6px 24px; justify-content: space-between; align-items: center">
+<span style="display: flex; align-items: center; gap: 8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D4B26A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"></path><path d="M9 12l2 2 4-4"></path></svg>Every flight by a DGCA-approved NSOP operator</span>
+<span>A brand of Indicgems Exim LLP · GST-registered · New Delhi · <a href="https://wa.me/91XXXXXXXXXX" style="color: #E8E2D4">WhatsApp +91 XXXXX XXXXX</a></span>
+</div>
+</div>
+
+<!-- HEADER -->
+<header style="background: #0B1020; border-bottom: 1px solid #1F2440; position: relative; z-index: 5">
+<div style="max-width: 1280px; margin: 0 auto; padding: 18px 28px; display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap">
+<a href="#top" aria-label="Vaanika home" style="display: flex; align-items: center; gap: 14px; text-decoration: none">
+<svg width="36" height="39" viewBox="10 0 180 196" aria-hidden="true"><defs><linearGradient id="hkb" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2C4FB0"></stop><stop offset="1" stop-color="#16296B"></stop></linearGradient><linearGradient id="hk" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F4E3B5"></stop><stop offset="0.4" stop-color="#D9BC78"></stop><stop offset="0.75" stop-color="#B8924A"></stop><stop offset="1" stop-color="#8C6A2F"></stop></linearGradient></defs><path d="M94 166 C56 156 26 118 18 64 C50 86 80 118 94 166 Z" fill="#F3EDE2"></path><path d="M106 166 C144 156 174 118 182 64 C150 86 120 118 106 166 Z" fill="url(#hkb)" stroke="url(#hk)" stroke-width="4"></path><path d="M100 28 C124 70 124 122 100 164 C76 122 76 70 100 28 Z" fill="url(#hk)"></path><path d="M88 12 A12 12 0 0 0 112 12 A15 15 0 0 1 88 12 Z" fill="url(#hk)"></path><path d="M46 182 Q100 194 154 182" stroke="url(#hk)" stroke-width="4" fill="none"></path></svg>
+<span style="display: flex; flex-direction: column; line-height: 1">
+<span style="font-family: 'Bodoni Moda', Georgia, serif; font-size: 25px; font-weight: 500; letter-spacing: 0.2em; color: #F3EDE2">V<span style="color: #D4B26A">AA</span>NIKA</span>
+<span style="margin-top: 6px; font-size: 9.5px; font-weight: 700; letter-spacing: 0.42em; color: #B8924A">PRIVATE AVIATION</span>
+</span>
+</a>
+<nav class="v-nav" aria-label="Main" style="display: flex; gap: 30px; font-size: 14.5px; font-weight: 500; flex-wrap: wrap">
+<a href="#standard">Our standard</a>
+<a href="#destinations">Destinations</a>
+<a href="#fleet">Jets &amp; helicopters</a>
+<a href="#shreeji">The Shreeji Arrival</a>
+<a href="#private">Private &amp; business</a>
+<a href="#planners">For planners</a>
+</nav>
+<a class="v-btn" href="#enquire" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 22px; min-height: 46px; box-sizing: border-box; border-radius: 999px; background: linear-gradient(135deg, #F4E3B5, #C9A55C 60%, #A9823C); color: #0B1020; text-decoration: none; font-size: 14.5px; font-weight: 700">Plan my flight</a>
+</div>
+</header>
+
+<!-- HERO VIDEO -->
+<section id="top" aria-label="Introduction" style="position: relative; height: 820px; overflow: hidden; background: #05070F">
+<div class="v-hero-poster" style="position: absolute; inset: 0"></div>
+<video class="v-hero-video" autoPlay="" muted="" loop="" playsInline="" preload="auto" poster="../video/hero-poster.jpg" aria-hidden="true" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover">
+<source src="../video/hero-loop-720p.mp4" type="video/mp4">
+</video>
+<div aria-hidden="true" style="position: absolute; inset: 0; background: linear-gradient(90deg, rgba(5,7,15,.88) 0%, rgba(5,7,15,.55) 42%, rgba(5,7,15,.05) 75%), linear-gradient(0deg, rgba(11,16,32,1) 0%, rgba(11,16,32,0) 32%)"></div>
+<div style="position: relative; z-index: 2; height: 100%; max-width: 1280px; margin: 0 auto; padding: 0 28px 92px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: flex-end">
+<p style="margin: 0 0 22px; font-size: 13px; font-weight: 700; letter-spacing: 0.32em; color: #D4B26A">PRIVATE JETS &amp; HELICOPTERS FOR INDIAN WEDDINGS</p>
+<h1 style="margin: 0; max-width: 860px; font-family: 'Bodoni Moda', Georgia, serif; font-weight: 400; font-size: clamp(48px, 6.6vw, 98px); line-height: 1.02; letter-spacing: -0.012em">The arrival they’ll talk about for a lifetime.</h1>
+<p style="margin: 26px 0 0; max-width: 580px; font-size: 19px; line-height: 1.6; color: #DDD6C8">Your family and closest guests, flown from any Indian city to Udaipur, Jaipur, Goa and beyond — only with DGCA-approved operators, at one written, all-in price.</p>
+<div style="display: flex; gap: 14px; margin-top: 38px; flex-wrap: wrap; align-items: center">
+<a class="v-btn" href="#enquire" style="display: inline-flex; align-items: center; gap: 10px; padding: 18px 30px; min-height: 58px; box-sizing: border-box; border-radius: 999px; background: linear-gradient(135deg, #F4E3B5, #C9A55C 60%, #A9823C); color: #0B1020; font-weight: 700; font-size: 16px; text-decoration: none">Plan my wedding flight
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg></a>
+<button class="v-btn" type="button" style="display: inline-flex; align-items: center; gap: 12px; padding: 10px 24px 10px 10px; min-height: 58px; box-sizing: border-box; border-radius: 999px; border: 1px solid rgba(243,237,226,.4); background: rgba(11,16,32,.35); color: #F3EDE2; font: inherit; font-size: 15.5px; font-weight: 600">
+<span style="width: 38px; height: 38px; border-radius: 50%; background: #F3EDE2; display: flex; align-items: center; justify-content: center"><svg width="14" height="14" viewBox="0 0 24 24" fill="#0B1020" aria-hidden="true"><path d="M7 4l14 8-14 8z"></path></svg></span>Watch the film · 27s</button>
+</div>
+</div>
+<p style="position: absolute; right: 28px; bottom: 24px; margin: 0; z-index: 2; font-size: 11.5px; letter-spacing: 0.08em; color: rgba(232,226,212,.6)">Illustrative footage · Udaipur at dusk</p>
+</section>
+
+
+
+<!-- TRUST MARQUEE -->
+<section class="v-marquee" aria-label="Our promises" style="position: relative; border-top: 1px solid #2A2F48; border-bottom: 1px solid #2A2F48; background: linear-gradient(180deg, #0E1328, #0B1020); overflow: hidden">
+<div aria-hidden="true" style="position: absolute; left: 0; top: 0; bottom: 0; width: 120px; z-index: 2; background: linear-gradient(90deg, #0C1124, rgba(12,17,36,0))"></div>
+<div aria-hidden="true" style="position: absolute; right: 0; top: 0; bottom: 0; width: 120px; z-index: 2; background: linear-gradient(270deg, #0C1124, rgba(12,17,36,0))"></div>
+<div class="v-track">
+
+<ul aria-hidden="false" style="display: flex; margin: 0; padding: 0; list-style: none">
+
+<li style="display: flex; align-items: center; gap: 14px; padding: 26px 34px; white-space: nowrap; border-right: 1px solid #222743">
+<span style="width: 42px; height: 42px; border-radius: 50%; border: 1px solid #8C6A2F; display: flex; align-items: center; justify-content: center; flex: none; background: radial-gradient(circle at 30% 30%, #1E2546, #0E1328)">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9D29A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z M9 12l2 2 4-4"></path></svg>
+</span>
+<span style="display: flex; flex-direction: column; line-height: 1.25">
+<span style="font-size: 10.5px; font-weight: 800; letter-spacing: 0.22em; color: #B8924A">DGCA-APPROVED</span>
+<span style="font-size: 15.5px; font-weight: 600; color: #F3EDE2; margin-top: 4px">Only licensed NSOP operators</span>
+</span>
+</li>
+
+<li style="display: flex; align-items: center; gap: 14px; padding: 26px 34px; white-space: nowrap; border-right: 1px solid #222743">
+<span style="width: 42px; height: 42px; border-radius: 50%; border: 1px solid #8C6A2F; display: flex; align-items: center; justify-content: center; flex: none; background: radial-gradient(circle at 30% 30%, #1E2546, #0E1328)">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9D29A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l5 5v13H7z M14 3v5h5 M10 13h6 M10 17h6"></path></svg>
+</span>
+<span style="display: flex; flex-direction: column; line-height: 1.25">
+<span style="font-size: 10.5px; font-weight: 800; letter-spacing: 0.22em; color: #B8924A">CHECKED</span>
+<span style="font-size: 15.5px; font-weight: 600; color: #F3EDE2; margin-top: 4px">Permit, aircraft papers &amp; insurance</span>
+</span>
+</li>
+
+<li style="display: flex; align-items: center; gap: 14px; padding: 26px 34px; white-space: nowrap; border-right: 1px solid #222743">
+<span style="width: 42px; height: 42px; border-radius: 50%; border: 1px solid #8C6A2F; display: flex; align-items: center; justify-content: center; flex: none; background: radial-gradient(circle at 30% 30%, #1E2546, #0E1328)">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9D29A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18v13H3z M3 10h18"></path></svg>
+</span>
+<span style="display: flex; flex-direction: column; line-height: 1.25">
+<span style="font-size: 10.5px; font-weight: 800; letter-spacing: 0.22em; color: #B8924A">TRANSPARENT</span>
+<span style="font-size: 15.5px; font-weight: 600; color: #F3EDE2; margin-top: 4px">One written, all-in price</span>
+</span>
+</li>
+
+<li style="display: flex; align-items: center; gap: 14px; padding: 26px 34px; white-space: nowrap; border-right: 1px solid #222743">
+<span style="width: 42px; height: 42px; border-radius: 50%; border: 1px solid #8C6A2F; display: flex; align-items: center; justify-content: center; flex: none; background: radial-gradient(circle at 30% 30%, #1E2546, #0E1328)">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9D29A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10l9-6 9 6 M5 10v8 M9.5 10v8 M14.5 10v8 M19 10v8 M3 20h18"></path></svg>
+</span>
+<span style="display: flex; flex-direction: column; line-height: 1.25">
+<span style="font-size: 10.5px; font-weight: 800; letter-spacing: 0.22em; color: #B8924A">GST INVOICE</span>
+<span style="font-size: 15.5px; font-weight: 600; color: #F3EDE2; margin-top: 4px">Billed by a registered LLP</span>
+</span>
+</li>
+
+<li style="display: flex; align-items: center; gap: 14px; padding: 26px 34px; white-space: nowrap; border-right: 1px solid #222743">
+<span style="width: 42px; height: 42px; border-radius: 50%; border: 1px solid #8C6A2F; display: flex; align-items: center; justify-content: center; flex: none; background: radial-gradient(circle at 30% 30%, #1E2546, #0E1328)">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9D29A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11h14v10H5z M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+</span>
+<span style="display: flex; flex-direction: column; line-height: 1.25">
+<span style="font-size: 10.5px; font-weight: 800; letter-spacing: 0.22em; color: #B8924A">SAFE PAYMENT</span>
+<span style="font-size: 15.5px; font-weight: 600; color: #F3EDE2; margin-top: 4px">To a company account, never a person</span>
+</span>
+</li>
+
+<li style="display: flex; align-items: center; gap: 14px; padding: 26px 34px; white-space: nowrap; border-right: 1px solid #222743">
+<span style="width: 42px; height: 42px; border-radius: 50%; border: 1px solid #8C6A2F; display: flex; align-items: center; justify-content: center; flex: none; background: radial-gradient(circle at 30% 30%, #1E2546, #0E1328)">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9D29A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h18 M12 5v3 M6 11c0-2 2-3 6-3s7 1 7 4-2 4-5 4H9c-2 0-3-1-3-3z M9 16l-1 3 M15 16l1 3 M6 19h12"></path></svg>
+</span>
+<span style="display: flex; flex-direction: column; line-height: 1.25">
+<span style="font-size: 10.5px; font-weight: 800; letter-spacing: 0.22em; color: #B8924A">HELICOPTERS</span>
+<span style="font-size: 15.5px; font-weight: 600; color: #F3EDE2; margin-top: 4px">Landing permissions coordinated</span>
+</span>
+</li>
+
+<li style="display: flex; align-items: center; gap: 14px; padding: 26px 34px; white-space: nowrap; border-right: 1px solid #222743">
+<span style="width: 42px; height: 42px; border-radius: 50%; border: 1px solid #8C6A2F; display: flex; align-items: center; justify-content: center; flex: none; background: radial-gradient(circle at 30% 30%, #1E2546, #0E1328)">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9D29A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"></path></svg>
+</span>
+<span style="display: flex; flex-direction: column; line-height: 1.25">
+<span style="font-size: 10.5px; font-weight: 800; letter-spacing: 0.22em; color: #B8924A">ONE COORDINATOR</span>
+<span style="font-size: 15.5px; font-weight: 600; color: #F3EDE2; margin-top: 4px">On WhatsApp until you land</span>
+</span>
+</li>
+
+<li style="display: flex; align-items: center; gap: 14px; padding: 26px 34px; white-space: nowrap; border-right: 1px solid #222743">
+<span style="width: 42px; height: 42px; border-radius: 50%; border: 1px solid #8C6A2F; display: flex; align-items: center; justify-content: center; flex: none; background: radial-gradient(circle at 30% 30%, #1E2546, #0E1328)">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9D29A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18h10a4 4 0 0 0 0-8 6 6 0 0 0-11.5 2A3 3 0 0 0 7 18z"></path></svg>
+</span>
+<span style="display: flex; flex-direction: column; line-height: 1.25">
+<span style="font-size: 10.5px; font-weight: 800; letter-spacing: 0.22em; color: #B8924A">SAFETY FIRST</span>
+<span style="font-size: 15.5px; font-weight: 600; color: #F3EDE2; margin-top: 4px">The pilot's call is final</span>
+</span>
+</li>
+
+<li style="display: flex; align-items: center; gap: 14px; padding: 26px 34px; white-space: nowrap; border-right: 1px solid #222743">
+<span style="width: 42px; height: 42px; border-radius: 50%; border: 1px solid #8C6A2F; display: flex; align-items: center; justify-content: center; flex: none; background: radial-gradient(circle at 30% 30%, #1E2546, #0E1328)">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9D29A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11h14v10H5z M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+</span>
+<span style="display: flex; flex-direction: column; line-height: 1.25">
+<span style="font-size: 10.5px; font-weight: 800; letter-spacing: 0.22em; color: #B8924A">DPDP ACT</span>
+<span style="font-size: 15.5px; font-weight: 600; color: #F3EDE2; margin-top: 4px">Your details kept private</span>
+</span>
+</li>
+
+</ul>
+
+<ul aria-hidden="true" style="display: flex; margin: 0; padding: 0; list-style: none">
+
+<li style="display: flex; align-items: center; gap: 14px; padding: 26px 34px; white-space: nowrap; border-right: 1px solid #222743">
+<span style="width: 42px; height: 42px; border-radius: 50%; border: 1px solid #8C6A2F; display: flex; align-items: center; justify-content: center; flex: none; background: radial-gradient(circle at 30% 30%, #1E2546, #0E1328)">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9D29A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z M9 12l2 2 4-4"></path></svg>
+</span>
+<span style="display: flex; flex-direction: column; line-height: 1.25">
+<span style="font-size: 10.5px; font-weight: 800; letter-spacing: 0.22em; color: #B8924A">DGCA-APPROVED</span>
+<span style="font-size: 15.5px; font-weight: 600; color: #F3EDE2; margin-top: 4px">Only licensed NSOP operators</span>
+</span>
+</li>
+
+<li style="display: flex; align-items: center; gap: 14px; padding: 26px 34px; white-space: nowrap; border-right: 1px solid #222743">
+<span style="width: 42px; height: 42px; border-radius: 50%; border: 1px solid #8C6A2F; display: flex; align-items: center; justify-content: center; flex: none; background: radial-gradient(circle at 30% 30%, #1E2546, #0E1328)">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9D29A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l5 5v13H7z M14 3v5h5 M10 13h6 M10 17h6"></path></svg>
+</span>
+<span style="display: flex; flex-direction: column; line-height: 1.25">
+<span style="font-size: 10.5px; font-weight: 800; letter-spacing: 0.22em; color: #B8924A">CHECKED</span>
+<span style="font-size: 15.5px; font-weight: 600; color: #F3EDE2; margin-top: 4px">Permit, aircraft papers &amp; insurance</span>
+</span>
+</li>
+
+<li style="display: flex; align-items: center; gap: 14px; padding: 26px 34px; white-space: nowrap; border-right: 1px solid #222743">
+<span style="width: 42px; height: 42px; border-radius: 50%; border: 1px solid #8C6A2F; display: flex; align-items: center; justify-content: center; flex: none; background: radial-gradient(circle at 30% 30%, #1E2546, #0E1328)">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9D29A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18v13H3z M3 10h18"></path></svg>
+</span>
+<span style="display: flex; flex-direction: column; line-height: 1.25">
+<span style="font-size: 10.5px; font-weight: 800; letter-spacing: 0.22em; color: #B8924A">TRANSPARENT</span>
+<span style="font-size: 15.5px; font-weight: 600; color: #F3EDE2; margin-top: 4px">One written, all-in price</span>
+</span>
+</li>
+
+<li style="display: flex; align-items: center; gap: 14px; padding: 26px 34px; white-space: nowrap; border-right: 1px solid #222743">
+<span style="width: 42px; height: 42px; border-radius: 50%; border: 1px solid #8C6A2F; display: flex; align-items: center; justify-content: center; flex: none; background: radial-gradient(circle at 30% 30%, #1E2546, #0E1328)">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9D29A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10l9-6 9 6 M5 10v8 M9.5 10v8 M14.5 10v8 M19 10v8 M3 20h18"></path></svg>
+</span>
+<span style="display: flex; flex-direction: column; line-height: 1.25">
+<span style="font-size: 10.5px; font-weight: 800; letter-spacing: 0.22em; color: #B8924A">GST INVOICE</span>
+<span style="font-size: 15.5px; font-weight: 600; color: #F3EDE2; margin-top: 4px">Billed by a registered LLP</span>
+</span>
+</li>
+
+<li style="display: flex; align-items: center; gap: 14px; padding: 26px 34px; white-space: nowrap; border-right: 1px solid #222743">
+<span style="width: 42px; height: 42px; border-radius: 50%; border: 1px solid #8C6A2F; display: flex; align-items: center; justify-content: center; flex: none; background: radial-gradient(circle at 30% 30%, #1E2546, #0E1328)">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9D29A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11h14v10H5z M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+</span>
+<span style="display: flex; flex-direction: column; line-height: 1.25">
+<span style="font-size: 10.5px; font-weight: 800; letter-spacing: 0.22em; color: #B8924A">SAFE PAYMENT</span>
+<span style="font-size: 15.5px; font-weight: 600; color: #F3EDE2; margin-top: 4px">To a company account, never a person</span>
+</span>
+</li>
+
+<li style="display: flex; align-items: center; gap: 14px; padding: 26px 34px; white-space: nowrap; border-right: 1px solid #222743">
+<span style="width: 42px; height: 42px; border-radius: 50%; border: 1px solid #8C6A2F; display: flex; align-items: center; justify-content: center; flex: none; background: radial-gradient(circle at 30% 30%, #1E2546, #0E1328)">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9D29A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h18 M12 5v3 M6 11c0-2 2-3 6-3s7 1 7 4-2 4-5 4H9c-2 0-3-1-3-3z M9 16l-1 3 M15 16l1 3 M6 19h12"></path></svg>
+</span>
+<span style="display: flex; flex-direction: column; line-height: 1.25">
+<span style="font-size: 10.5px; font-weight: 800; letter-spacing: 0.22em; color: #B8924A">HELICOPTERS</span>
+<span style="font-size: 15.5px; font-weight: 600; color: #F3EDE2; margin-top: 4px">Landing permissions coordinated</span>
+</span>
+</li>
+
+<li style="display: flex; align-items: center; gap: 14px; padding: 26px 34px; white-space: nowrap; border-right: 1px solid #222743">
+<span style="width: 42px; height: 42px; border-radius: 50%; border: 1px solid #8C6A2F; display: flex; align-items: center; justify-content: center; flex: none; background: radial-gradient(circle at 30% 30%, #1E2546, #0E1328)">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9D29A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"></path></svg>
+</span>
+<span style="display: flex; flex-direction: column; line-height: 1.25">
+<span style="font-size: 10.5px; font-weight: 800; letter-spacing: 0.22em; color: #B8924A">ONE COORDINATOR</span>
+<span style="font-size: 15.5px; font-weight: 600; color: #F3EDE2; margin-top: 4px">On WhatsApp until you land</span>
+</span>
+</li>
+
+<li style="display: flex; align-items: center; gap: 14px; padding: 26px 34px; white-space: nowrap; border-right: 1px solid #222743">
+<span style="width: 42px; height: 42px; border-radius: 50%; border: 1px solid #8C6A2F; display: flex; align-items: center; justify-content: center; flex: none; background: radial-gradient(circle at 30% 30%, #1E2546, #0E1328)">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9D29A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18h10a4 4 0 0 0 0-8 6 6 0 0 0-11.5 2A3 3 0 0 0 7 18z"></path></svg>
+</span>
+<span style="display: flex; flex-direction: column; line-height: 1.25">
+<span style="font-size: 10.5px; font-weight: 800; letter-spacing: 0.22em; color: #B8924A">SAFETY FIRST</span>
+<span style="font-size: 15.5px; font-weight: 600; color: #F3EDE2; margin-top: 4px">The pilot's call is final</span>
+</span>
+</li>
+
+<li style="display: flex; align-items: center; gap: 14px; padding: 26px 34px; white-space: nowrap; border-right: 1px solid #222743">
+<span style="width: 42px; height: 42px; border-radius: 50%; border: 1px solid #8C6A2F; display: flex; align-items: center; justify-content: center; flex: none; background: radial-gradient(circle at 30% 30%, #1E2546, #0E1328)">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9D29A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11h14v10H5z M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+</span>
+<span style="display: flex; flex-direction: column; line-height: 1.25">
+<span style="font-size: 10.5px; font-weight: 800; letter-spacing: 0.22em; color: #B8924A">DPDP ACT</span>
+<span style="font-size: 15.5px; font-weight: 600; color: #F3EDE2; margin-top: 4px">Your details kept private</span>
+</span>
+</li>
+
+</ul>
+</div>
+</section>
+
+<!-- THE VAANIKA STANDARD -->
+<section id="standard" style="padding: 130px 0 120px">
+<div style="max-width: 1280px; margin: 0 auto; padding: 0 28px; display: flex; flex-wrap: wrap; gap: 64px; align-items: flex-start">
+<div style="flex: 1 1 440px; min-width: 0">
+<p style="margin: 0; font-size: 13px; font-weight: 700; letter-spacing: 0.32em; color: #D4B26A">THE VAANIKA STANDARD</p>
+<h2 style="margin: 16px 0 0; font-family: 'Bodoni Moda', Georgia, serif; font-weight: 400; font-size: clamp(38px, 4.4vw, 62px); line-height: 1.06">We check the operator before we quote. Every time.</h2>
+<p style="margin: 22px 0 0; max-width: 520px; font-size: 18px; line-height: 1.7; color: #C9C2B2">Your quote names the operator and the aircraft, so you know exactly who is flying your family. If anything doesn’t check out, we don’t offer it — however good the price.</p>
+<a class="v-btn" href="#how" style="display: inline-flex; margin-top: 30px; align-items: center; gap: 10px; padding: 14px 24px; min-height: 50px; box-sizing: border-box; border-radius: 999px; border: 1px solid #D4B26A; color: #F4E3B5; font-weight: 600; text-decoration: none; font-size: 15px">See a sample quote</a>
+</div>
+<ol style="flex: 1 1 520px; min-width: 0; margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px">
+<li style="padding: 28px; border-radius: 20px; border: 1px solid #262B40; background: #0E1328"><p class="v-num" style="margin: 0; font-family: 'Bodoni Moda', Georgia, serif; font-size: 34px; color: #D4B26A; line-height: 1">01</p><h3 style="margin: 16px 0 0; font-size: 18px; font-weight: 700">Operator permit</h3><p style="margin: 8px 0 0; font-size: 15px; line-height: 1.6; color: #B5AE9F">A valid DGCA Non-Scheduled Operator Permit, checked against the operator’s papers.</p></li>
+<li style="padding: 28px; border-radius: 20px; border: 1px solid #262B40; background: #0E1328"><p class="v-num" style="margin: 0; font-family: 'Bodoni Moda', Georgia, serif; font-size: 34px; color: #D4B26A; line-height: 1">02</p><h3 style="margin: 16px 0 0; font-size: 18px; font-weight: 700">The aircraft itself</h3><p style="margin: 8px 0 0; font-size: 15px; line-height: 1.6; color: #B5AE9F">Registration and airworthiness papers for the exact aircraft in your quote.</p></li>
+<li style="padding: 28px; border-radius: 20px; border: 1px solid #262B40; background: #0E1328"><p class="v-num" style="margin: 0; font-family: 'Bodoni Moda', Georgia, serif; font-size: 34px; color: #D4B26A; line-height: 1">03</p><h3 style="margin: 16px 0 0; font-size: 18px; font-weight: 700">Insurance</h3><p style="margin: 8px 0 0; font-size: 15px; line-height: 1.6; color: #B5AE9F">Current passenger and aircraft insurance, in date for your flight.</p></li>
+<li style="padding: 28px; border-radius: 20px; border: 1px solid #262B40; background: #0E1328"><p class="v-num" style="margin: 0; font-family: 'Bodoni Moda', Georgia, serif; font-size: 34px; color: #D4B26A; line-height: 1">04</p><h3 style="margin: 16px 0 0; font-size: 18px; font-weight: 700">Landing permissions</h3><p style="margin: 8px 0 0; font-size: 15px; line-height: 1.6; color: #B5AE9F">For helicopters: the operator’s landing request, the venue owner’s NOC and the district’s nod — all in place before you pay in full.</p></li>
+</ol>
+</div>
+</section>
+
+<!-- THREE MOMENTS -->
+<section aria-labelledby="moments" style="padding: 40px 0 120px">
+<div style="max-width: 1280px; margin: 0 auto; padding: 0 28px">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 20px">
+<div>
+<p style="margin: 0; font-size: 13px; font-weight: 700; letter-spacing: 0.32em; color: #D4B26A">THE ARRIVAL</p>
+<h2 id="moments" style="margin: 16px 0 0; max-width: 700px; font-family: 'Bodoni Moda', Georgia, serif; font-weight: 400; font-size: clamp(36px, 4.2vw, 58px); line-height: 1.08">Three moments your family will never forget.</h2>
+</div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; margin-top: 56px">
+<article class="v-card" style="border: 1px solid #262B40; border-radius: 22px; overflow: hidden; background: #0E1328"><div style="overflow: hidden; height: 300px"><img class="v-photo" src="../photos/private-jet-sunset.jpg" alt="A private jet on the tarmac at golden hour" style="height: 300px"></div><div style="padding: 26px 28px 30px"><p style="margin: 0; font-family: 'Bodoni Moda', Georgia, serif; color: #D4B26A">I.</p><h3 style="margin: 6px 0 0; font-family: 'Bodoni Moda', Georgia, serif; font-weight: 500; font-size: 28px">Wheels up, together</h3><p style="margin: 12px 0 0; font-size: 16px; line-height: 1.65; color: #C9C2B2">No queues, no family split across flights. Everyone boards together from your city, at the time you choose.</p></div></article>
+<article class="v-card" style="border: 1px solid #262B40; border-radius: 22px; overflow: hidden; background: #0E1328"><div style="overflow: hidden; height: 300px"><img class="v-photo" src="../photos/jet-cabin.jpg" alt="Cream leather seats inside a private jet cabin" style="height: 300px"></div><div style="padding: 26px 28px 30px"><p style="margin: 0; font-family: 'Bodoni Moda', Georgia, serif; color: #D4B26A">II.</p><h3 style="margin: 6px 0 0; font-family: 'Bodoni Moda', Georgia, serif; font-weight: 500; font-size: 28px">Only your people</h3><p style="margin: 12px 0 0; font-size: 16px; line-height: 1.65; color: #C9C2B2">A quiet cabin, just family. Watch the lake and the palace appear from the window as you descend.</p></div></article>
+<article class="v-card" style="border: 1px solid #262B40; border-radius: 22px; overflow: hidden; background: #0E1328"><div style="overflow: hidden; height: 300px"><img class="v-photo" src="../photos/marigold.jpg" alt="Marigold and jasmine garlands at a wedding" style="height: 300px"></div><div style="padding: 26px 28px 30px"><p style="margin: 0; font-family: 'Bodoni Moda', Georgia, serif; color: #D4B26A">III.</p><h3 style="margin: 6px 0 0; font-family: 'Bodoni Moda', Georgia, serif; font-weight: 500; font-size: 28px">The entrance</h3><p style="margin: 12px 0 0; font-size: 16px; line-height: 1.65; color: #C9C2B2">Marigolds, music and a landing timed to the moment — stepping out where every guest can see.</p></div></article>
+</div>
+</div>
+</section>
+
+<!-- DESTINATIONS -->
+<section id="destinations" style="padding: 120px 0; background: #070A14; border-top: 1px solid #1B2036; border-bottom: 1px solid #1B2036">
+<div style="max-width: 1280px; margin: 0 auto; padding: 0 28px">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 24px; align-items: flex-end">
+<div style="flex: 1 1 520px; min-width: 0">
+<p style="margin: 0; font-size: 13px; font-weight: 700; letter-spacing: 0.32em; color: #D4B26A">DESTINATIONS</p>
+<h2 style="margin: 16px 0 0; font-family: 'Bodoni Moda', Georgia, serif; font-weight: 400; font-size: clamp(36px, 4.2vw, 58px); line-height: 1.08">From your city to the mandap in hours, not a day.</h2>
+</div>
+<p style="flex: 0 1 380px; margin: 0; font-size: 15px; line-height: 1.65; color: #A9A293">Approximate flying times by private jet. The exact time depends on the aircraft, the weather and the airports used.</p>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; margin-top: 52px">
+<figure class="v-dest" style="margin: 0; position: relative; border-radius: 22px; overflow: hidden; height: 420px"><img class="v-photo" src="../photos/udaipur-golden.jpg" alt="City Palace on Lake Pichola, Udaipur" style="height: 420px"><figcaption style="position: absolute; left: 0; right: 0; bottom: 0; padding: 80px 26px 24px; background: linear-gradient(0deg, rgba(5,7,15,.92), rgba(5,7,15,0))"><span style="display: block; font-family: 'Bodoni Moda', Georgia, serif; font-size: 34px">Udaipur</span><span class="v-num" style="display: block; margin-top: 6px; font-size: 14px; font-weight: 600; color: #E9D29A">Delhi · about 1 hr 15 min &#160;·&#160; Mumbai · about 1 hr 10 min</span></figcaption></figure>
+<figure class="v-dest" style="margin: 0; position: relative; border-radius: 22px; overflow: hidden; height: 420px"><img class="v-photo" src="../photos/jaipur.jpg" alt="Amber Fort reflected in Maota Lake, Jaipur" style="height: 420px"><figcaption style="position: absolute; left: 0; right: 0; bottom: 0; padding: 80px 26px 24px; background: linear-gradient(0deg, rgba(5,7,15,.92), rgba(5,7,15,0))"><span style="display: block; font-family: 'Bodoni Moda', Georgia, serif; font-size: 34px">Jaipur</span><span class="v-num" style="display: block; margin-top: 6px; font-size: 14px; font-weight: 600; color: #E9D29A">Delhi · about 45 min &#160;·&#160; Kolkata · about 2 hr</span></figcaption></figure>
+<figure class="v-dest" style="margin: 0; position: relative; border-radius: 22px; overflow: hidden; height: 420px"><img class="v-photo" src="../photos/goa.jpg" alt="Palm tree silhouette over the sea at sunset, Goa" style="height: 420px"><figcaption style="position: absolute; left: 0; right: 0; bottom: 0; padding: 80px 26px 24px; background: linear-gradient(0deg, rgba(5,7,15,.92), rgba(5,7,15,0))"><span style="display: block; font-family: 'Bodoni Moda', Georgia, serif; font-size: 34px">Goa</span><span class="v-num" style="display: block; margin-top: 6px; font-size: 14px; font-weight: 600; color: #E9D29A">Bengaluru · about 1 hr &#160;·&#160; Delhi · about 2 hr 15 min</span></figcaption></figure>
+</div>
+</div>
+</section>
+
+<!-- FLEET -->
+<section id="fleet" style="padding: 120px 0">
+<div style="max-width: 1280px; margin: 0 auto; padding: 0 28px">
+<p style="margin: 0; font-size: 13px; font-weight: 700; letter-spacing: 0.32em; color: #D4B26A">CHOOSE YOUR ARRIVAL</p>
+<h2 style="margin: 16px 0 0; max-width: 760px; font-family: 'Bodoni Moda', Georgia, serif; font-weight: 400; font-size: clamp(36px, 4.2vw, 58px); line-height: 1.08">Five ways to fly in. One team for all of it.</h2>
+<div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; margin-top: 52px">
+<article class="v-card" style="padding: 28px 22px; border: 1px solid #262B40; border-radius: 20px; background: linear-gradient(180deg, #121833, #0E1328)"><svg width="110" height="48" viewBox="0 0 200 80" aria-hidden="true" fill="#E9D29A"><path d="M40 40 C40 26 70 18 110 18 C150 18 172 30 176 44 C178 54 166 60 140 60 L70 60 C52 60 40 52 40 40 Z"></path><path d="M44 38 L4 32 L4 38 L44 46 Z"></path><path d="M4 22 L12 22 L14 40 L4 40 Z"></path><rect x="106" y="8" width="4" height="12"></rect><path d="M18 8 H198 M70 60 L66 72 M140 60 L144 72 M56 72 H158" stroke="#E9D29A" stroke-width="3" fill="none"></path></svg><h3 style="margin: 20px 0 0; font-family: 'Bodoni Moda', Georgia, serif; font-weight: 500; font-size: 23px">Helicopter</h3><p class="v-num" style="margin: 4px 0 0; font-size: 13.5px; font-weight: 700; color: #D4B26A">Up to 5–6 guests</p><p style="margin: 12px 0 0; font-size: 14.5px; line-height: 1.6; color: #B5AE9F">Airport to venue. The grand entrance.</p></article>
+<article class="v-card" style="padding: 28px 22px; border: 1px solid #262B40; border-radius: 20px; background: linear-gradient(180deg, #121833, #0E1328)"><svg width="110" height="48" viewBox="0 0 200 60" aria-hidden="true" fill="#E9D29A"><path d="M10 34 C30 30 120 26 170 24 C185 23 196 26 198 30 C196 34 186 36 170 36 L40 38 C25 38 14 37 10 34 Z M18 34 L6 8 L20 8 L42 32 Z M90 35 L122 35 L74 54 L62 54 Z"></path></svg><h3 style="margin: 20px 0 0; font-family: 'Bodoni Moda', Georgia, serif; font-weight: 500; font-size: 23px">Light jet</h3><p class="v-num" style="margin: 4px 0 0; font-size: 13.5px; font-weight: 700; color: #D4B26A">About 6–7 guests</p><p style="margin: 12px 0 0; font-size: 14.5px; line-height: 1.6; color: #B5AE9F">The couple and closest family.</p></article>
+<article class="v-card" style="padding: 28px 22px; border: 1px solid #262B40; border-radius: 20px; background: linear-gradient(180deg, #121833, #0E1328)"><svg width="125" height="48" viewBox="0 0 230 60" aria-hidden="true" fill="#E9D29A"><path d="M10 34 C30 30 140 26 200 24 C215 23 226 26 228 30 C226 34 216 36 200 36 L40 38 C25 38 14 37 10 34 Z M18 34 L6 6 L22 6 L44 32 Z M100 35 L136 35 L80 56 L66 56 Z"></path></svg><h3 style="margin: 20px 0 0; font-family: 'Bodoni Moda', Georgia, serif; font-weight: 500; font-size: 23px">Super-midsize</h3><p class="v-num" style="margin: 4px 0 0; font-size: 13.5px; font-weight: 700; color: #D4B26A">About 8–9 guests</p><p style="margin: 12px 0 0; font-size: 14.5px; line-height: 1.6; color: #B5AE9F">One family side, coast to coast.</p></article>
+<article class="v-card" style="padding: 28px 22px; border: 1px solid #262B40; border-radius: 20px; background: linear-gradient(180deg, #121833, #0E1328)"><svg width="135" height="48" viewBox="0 0 260 60" aria-hidden="true" fill="#E9D29A"><path d="M10 34 C30 30 160 26 230 24 C245 23 256 26 258 30 C256 34 246 36 230 36 L40 38 C25 38 14 37 10 34 Z M18 34 L4 4 L22 4 L46 32 Z M110 35 L150 35 L86 58 L70 58 Z"></path></svg><h3 style="margin: 20px 0 0; font-family: 'Bodoni Moda', Georgia, serif; font-weight: 500; font-size: 23px">Heavy jet</h3><p class="v-num" style="margin: 4px 0 0; font-size: 13.5px; font-weight: 700; color: #D4B26A">About 12–14 guests</p><p style="margin: 12px 0 0; font-size: 14.5px; line-height: 1.6; color: #B5AE9F">The full VIP circle, room to celebrate.</p></article>
+<article class="v-card" style="padding: 28px 22px; border: 1px solid #8C6A2F; border-radius: 20px; background: linear-gradient(180deg, #1A1E38, #0E1328)"><svg width="140" height="48" viewBox="0 0 300 60" aria-hidden="true" fill="#E9D29A"><path d="M10 34 C30 28 200 26 270 25 C286 25 296 27 298 30 C296 34 286 36 270 36 L40 39 C25 39 14 37 10 34 Z M18 34 L4 2 L24 2 L50 32 Z M130 36 L176 36 L100 58 L82 58 Z"></path></svg><h3 style="margin: 20px 0 0; font-family: 'Bodoni Moda', Georgia, serif; font-weight: 500; font-size: 23px">Group charter</h3><p class="v-num" style="margin: 4px 0 0; font-size: 13.5px; font-weight: 700; color: #D4B26A">50 guests and more</p><p style="margin: 12px 0 0; font-size: 14.5px; line-height: 1.6; color: #B5AE9F">The whole baraat, one departure.</p></article>
+</div>
+<p style="margin: 20px 0 0; font-size: 13.5px; color: #8E8A9E">Guest numbers are typical for each class; the exact aircraft decides the final count.</p>
+</div>
+</section>
+
+<!-- SHREEJI -->
+<section id="shreeji" aria-labelledby="shreeji-h" style="position: relative; padding: 170px 0; overflow: hidden">
+<div class="v-shreeji" role="img" aria-label="A bride and groom walking from a black helicopter parked on a lawn" style="position: absolute; inset: 0"></div>
+<div aria-hidden="true" style="position: absolute; inset: 0; background: linear-gradient(90deg, rgba(11,16,32,.97) 0%, rgba(11,16,32,.85) 36%, rgba(11,16,32,.15) 64%, rgba(11,16,32,0) 100%), linear-gradient(0deg, rgba(11,16,32,.7) 0%, rgba(11,16,32,0) 30%)"></div>
+<div style="position: relative; max-width: 1280px; margin: 0 auto; padding: 0 28px">
+<div style="max-width: 560px">
+<p style="margin: 0; font-size: 13px; font-weight: 700; letter-spacing: 0.32em; color: #D4B26A">SIGNATURE EXPERIENCE</p>
+<h2 id="shreeji-h" style="margin: 16px 0 0; font-family: 'Bodoni Moda', Georgia, serif; font-weight: 400; font-size: clamp(46px, 5.6vw, 84px); line-height: 1">The Shreeji Arrival</h2>
+<p style="margin: 24px 0 0; font-size: 18px; line-height: 1.7; color: #DDD6C8">The bride or groom arrives by helicopter, timed to the music, with a flower shower where permission allows. We coordinate the landing spot and permissions with the operator and your venue, and plan the minute-by-minute with your planner.</p>
+<a class="v-btn" href="#enquire" style="display: inline-flex; margin-top: 34px; padding: 16px 28px; min-height: 54px; box-sizing: border-box; align-items: center; border-radius: 999px; border: 1px solid #D4B26A; color: #F4E3B5; font-weight: 600; text-decoration: none">Ask about the Shreeji Arrival</a>
+</div>
+</div>
+</section>
+
+<!-- HOW IT WORKS + QUOTE -->
+<section id="how" style="padding: 120px 0; background: #F7F2E8; color: #0B1A3A">
+<div style="max-width: 1280px; margin: 0 auto; padding: 0 28px; display: flex; flex-wrap: wrap; gap: 64px; align-items: flex-start">
+<div style="flex: 1 1 520px; min-width: 0">
+<p style="margin: 0; font-size: 13px; font-weight: 700; letter-spacing: 0.32em; color: #7A5A1E">HOW IT WORKS</p>
+<h2 style="margin: 16px 0 0; font-family: 'Bodoni Moda', Georgia, serif; font-weight: 400; font-size: clamp(36px, 4.2vw, 58px); line-height: 1.08">Four steps. One person looking after you.</h2>
+<ol style="margin: 44px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 0">
+<li style="display: flex; gap: 24px; padding: 22px 0; border-top: 1px solid #E2D8C4"><span class="v-num" style="font-family: 'Bodoni Moda', Georgia, serif; font-size: 30px; color: #A9823C; line-height: 1.1; width: 36px; flex: none">1</span><div><h3 style="margin: 0; font-size: 19px; font-weight: 700">Tell us the plan</h3><p style="margin: 6px 0 0; font-size: 16px; line-height: 1.65; color: #3E465E">Date, cities, venue and guest count — on WhatsApp or the form below.</p></div></li>
+<li style="display: flex; gap: 24px; padding: 22px 0; border-top: 1px solid #E2D8C4"><span class="v-num" style="font-family: 'Bodoni Moda', Georgia, serif; font-size: 30px; color: #A9823C; line-height: 1.1; width: 36px; flex: none">2</span><div><h3 style="margin: 0; font-size: 19px; font-weight: 700">Get one written quote</h3><p style="margin: 6px 0 0; font-size: 16px; line-height: 1.65; color: #3E465E">The operator, the aircraft and the full price in one document.</p></div></li>
+<li style="display: flex; gap: 24px; padding: 22px 0; border-top: 1px solid #E2D8C4"><span class="v-num" style="font-family: 'Bodoni Moda', Georgia, serif; font-size: 30px; color: #A9823C; line-height: 1.1; width: 36px; flex: none">3</span><div><h3 style="margin: 0; font-size: 19px; font-weight: 700">Sign and confirm</h3><p style="margin: 6px 0 0; font-size: 16px; line-height: 1.65; color: #3E465E">Accept the terms online; pay by bank transfer to our company account, against a GST invoice.</p></div></li>
+<li style="display: flex; gap: 24px; padding: 22px 0; border-top: 1px solid #E2D8C4; border-bottom: 1px solid #E2D8C4"><span class="v-num" style="font-family: 'Bodoni Moda', Georgia, serif; font-size: 30px; color: #A9823C; line-height: 1.1; width: 36px; flex: none">4</span><div><h3 style="margin: 0; font-size: 19px; font-weight: 700">Fly in</h3><p style="margin: 6px 0 0; font-size: 16px; line-height: 1.65; color: #3E465E">Your coordinator keeps you and your planner updated until you land.</p></div></li>
+</ol>
+</div>
+<div style="flex: 1 1 420px; min-width: 0; padding: 36px; border-radius: 26px; background: #FFFFFF; border: 1px solid #E6DDCB; box-shadow: 0 40px 90px rgba(11,26,58,.14)">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap">
+<span style="font-family: 'Bodoni Moda', Georgia, serif; font-size: 21px; letter-spacing: 0.18em">V<span style="color: #8C6A2F">AA</span>NIKA</span>
+<span style="padding: 6px 12px; border-radius: 999px; background: #0B1A3A; color: #F4E3B5; font-size: 11px; font-weight: 800; letter-spacing: 0.14em">SAMPLE QUOTE</span>
+</div>
+<p style="margin: 20px 0 0; font-size: 13.5px; color: #4A526A">Every quote shows these lines.</p>
+<dl class="v-num" style="margin: 14px 0 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); font-size: 15px">
+<dt style="padding: 13px 0; border-top: 1px solid #E2D8C4; color: #4A526A">Route</dt><dd style="margin: 0; padding: 13px 0; border-top: 1px solid #E2D8C4; font-weight: 600; text-align: right">Delhi → Udaipur</dd>
+<dt style="padding: 13px 0; border-top: 1px solid #E2D8C4; color: #4A526A">Aircraft</dt><dd style="margin: 0; padding: 13px 0; border-top: 1px solid #E2D8C4; font-weight: 600; text-align: right">Super-midsize · [REG]</dd>
+<dt style="padding: 13px 0; border-top: 1px solid #E2D8C4; color: #4A526A">Operator</dt><dd style="margin: 0; padding: 13px 0; border-top: 1px solid #E2D8C4; font-weight: 600; text-align: right">[OPERATOR NAME]</dd>
+<dt style="padding: 13px 0; border-top: 1px solid #E2D8C4; color: #4A526A">NSOP permit</dt><dd style="margin: 0; padding: 13px 0; border-top: 1px solid #E2D8C4; font-weight: 700; text-align: right; color: #1E6B45">Checked</dd>
+<dt style="padding: 13px 0; border-top: 1px solid #E2D8C4; color: #4A526A">Insurance</dt><dd style="margin: 0; padding: 13px 0; border-top: 1px solid #E2D8C4; font-weight: 700; text-align: right; color: #1E6B45">Checked</dd>
+<dt style="padding: 15px 0; border-top: 2px solid #0B1A3A; font-weight: 700">All-in price</dt><dd style="margin: 0; padding: 15px 0; border-top: 2px solid #0B1A3A; font-family: 'Bodoni Moda', Georgia, serif; font-size: 24px; text-align: right">₹ [YOUR PRICE]</dd>
+</dl>
+<p style="margin: 10px 0 0; font-size: 12.5px; color: #4A526A">Includes GST. Valid for [48] hours.</p>
+</div>
+</div>
+</section>
+
+<!-- BEYOND WEDDINGS -->
+<section id="private" aria-labelledby="private-h" style="position: relative; background: #070A14; border-bottom: 1px solid #1B2036; overflow: hidden">
+<div style="display: flex; flex-wrap: wrap; min-height: 540px">
+<div style="flex: 1 1 520px; min-width: 0; display: flex; align-items: center; padding: 96px 28px 96px max(28px, calc((100% - 1280px) / 2 + 28px)); box-sizing: border-box">
+<div style="max-width: 540px">
+<p style="margin: 0; font-size: 13px; font-weight: 700; letter-spacing: 0.32em; color: #D4B26A">BEYOND WEDDINGS</p>
+<h2 id="private-h" style="margin: 16px 0 0; font-family: 'Bodoni Moda', Georgia, serif; font-weight: 400; font-size: clamp(34px, 4vw, 54px); line-height: 1.08">Private &amp; business charters. Discreet by default.</h2>
+<p style="margin: 20px 0 0; font-size: 17px; line-height: 1.7; color: #C9C2B2">Business travel, VIP movement, events and private trips — with the same verified operators and one written price.</p>
+<ul style="margin: 26px 0 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 20px; font-size: 15px; color: #E8E2D4">
+<li style="display: flex; gap: 10px; align-items: center"><span style="width: 7px; height: 7px; border-radius: 50%; background: #D4B26A; flex: none"></span>Same-day and short notice</li>
+<li style="display: flex; gap: 10px; align-items: center"><span style="width: 7px; height: 7px; border-radius: 50%; background: #D4B26A; flex: none"></span>Multi-city and round trips</li>
+<li style="display: flex; gap: 10px; align-items: center"><span style="width: 7px; height: 7px; border-radius: 50%; background: #D4B26A; flex: none"></span>Names and plans kept private</li>
+<li style="display: flex; gap: 10px; align-items: center"><span style="width: 7px; height: 7px; border-radius: 50%; background: #D4B26A; flex: none"></span>GST invoice for your company</li>
+</ul>
+<a class="v-btn" href="#enquire" style="display: inline-flex; gap: 10px; align-items: center; margin-top: 34px; padding: 16px 28px; min-height: 54px; box-sizing: border-box; border-radius: 999px; border: 1px solid #D4B26A; color: #F4E3B5; font-weight: 600; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>Talk to us privately</a>
+</div>
+</div>
+<div style="flex: 1 1 480px; min-width: 0; position: relative; min-height: 420px">
+<div class="v-vip" role="img" aria-label="Tail and engine of a private jet on a runway at dusk" style="position: absolute; inset: 0"></div>
+<div aria-hidden="true" style="position: absolute; inset: 0; background: linear-gradient(90deg, #070A14 0%, rgba(7,10,20,.35) 30%, rgba(7,10,20,0) 60%)"></div>
+</div>
+</div>
+</section>
+
+<!-- PLANNERS -->
+<section id="planners" style="padding: 110px 0; background: linear-gradient(135deg, #1A1530, #0E1328 60%); border-bottom: 1px solid #262B40">
+<div style="max-width: 1280px; margin: 0 auto; padding: 0 28px; display: flex; flex-wrap: wrap; gap: 40px; align-items: center; justify-content: space-between">
+<div style="flex: 1 1 560px; min-width: 0">
+<p style="margin: 0; font-size: 13px; font-weight: 700; letter-spacing: 0.32em; color: #D4B26A">FOR WEDDING PLANNERS</p>
+<h2 style="margin: 16px 0 0; font-family: 'Bodoni Moda', Georgia, serif; font-weight: 400; font-size: clamp(32px, 3.8vw, 52px); line-height: 1.1">Add a sky arrival to your weddings. You stay the host.</h2>
+<p style="margin: 20px 0 0; max-width: 620px; font-size: 17px; line-height: 1.7; color: #C9C2B2">We handle operators, permissions, timings and paperwork, under your name with your client. You earn a commission on every confirmed flight, paid when the client’s payment reaches us.</p>
+</div>
+<a class="v-btn" href="#enquire" style="display: inline-flex; align-items: center; padding: 18px 30px; min-height: 58px; box-sizing: border-box; border-radius: 999px; background: #F3EDE2; color: #0B1020; font-weight: 700; text-decoration: none">Become a partner planner</a>
+</div>
+</section>
+
+<!-- NAME STORY -->
+<section aria-labelledby="name-h" style="padding: 130px 0">
+<div style="max-width: 980px; margin: 0 auto; padding: 0 28px; text-align: center; display: flex; flex-direction: column; align-items: center">
+<svg width="132" height="144" viewBox="10 0 180 196" aria-hidden="true"><defs><linearGradient id="nkb" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2C4FB0"></stop><stop offset="1" stop-color="#16296B"></stop></linearGradient><linearGradient id="nk" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F4E3B5"></stop><stop offset="0.4" stop-color="#D9BC78"></stop><stop offset="0.75" stop-color="#B8924A"></stop><stop offset="1" stop-color="#8C6A2F"></stop></linearGradient></defs><path d="M94 166 C56 156 26 118 18 64 C50 86 80 118 94 166 Z" fill="#F3EDE2"></path><path d="M106 166 C144 156 174 118 182 64 C150 86 120 118 106 166 Z" fill="url(#nkb)" stroke="url(#nk)" stroke-width="2.4"></path><path d="M100 28 C124 70 124 122 100 164 C76 122 76 70 100 28 Z" fill="url(#nk)"></path><path d="M88 12 A12 12 0 0 0 112 12 A15 15 0 0 1 88 12 Z" fill="url(#nk)"></path><path d="M46 182 Q100 194 154 182" stroke="url(#nk)" stroke-width="2.4" fill="none"></path></svg>
+<p style="margin: 34px 0 0; font-size: 13px; font-weight: 700; letter-spacing: 0.32em; color: #D4B26A">WHY “VAANIKA”</p>
+<h2 id="name-h" style="margin: 16px 0 0; font-family: 'Bodoni Moda', Georgia, serif; font-weight: 400; font-size: clamp(30px, 3.6vw, 48px); line-height: 1.25">The vaani of Saraswati, the shakti of Kalika, and the gold of Lakshmi.</h2>
+<p style="margin: 22px 0 0; max-width: 640px; font-size: 17px; line-height: 1.7; color: #C9C2B2">Three petals in our lotus, one for each. Clear words, a protected journey, and an auspicious beginning to a new life together.</p>
+</div>
+</section>
+
+<!-- FAQ -->
+<section aria-labelledby="faq-h" style="padding: 20px 0 120px">
+<div style="max-width: 880px; margin: 0 auto; padding: 0 28px">
+<h2 id="faq-h" style="margin: 0; font-family: 'Bodoni Moda', Georgia, serif; font-weight: 400; font-size: clamp(32px, 3.6vw, 48px); text-align: center">Questions families ask</h2>
+<div style="margin-top: 44px; border-top: 1px solid #262B40">
+<details style="border-bottom: 1px solid #262B40; padding: 20px 0"><summary style="display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 18px; font-weight: 600; min-height: 44px">Is a private charter safe?<span class="v-plus" style="font-size: 26px; color: #D4B26A; line-height: 1" aria-hidden="true">+</span></summary><p style="margin: 10px 0 0; font-size: 16px; line-height: 1.7; color: #C9C2B2">We only work with operators that hold a valid DGCA Non-Scheduled Operator Permit, and check the aircraft’s papers and insurance before we quote.</p></details>
+<details style="border-bottom: 1px solid #262B40; padding: 20px 0"><summary style="display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 18px; font-weight: 600; min-height: 44px">Is Vaanika an airline or operator?<span class="v-plus" style="font-size: 26px; color: #D4B26A; line-height: 1" aria-hidden="true">+</span></summary><p style="margin: 10px 0 0; font-size: 16px; line-height: 1.7; color: #C9C2B2">No. We arrange your charter as an agent. The flight is operated by the licensed operator named in your quote.</p></details>
+<details style="border-bottom: 1px solid #262B40; padding: 20px 0"><summary style="display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 18px; font-weight: 600; min-height: 44px">Can a helicopter land at our venue?<span class="v-plus" style="font-size: 26px; color: #D4B26A; line-height: 1" aria-hidden="true">+</span></summary><p style="margin: 10px 0 0; font-size: 16px; line-height: 1.7; color: #C9C2B2">Only at a suitable spot with the right permissions. The operator files the landing request and checks the site; the venue owner gives a written NOC; the district is informed and, where it asks, gives its approval. We coordinate all of it and tell you honestly if it can’t be done — for example during election restrictions.</p></details>
+<details style="border-bottom: 1px solid #262B40; padding: 20px 0"><summary style="display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 18px; font-weight: 600; min-height: 44px">How do we pay?<span class="v-plus" style="font-size: 26px; color: #D4B26A; line-height: 1" aria-hidden="true">+</span></summary><p style="margin: 10px 0 0; font-size: 16px; line-height: 1.7; color: #C9C2B2">By bank transfer to the current account of Indicgems Exim LLP, against a GST invoice. Never to a personal account.</p></details>
+<details style="border-bottom: 1px solid #262B40; padding: 20px 0"><summary style="display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 18px; font-weight: 600; min-height: 44px">What if the weather is bad?<span class="v-plus" style="font-size: 26px; color: #D4B26A; line-height: 1" aria-hidden="true">+</span></summary><p style="margin: 10px 0 0; font-size: 16px; line-height: 1.7; color: #C9C2B2">The pilot decides, and safety comes first. Your signed agreement explains the options and refunds in plain words.</p></details>
+</div>
+</div>
+</section>
+
+<!-- ENQUIRY -->
+<section id="enquire" style="position: relative; padding: 150px 0; overflow: hidden">
+<div class="v-lights" role="img" aria-label="Fairy lights at a night celebration" style="position: absolute; inset: 0"></div>
+<div aria-hidden="true" style="position: absolute; inset: 0; background: linear-gradient(90deg, rgba(11,16,32,.9) 0%, rgba(11,16,32,.74) 50%, rgba(11,16,32,.58) 100%)"></div>
+<div style="position: relative; max-width: 1280px; margin: 0 auto; padding: 0 28px; display: flex; flex-wrap: wrap; gap: 56px; align-items: center">
+<div style="flex: 1 1 440px; min-width: 0">
+<h2 style="margin: 0; font-family: 'Bodoni Moda', Georgia, serif; font-weight: 400; font-size: clamp(44px, 5.4vw, 80px); line-height: 1.02">Your wedding, from above.</h2>
+<p style="margin: 24px 0 0; max-width: 480px; font-size: 18px; line-height: 1.7; color: #DDD6C8">Tell us the date and the cities. A coordinator replies with options and one clear price.</p>
+<a class="v-btn" href="https://wa.me/91XXXXXXXXXX" style="display: inline-flex; gap: 12px; align-items: center; margin-top: 32px; padding: 18px 30px; min-height: 58px; box-sizing: border-box; border-radius: 999px; background: linear-gradient(135deg, #F4E3B5, #C9A55C 60%, #A9823C); color: #0B1020; font-weight: 700; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"></path></svg>Chat on WhatsApp</a>
+</div>
+<form aria-label="Wedding flight enquiry" style="flex: 1 1 460px; min-width: 0; padding: 36px; border-radius: 26px; background: rgba(14,19,40,.94); border: 1px solid #2A3050; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px">
+<label style="display: flex; flex-direction: column; gap: 8px; font-size: 13px; font-weight: 600; color: #D9D2C3">Your name<input type="text" autocomplete="name" style="min-height: 50px; padding: 0 14px; border-radius: 12px; border: 1px solid #343A5A; background: #0B1020; color: #F3EDE2; font: inherit; font-size: 15px"></label>
+<label style="display: flex; flex-direction: column; gap: 8px; font-size: 13px; font-weight: 600; color: #D9D2C3">WhatsApp number<input type="tel" autocomplete="tel" style="min-height: 50px; padding: 0 14px; border-radius: 12px; border: 1px solid #343A5A; background: #0B1020; color: #F3EDE2; font: inherit; font-size: 15px"></label>
+<label style="display: flex; flex-direction: column; gap: 8px; font-size: 13px; font-weight: 600; color: #D9D2C3">Wedding date<input type="date" style="min-height: 50px; padding: 0 14px; border-radius: 12px; border: 1px solid #343A5A; background: #0B1020; color: #F3EDE2; font: inherit; font-size: 15px; color-scheme: dark"></label>
+<label style="display: flex; flex-direction: column; gap: 8px; font-size: 13px; font-weight: 600; color: #D9D2C3">Guests flying<select style="min-height: 50px; padding: 0 12px; border-radius: 12px; border: 1px solid #343A5A; background: #0B1020; color: #F3EDE2; font: inherit; font-size: 15px"><option>Up to 6</option><option>7 to 14</option><option>15 to 50</option><option>More than 50</option></select></label>
+<label style="display: flex; flex-direction: column; gap: 8px; font-size: 13px; font-weight: 600; color: #D9D2C3">Flying from<input type="text" placeholder="e.g. Delhi" style="min-height: 50px; padding: 0 14px; border-radius: 12px; border: 1px solid #343A5A; background: #0B1020; color: #F3EDE2; font: inherit; font-size: 15px"></label>
+<label style="display: flex; flex-direction: column; gap: 8px; font-size: 13px; font-weight: 600; color: #D9D2C3">Venue or city<input type="text" placeholder="e.g. Udaipur" style="min-height: 50px; padding: 0 14px; border-radius: 12px; border: 1px solid #343A5A; background: #0B1020; color: #F3EDE2; font: inherit; font-size: 15px"></label>
+<label style="grid-column: 1 / -1; display: flex; gap: 12px; align-items: flex-start; font-size: 13px; line-height: 1.5; color: #B5AE9F"><input type="checkbox" style="width: 20px; height: 20px; margin: 0; accent-color: #D4B26A; flex: none">I agree that Vaanika may contact me about this enquiry. My details are used only for this, as the privacy notice explains.</label>
+<button class="v-btn" type="button" style="grid-column: 1 / -1; min-height: 58px; border: 0; border-radius: 999px; background: #F3EDE2; color: #0B1020; font: inherit; font-size: 16px; font-weight: 700">Send my enquiry</button>
+<p style="grid-column: 1 / -1; margin: 0; font-size: 12.5px; color: #8E8A9E; text-align: center">A coordinator replies within [2 working hours]. No spam, ever.</p>
+</form>
+</div>
+</section>
+
+<!-- FOOTER -->
+<footer style="border-top: 1px solid #1F2440; background: #070A14">
+<div style="max-width: 1280px; margin: 0 auto; padding: 56px 28px 28px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 36px; font-size: 14px; line-height: 1.7; color: #A9A293">
+<div style="grid-column: span 2">
+<p style="margin: 0; font-family: 'Bodoni Moda', Georgia, serif; font-size: 24px; letter-spacing: 0.2em; color: #F3EDE2">V<span style="color: #D4B26A">AA</span>NIKA</p>
+<p style="margin: 14px 0 0; max-width: 520px">Vaanika arranges private charters as an agent. Every flight is operated by a DGCA-approved Non-Scheduled Operator Permit holder named in your quote.</p>
+</div>
+<div>
+<p style="margin: 0; font-size: 11px; font-weight: 800; letter-spacing: 0.22em; color: #D4B26A">COMPANY</p>
+<p style="margin: 12px 0 0">Indicgems Exim LLP<br>LLPIN [LLPIN]<br>GSTIN [DELHI GSTIN]<br>[Registered address], New Delhi</p>
+</div>
+<nav aria-label="Footer">
+<p style="margin: 0; font-size: 11px; font-weight: 800; letter-spacing: 0.22em; color: #D4B26A">LINKS</p>
+<p style="margin: 12px 0 0; display: flex; flex-direction: column; gap: 4px"><a href="#standard">Our standard</a><a href="#planners">For planners</a><a href="#private">Private &amp; business</a><a href="#enquire">Privacy notice</a><a href="#enquire">Terms</a></p>
+</nav>
+</div>
+<div style="max-width: 1280px; margin: 0 auto; padding: 18px 28px 32px; border-top: 1px solid #1B2036; font-size: 12.5px; color: #6F6B80; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px">
+<span>© 2026 Indicgems Exim LLP. Vaanika is a brand of Indicgems Exim LLP.</span><span>Photography: illustrative stock images.</span>
+</div>
+</footer>
+</div>
+
+
+</body>
+</html>
