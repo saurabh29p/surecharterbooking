@@ -2,7 +2,7 @@
 
 Prompt for Claude Code. This replaces the old ShubhJets website brief.
 Read it with `UX.md` (§6 is for the website) and `docs/WEBSITE-RESEARCH.md` (the research behind every choice here).
-**Do not write code until you have sent me your plan and all your questions in one batch, and I have answered.**
+**Build first; I will answer questions later.** Send me your plan and all your questions in one message, then keep going without waiting: use the placeholders in §11 for business details, pick sensible defaults for anything else, and record each default in `docs/DECISIONS.md` so I can change it later. Stop and wait only before anything that costs money, can't be undone, or goes public (buying the domain, connecting it, removing `noindex`).
 
 ---
 
@@ -140,7 +140,7 @@ The mockup photos are placeholders. Use them to build and preview, keep the "Ill
 
 ## 13. Phases (send me a preview link and screenshots after each)
 
-1. **Plan:** read everything, then send your plan, folder structure, list of components and all your questions in one batch. Wait for my answers.
+1. **Plan:** read everything, then send your plan, folder structure, list of components and all your questions in one batch. **Do not wait for answers**; continue to phase 2 straight away.
 2. **Home page** matching the mockup on desktop and mobile, header, footer, sticky WhatsApp, enquiry form wired to the API on a test database. Preview on Vercel.
 3. **All other launch pages**, legal drafts, 404, `VERIFY.md`, `PLACEHOLDERS.md`.
 4. **SEO/AEO, speed and accessibility pass:** JSON-LD, sitemap, OG images, Lighthouse and Web Vitals numbers in the report.
