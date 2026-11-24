@@ -30,6 +30,8 @@ interface Props {
   imagePosition?: 'center' | 'left' | 'right' | 'top';
   planHref?: string;
   jsonLd?: object[];
+  /** Social sharing image, e.g. /og/weddings.jpg (default: the logo on midnight). */
+  ogImage?: string;
   /** Hide the closing "talk to us" band (pages that end with a form). */
   noCta?: boolean;
 }
@@ -48,6 +50,7 @@ const {
   planHref = '/contact/#enquire',
   jsonLd = [],
   noCta = false,
+  ogImage,
 } = Astro.props;
 const trail = [{ name: 'Home', path: '/' }, ...crumbs];
 ---
@@ -57,6 +60,7 @@ const trail = [{ name: 'Home', path: '/' }, ...crumbs];
   description={description}
   pageName={pageName}
   planHref={planHref}
+  ogImage={ogImage}
   jsonLd={[breadcrumbJsonLd(trail), ...jsonLd]}
 >
   <slot name="head" slot="head" />

@@ -3,7 +3,7 @@
  * in once. Kept small (WEBSITE.md §4: JavaScript ≤ 30 KB per page).
  */
 import { attribution, rememberCampaign } from '../lib/attribution';
-import { API_URL } from '../config/site';
+import { API_URL, GOOGLE_ADS_ID, GOOGLE_ADS_LABELS } from '../config/site';
 
 const storage = (): Storage | null => {
   try {
@@ -27,13 +27,18 @@ function sendTap(kind: 'WHATSAPP' | 'CALL') {
   } catch {
     // Counting a tap must never stop it.
   }
-  gtagConversion(kind === 'WHATSAPP' ? 'whatsapp_tap' : 'call_tap');
+  gtagConversion(kind === 'WHATSAPP' ? 'whatsapp' : 'call');
 }
 
-/** Google Ads conversion, only when an Ads id is configured (loaded by the layout). */
-export function gtagConversion(label: string) {
+/**
+ * Google Ads conversion for a form or tap ("enquiry", "partner", "whatsapp", "call"), only when an Ads
+ * id and that conversion's label are configured.
+ */
+export function gtagConversion(kind: 'enquiry' | 'partner' | 'whatsapp' | 'call') {
+  const label = GOOGLE_ADS_LABELS[kind];
   const w = window as unknown as { gtag?: (...a: unknown[]) => void };
-  w.gtag?.('event', label);
+  if (GOOGLE_ADS_ID && label)
+    w.gtag?.('event', 'conversion', { send_to: `${GOOGLE_ADS_ID}/${label}` });
 }
 
 function watchTaps() {

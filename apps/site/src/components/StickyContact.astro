@@ -13,9 +13,11 @@ interface Props {
 const wa = whatsappLink(Astro.props.pageName);
 ---
 
-<a class="wa-fab" href={wa} data-tap="WHATSAPP" aria-label="Chat with Vaanika on WhatsApp">
-  <Icon name="chat" size={26} stroke={2} />
-</a>
+<aside aria-label="WhatsApp">
+  <a class="wa-fab" href={wa} data-tap="WHATSAPP" aria-label="Chat with Vaanika on WhatsApp">
+    <Icon name="chat" size={26} stroke={2} />
+  </a>
+</aside>
 
 <nav class="contact-bar" aria-label="Quick contact">
   <a class="contact-bar__wa" href={wa} data-tap="WHATSAPP">

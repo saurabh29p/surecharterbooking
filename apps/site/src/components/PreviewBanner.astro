@@ -7,11 +7,11 @@ const left = PREVIEW ? remainingPlaceholders() : [];
 ---
 
 {left.length > 0 && (
-  <div class="preview-banner" role="note">
+  <aside class="preview-banner" aria-label="Preview notice">
     <strong>Preview</strong> · not live, not indexed ·{' '}
     {`${left.length} ${left.length === 1 ? 'placeholder' : 'placeholders'} to fill`}
     <span class="preview-banner__list">: {left.join(', ')} (apps/site/PLACEHOLDERS.md)</span>
-  </div>
+  </aside>
 )}
 
 <style>

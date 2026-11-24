@@ -9,7 +9,16 @@ export const API_URL = (import.meta.env.PUBLIC_API_URL ?? 'http://localhost:3000
   /\/$/,
   '',
 );
-export const GOOGLE_ADS_ID = import.meta.env.PUBLIC_GOOGLE_ADS_ID ?? null;
+export const GOOGLE_ADS_ID = import.meta.env.PUBLIC_GOOGLE_ADS_ID || null;
+/** Conversion labels from Google Ads, e.g. "enquiry:AbC123,whatsapp:DeF456,call:GhI789,partner:JkL012". */
+export const GOOGLE_ADS_LABELS: Record<string, string> = Object.fromEntries(
+  (import.meta.env.PUBLIC_GOOGLE_ADS_LABELS ?? '')
+    .split(',')
+    .map((pair) => pair.split(':').map((x) => x.trim()))
+    .filter((kv): kv is [string, string] => kv.length === 2 && !!kv[0] && !!kv[1]),
+);
+/** "vercel" switches on Vercel Web Analytics and Speed Insights (cookieless). */
+export const ANALYTICS = import.meta.env.PUBLIC_ANALYTICS === 'vercel';
 
 export const PREVIEW = __PREVIEW__;
 export const INDEXABLE = __INDEXABLE__;

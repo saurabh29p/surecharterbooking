@@ -18,6 +18,12 @@ const bodoni = '@fontsource-variable/bodoni-moda/files/bodoni-moda-latin-opsz';
 /** Where forms and taps go: the only other origin a page may talk to. */
 const apiOrigin = new URL(process.env.PUBLIC_API_URL ?? 'http://localhost:3000').origin;
 
+/** Google Ads is the only third party, and only when its id is set. */
+const ads = !!process.env.PUBLIC_GOOGLE_ADS_ID;
+const adsHosts = ads
+  ? ' https://www.googletagmanager.com https://www.google.com https://googleads.g.doubleclick.net https://www.googleadservices.com'
+  : '';
+
 export default defineConfig({
   site: process.env.PUBLIC_SITE_URL ?? 'https://flyvaanika.com',
   output: 'static',
@@ -33,15 +39,18 @@ export default defineConfig({
     csp: {
       directives: [
         "default-src 'self'",
-        "img-src 'self' data:",
+        `img-src 'self' data:${adsHosts}`,
         "font-src 'self'",
         "media-src 'self'",
-        `connect-src 'self' ${apiOrigin}`,
+        `connect-src 'self' ${apiOrigin}${adsHosts}`,
         "object-src 'none'",
         "base-uri 'self'",
         "form-action 'self'",
-        "frame-src 'none'",
+        ads ? 'frame-src https://td.doubleclick.net' : "frame-src 'none'",
       ],
+      scriptDirective: {
+        resources: ["'self'", ...(ads ? ['https://www.googletagmanager.com'] : [])],
+      },
     },
   },
   // Self-hosted fonts (no Google Fonts request at runtime). Bodoni Moda keeps its optical-size axis,

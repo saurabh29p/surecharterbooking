@@ -44,6 +44,7 @@ const INCLUDED = [
 ---
 
 <Page
+  ogImage="/og/weddings.jpg"
   title="Private jets for weddings in India"
   description={description}
   pageName="Wedding flights"
@@ -111,7 +112,12 @@ const INCLUDED = [
           By private jet; the exact time depends on the aircraft, the weather and the airports used.
         </p>
       </div>
-      <div class="table-scroll wed__table reveal">
+      <div
+        tabindex="0"
+        role="region"
+        aria-label="Flying times table"
+        class="table-scroll wed__table reveal"
+      >
         <table class="facts num">
           <caption class="visually-hidden">
             Approximate private jet flying times to wedding destinations

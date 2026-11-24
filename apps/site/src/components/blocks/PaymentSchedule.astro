@@ -12,7 +12,12 @@ const { headingLevel: H = 'h2' } = Astro.props;
 
 <div class="pay">
   <H class="pay__title display">How you pay</H>
-  <div class="table-scroll pay__table">
+  <div
+    tabindex="0"
+    role="region"
+    aria-label="Payment schedule table"
+    class="table-scroll pay__table"
+  >
     <table class="facts">
       <caption class="visually-hidden">Payment schedule</caption>
       <thead>

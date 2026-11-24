@@ -11,4 +11,6 @@ interface ImportMetaEnv {
   readonly PUBLIC_WHATSAPP_NUMBER?: string;
   readonly PUBLIC_PHONE?: string;
   readonly PUBLIC_GOOGLE_ADS_ID?: string;
+  readonly PUBLIC_GOOGLE_ADS_LABELS?: string;
+  readonly PUBLIC_ANALYTICS?: string;
 }

@@ -13,7 +13,7 @@ const rows = Astro.props.jetsOnly
   : AIRCRAFT_CLASSES;
 ---
 
-<div class="table-scroll">
+<div tabindex="0" role="region" aria-label="Aircraft classes table" class="table-scroll">
   <table class="facts num">
     <caption class="visually-hidden">Aircraft classes: typical seats, range and use</caption>
     <thead>

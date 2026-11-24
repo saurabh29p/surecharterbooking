@@ -628,6 +628,7 @@ figure {
 
 .table-scroll {
   overflow-x: auto;
+  outline-offset: 3px;
   border: 1px solid var(--line);
   border-radius: 16px;
   background: var(--panel);

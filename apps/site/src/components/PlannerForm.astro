@@ -347,7 +347,7 @@ const wa = whatsappLink(
           const done = root.querySelector<HTMLElement>('[data-done]')!;
           done.hidden = false;
           done.focus();
-          gtagConversion('partner_signup');
+          gtagConversion('partner');
           return;
         }
         const data = (await res.json().catch(() => ({}))) as {

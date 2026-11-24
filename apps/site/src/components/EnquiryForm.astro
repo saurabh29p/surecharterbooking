@@ -555,7 +555,7 @@ const wa = whatsappLink(pageName);
           const done = root.querySelector<HTMLElement>('[data-done]')!;
           done.hidden = false;
           done.focus();
-          gtagConversion('enquiry_sent');
+          gtagConversion('enquiry');
           return;
         }
         const data = (await res.json().catch(() => ({}))) as {

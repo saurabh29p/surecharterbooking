@@ -20,6 +20,7 @@ const { Content } = await render(entry);
 ---
 
 <Page
+  ogImage={`/og/${entry.id}.jpg`}
   title={d.title}
   description={d.description}
   pageName={d.name}
@@ -41,7 +42,12 @@ const { Content } = await render(entry);
         <h2 id="facts-h" class="h2 dest__h2">
           {d.name} at a glance
         </h2>
-        <div class="table-scroll dest__table">
+        <div
+          tabindex="0"
+          role="region"
+          aria-label="Flying times table"
+          class="table-scroll dest__table"
+        >
           <table class="facts num">
             <caption class="visually-hidden">
               Approximate private jet flying times to{d.name}

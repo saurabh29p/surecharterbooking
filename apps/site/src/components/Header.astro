@@ -16,7 +16,7 @@ const path = Astro.url.pathname;
 const wa = whatsappLink(pageName);
 ---
 
-<div class="utility">
+<aside class="utility" aria-label="Company">
   <div class="container utility__inner">
     <span class="utility__item">
       <Icon name="shield" size={14} stroke={2} class="gold-text" />
@@ -29,7 +29,7 @@ const wa = whatsappLink(pageName);
       </a>
     </span>
   </div>
-</div>
+</aside>
 
 <header class="header" data-header>
   <div class="container header__inner">
