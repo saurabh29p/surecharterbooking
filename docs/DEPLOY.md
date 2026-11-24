@@ -53,7 +53,7 @@ Each step lists who does it. "You" means only you can do it: an account, a payme
 2. Add the domain `app.flyvaanika.com` (Vercel shows a CNAME record for step 4).
 
 **For now (testing, before the domain)** the forwarding in `vercel.json` points at the Railway test address
-`https://api-production-e90b9fa3.up.railway.app`. Switch it to `https://api.flyvaanika.com` once that domain works.
+`https://api.flyvaanika.com` (switched on 24 Nov 2026; before that, `https://api-production-e90b9fa3.up.railway.app`).
 
 ### 4. DNS records (you, or me if the DNS is on Vercel and you connect it)
 | Record | Name | Value |

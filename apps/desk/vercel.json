@@ -7,11 +7,11 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://api-production-e90b9fa3.up.railway.app/api/:path*"
+      "destination": "https://api.flyvaanika.com/api/:path*"
     },
     {
       "source": "/s/:path*",
-      "destination": "https://api-production-e90b9fa3.up.railway.app/api/s/:path*"
+      "destination": "https://api.flyvaanika.com/api/s/:path*"
     },
     { "source": "/(.*)", "destination": "/index.html" }
   ],

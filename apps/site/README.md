@@ -20,7 +20,7 @@ The enquiry form posts to the desk API. Locally, start the API (`pnpm dev` at th
 | Variable | What | Example |
 |---|---|---|
 | `PUBLIC_SITE_URL` | Canonical address | `https://flyvaanika.com` |
-| `PUBLIC_API_URL` | Desk API for forms and taps | `https://api.flyvaanika.com` |
+| `PUBLIC_API_URL` | Desk API for forms and taps | `https://api.flyvaanika.com` (set on Vercel preview and production since 24 Nov 2026) |
 | `PUBLIC_WHATSAPP_NUMBER` | WhatsApp, digits with country code | `919812345678` |
 | `PUBLIC_PHONE` | Call number, digits with country code | `919812345678` |
 | `PUBLIC_GOOGLE_ADS_ID` | Optional Google Ads conversion ID | `AW-123456789` |

@@ -5,7 +5,8 @@ Work top to bottom; each step says who does it. "Me" steps happen only after you
 
 Today the test setup is:
 - **API:** Railway service `api` (Singapore). It deploys from the branch `claude/new-session-ox4tcm` and runs on
-  `api-production-e90b9fa3.up.railway.app`.
+  `api-production-e90b9fa3.up.railway.app`, and since 24 Nov 2026 on `api.flyvaanika.com`. The desk is also on
+  `app.flyvaanika.com` (linked to that branch until the merge to `main`).
 - **Desk:** Vercel project `surecharterbooking`. It is reached through a branch preview link that sits behind Vercel
   login.
 - **Data:** the test database and the `files` bucket hold test data: the end-to-end wedding, the "E2E" business
