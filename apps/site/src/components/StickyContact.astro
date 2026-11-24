@@ -1,8 +1,10 @@
 ---
 /**
  * WhatsApp everywhere (WEBSITE.md §5, UX.md §6): a round button on desktop that pulses once after
- * 5 s, and a WhatsApp + Call bar on phones (from home-mobile.html).
+ * 5 s, and a WhatsApp + Call bar on phones (from home-mobile.html). Each appears only once its
+ * number is set (config/company.ts `show`).
  */
+import { show } from '../config/company';
 import { telLink, whatsappLink } from '../config/site';
 import Icon from './Icon.astro';
 
@@ -13,22 +15,30 @@ interface Props {
 const wa = whatsappLink(Astro.props.pageName);
 ---
 
-<aside aria-label="WhatsApp">
-  <a class="wa-fab" href={wa} data-tap="WHATSAPP" aria-label="Chat with Vaanika on WhatsApp">
-    <Icon name="chat" size={26} stroke={2} />
-  </a>
-</aside>
+{show.whatsapp && (
+  <aside aria-label="WhatsApp">
+    <a class="wa-fab" href={wa} data-tap="WHATSAPP" aria-label="Chat with Vaanika on WhatsApp">
+      <Icon name="chat" size={26} stroke={2} />
+    </a>
+  </aside>
+)}
 
-<nav class="contact-bar" aria-label="Quick contact">
-  <a class="contact-bar__wa" href={wa} data-tap="WHATSAPP">
-    <Icon name="chat" size={18} stroke={2} />
-    WhatsApp
-  </a>
-  <a class="contact-bar__call" href={telLink} data-tap="CALL">
-    <Icon name="phone" size={18} stroke={2} />
-    Call
-  </a>
-</nav>
+{(show.whatsapp || show.phone) && (
+  <nav class="contact-bar" aria-label="Quick contact">
+    {show.whatsapp && (
+      <a class="contact-bar__wa" href={wa} data-tap="WHATSAPP">
+        <Icon name="chat" size={18} stroke={2} />
+        WhatsApp
+      </a>
+    )}
+    {show.phone && (
+      <a class="contact-bar__call" href={telLink} data-tap="CALL">
+        <Icon name="phone" size={18} stroke={2} />
+        Call
+      </a>
+    )}
+  </nav>
+)}
 
 <style>
   .wa-fab {

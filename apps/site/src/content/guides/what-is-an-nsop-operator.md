@@ -1,6 +1,6 @@
 ---
 title: What is an NSOP operator, and why it matters for your wedding flight
-seoTitle: "NSOP operators explained for wedding flights"
+seoTitle: 'NSOP operators explained for wedding flights'
 description: An NSOP operator holds a Non-Scheduled Operator Permit from the DGCA, India's aviation regulator, which allows it to fly charter flights for paying passengers. Only NSOP holders may fly your wedding guests.
 published: 2026-11-24
 moneyPage: /how-we-work/

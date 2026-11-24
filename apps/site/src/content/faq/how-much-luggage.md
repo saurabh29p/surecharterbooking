@@ -1,5 +1,5 @@
 ---
-question: "How much luggage can we bring?"
+question: 'How much luggage can we bring?'
 group: Booking
 order: 3
 tags: [weddings]

@@ -20,6 +20,12 @@ const date = (d: Date) =>
 >
   <section class="section" aria-label="Guides">
     <div class="container gl">
+      {guides.length === 0 && (
+        <p class="lead">
+          Our first guides are being written. Meanwhile, the FAQ answers the most common questions:{' '}
+          <a href="/faq/">read the FAQ</a>.
+        </p>
+      )}
       {guides.map((g) => (
         <a class="card card--link card-lift gl__item reveal" href={`/guides/${g.id}/`}>
           <p class="gl__meta">

@@ -1,5 +1,5 @@
 ---
-import { company } from '../config/company';
+import { company, show } from '../config/company';
 import { NAV, telLink, whatsappLink } from '../config/site';
 import Icon from './Icon.astro';
 import Logo from './Logo.astro';
@@ -23,10 +23,16 @@ const wa = whatsappLink(pageName);
       Every flight by a DGCA-approved NSOP operator
     </span>
     <span class="utility__item">
-      A brand of {company.legalName} · GST-registered · New Delhi ·
-      <a href={wa} data-tap="WHATSAPP" class="utility__wa">
-        WhatsApp {company.whatsapp.display}
-      </a>
+      A brand of {company.legalName}
+      {show.gstin && ' · GST-registered'} · New Delhi
+      {show.whatsapp && (
+        <>
+          {' · '}
+          <a href={wa} data-tap="WHATSAPP" class="utility__wa">
+            WhatsApp {company.whatsapp.display}
+          </a>
+        </>
+      )}
     </span>
   </div>
 </aside>
@@ -86,16 +92,22 @@ const wa = whatsappLink(pageName);
     <a class="btn btn--gold btn--lg btn--block" href={planHref} data-menu-close>
       Plan my wedding flight
     </a>
-    <div class="menu__contact">
-      <a class="btn btn--ivory" href={wa} data-tap="WHATSAPP">
-        <Icon name="chat" size={18} stroke={2} />
-        WhatsApp
-      </a>
-      <a class="btn btn--outline" href={telLink} data-tap="CALL">
-        <Icon name="phone" size={18} stroke={2} />
-        Call
-      </a>
-    </div>
+    {(show.whatsapp || show.phone) && (
+      <div class="menu__contact">
+        {show.whatsapp && (
+          <a class="btn btn--ivory" href={wa} data-tap="WHATSAPP">
+            <Icon name="chat" size={18} stroke={2} />
+            WhatsApp
+          </a>
+        )}
+        {show.phone && (
+          <a class="btn btn--outline" href={telLink} data-tap="CALL">
+            <Icon name="phone" size={18} stroke={2} />
+            Call
+          </a>
+        )}
+      </div>
+    )}
   </div>
 </dialog>
 

@@ -22,7 +22,6 @@ const STATIC = [
   '/faq/',
   '/about/',
   '/contact/',
-  '/guides/',
 ];
 
 export const GET: APIRoute = async () => {
@@ -40,6 +39,8 @@ export const GET: APIRoute = async () => {
       path,
       lastmod: undefined as string | undefined,
     })),
+    // The guides hub is listed only once at least one guide is published.
+    ...(guides.length ? [{ path: '/guides/', lastmod: undefined as string | undefined }] : []),
     ...guides,
     ...legal,
   ];

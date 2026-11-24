@@ -7,13 +7,9 @@ updated: 2026-11-24
 
 If something has gone wrong, tell us. Our grievance officer handles complaints about bookings, payments, this website and your personal data.
 
-## Grievance officer
+## How to reach the grievance officer
 
-- **Name:** [GRIEVANCE OFFICER NAME]
-- **Designation:** [DESIGNATION]
-- **Email:** grievance@flyvaanika.com
-- **Phone:** [Phone]
-- **Address:** Indicgems Exim LLP, [Registered address], New Delhi
+The grievance officer's details are under **Contact** at the end of this page. Until they are listed there, send your complaint with the [enquiry form](/contact/#enquire) and start your message with "Grievance".
 
 ## What to include
 
@@ -23,8 +19,6 @@ Your name, phone number, booking reference (if any), what happened and what you 
 
 - **Acknowledgement:** within 48 hours of receiving your complaint.
 - **Resolution:** within one month, and sooner where we can.
-
-[LAWYER TO CONFIRM timelines under the Consumer Protection (E-Commerce) Rules, 2020 and the DPDP Rules, 2025.]
 
 ## Personal data complaints
 

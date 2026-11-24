@@ -1,5 +1,5 @@
 ---
-question: "How many guests can fly together?"
+question: 'How many guests can fly together?'
 group: Booking
 order: 2
 tags: [weddings]

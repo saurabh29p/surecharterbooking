@@ -6,6 +6,7 @@
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import Icon from '../components/Icon.astro';
+import { show } from '../config/company';
 import { whatsappLink } from '../config/site';
 import { breadcrumbJsonLd } from '../lib/jsonld';
 import Base from './Base.astro';
@@ -117,10 +118,12 @@ const trail = [{ name: 'Home', path: '/' }, ...crumbs];
           <a class="btn btn--gold btn--lg" href="/contact/#enquire">
             Plan my flight <Icon name="arrow" size={18} stroke={2} class="btn__arrow" />
           </a>
-          <a class="btn btn--outline btn--lg" href={whatsappLink(pageName)} data-tap="WHATSAPP">
-            <Icon name="chat" size={18} stroke={2} />
-            WhatsApp
-          </a>
+          {show.whatsapp && (
+            <a class="btn btn--outline btn--lg" href={whatsappLink(pageName)} data-tap="WHATSAPP">
+              <Icon name="chat" size={18} stroke={2} />
+              WhatsApp
+            </a>
+          )}
         </div>
       </div>
     </section>

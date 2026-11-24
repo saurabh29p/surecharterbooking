@@ -1,5 +1,5 @@
 ---
-question: "Will we know the operator and aircraft before we pay?"
+question: 'Will we know the operator and aircraft before we pay?'
 group: Safety
 order: 4
 tags: [weddings, private]

@@ -1,5 +1,5 @@
 ---
-question: "Do you contact our clients directly?"
+question: 'Do you contact our clients directly?'
 group: Planners
 order: 2
 tags: [planners]

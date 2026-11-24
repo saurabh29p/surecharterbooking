@@ -4,8 +4,13 @@
  * Preview builds mark every `.verify` (here and in Markdown) with a dotted underline and a
  * "verify" tag; each is listed in apps/site/VERIFY.md. The launched site shows plain text.
  */
+import { PREVIEW } from '../config/site';
 ---
 
-<span class="verify">
+{PREVIEW ? (
+  <span class="verify">
+    <slot />
+  </span>
+) : (
   <slot />
-</span>
+)}

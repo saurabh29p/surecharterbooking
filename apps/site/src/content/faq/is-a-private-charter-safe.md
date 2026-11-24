@@ -1,5 +1,5 @@
 ---
-question: "Is a private charter safe?"
+question: 'Is a private charter safe?'
 group: Safety
 order: 1
 home: 1

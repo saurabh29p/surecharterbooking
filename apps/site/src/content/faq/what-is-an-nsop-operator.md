@@ -1,5 +1,5 @@
 ---
-question: "What is an NSOP operator?"
+question: 'What is an NSOP operator?'
 group: Safety
 order: 3
 tags: [weddings, private]

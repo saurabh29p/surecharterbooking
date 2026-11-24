@@ -11,13 +11,11 @@ updated: 2026-11-24
 
 Typical operator slabs look like this; **your quote is what counts**:
 
-| When you cancel | What is kept |
-|---|---|
-| More than [7] days before departure | [10]% of the charter price |
-| [7] to [3] days before | [50]% |
-| Less than [72] hours before, or no-show | [100]% |
-
-[LAWYER AND OPERATORS TO CONFIRM: slabs differ by operator and aircraft.]
+| When you cancel                       | What is kept             |
+| ------------------------------------- | ------------------------ |
+| More than 7 days before departure     | 10% of the charter price |
+| 7 to 3 days before                    | 50%                      |
+| Less than 72 hours before, or no-show | 100%                     |
 
 Also non-refundable once incurred:
 
@@ -38,11 +36,11 @@ Moving a date or changing an aircraft is often cheaper than cancelling. Ask us f
 ## How refunds are paid
 
 - By bank transfer to the account you paid from, in Indian rupees.
-- Within [14] days of the operator's refund reaching us, or of the cancellation if no operator refund is involved. [LAWYER TO CONFIRM]
+- Within 14 days of the operator's refund reaching us, or of the cancellation if no operator refund is involved.
 - With a GST credit note where the law requires one.
 
 ## How to cancel
 
-In writing — WhatsApp or email to hello@flyvaanika.com — quoting your booking reference. The time we receive it decides the slab.
+In writing, quoting your booking reference: use the [enquiry form](/contact/#enquire) or a written channel listed under **Contact** at the end of this page. The time we receive it decides the slab.
 
 Questions or complaints: our [grievance officer](/legal/grievance/).

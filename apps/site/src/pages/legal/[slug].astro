@@ -1,6 +1,7 @@
 ---
 import { getCollection, render, type CollectionEntry } from 'astro:content';
-import { LEGAL_LINKS, PREVIEW } from '../../config/site';
+import LegalContact from '../../components/blocks/LegalContact.astro';
+import { LEGAL_LINKS } from '../../config/site';
 import Page from '../../layouts/Page.astro';
 
 export async function getStaticPaths() {
@@ -36,16 +37,13 @@ const updated = l.updated.toLocaleDateString('en-IN', {
   <section class="section">
     <div class="container lg">
       <div>
-        {PREVIEW && (
-          <p class="lg__draft" role="note">
-            <strong>DRAFT — pending legal review.</strong> This text is a starting point for our
-            lawyer, not legal advice, and does not go live until the lawyer approves it.
-          </p>
-        )}
-        <p class="lg__updated">Last updated {updated}</p>
+        <p class="lg__updated" role="note">
+          Last updated {updated}. Under legal review.
+        </p>
         <div class="prose lg__prose">
           <Content />
         </div>
+        <LegalContact />
       </div>
       <nav class="lg__nav" aria-label="Legal pages">
         <ul>
@@ -68,16 +66,6 @@ const updated = l.updated.toLocaleDateString('en-IN', {
     grid-template-columns: 1fr 240px;
     gap: 56px;
     align-items: start;
-  }
-
-  .lg__draft {
-    margin-bottom: 20px;
-    padding: 14px 16px;
-    border: 1px dashed var(--gold);
-    border-radius: 12px;
-    background: rgba(212, 178, 106, 0.1);
-    color: var(--gold-light);
-    font-size: 14.5px;
   }
 
   .lg__updated {

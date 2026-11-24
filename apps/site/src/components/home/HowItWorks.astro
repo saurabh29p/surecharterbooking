@@ -1,6 +1,6 @@
 ---
 /** How it works + sample quote (the light section). Payment safety note under the quote (§7). */
-import { company, PAYMENT_SAFETY } from '../../config/company';
+import { PAYMENT_SAFETY, QUOTE_VALIDITY } from '../../config/company';
 import { STEPS } from '../../data/facts';
 ---
 
@@ -37,17 +37,17 @@ import { STEPS } from '../../data/facts';
         <dt>Route</dt>
         <dd>Delhi → Udaipur</dd>
         <dt>Aircraft</dt>
-        <dd>Super-midsize · [REG]</dd>
+        <dd>Super-midsize, registration shown</dd>
         <dt>Operator</dt>
-        <dd>[OPERATOR NAME]</dd>
+        <dd>Named in your quote</dd>
         <dt>NSOP permit</dt>
         <dd class="ok">Checked</dd>
         <dt>Insurance</dt>
         <dd class="ok">Checked</dd>
         <dt class="total">All-in price</dt>
-        <dd class="total display">₹ [YOUR PRICE]</dd>
+        <dd class="total display">₹ one written price</dd>
       </dl>
-      <p class="quote__foot">Includes GST. Valid for {company.quoteValidity}.</p>
+      <p class="quote__foot">Includes GST. Valid for {QUOTE_VALIDITY}.</p>
       <p class="quote__safety">{PAYMENT_SAFETY}</p>
     </div>
   </div>

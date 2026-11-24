@@ -20,6 +20,29 @@ const apiOrigin = new URL(process.env.PUBLIC_API_URL ?? 'http://localhost:3000')
 
 /** Google Ads is the only third party, and only when its id is set. */
 const ads = !!process.env.PUBLIC_GOOGLE_ADS_ID;
+/**
+ * On the launched site, estimated facts written in Markdown as <span class="verify"> become plain
+ * text (the "verify" tag is for previews only; WEBSITE.md §10, apps/site/VERIFY.md).
+ */
+const unwrapVerify = {
+  name: 'vaanika:unwrap-verify',
+  hooks: {
+    'astro:build:done': async ({ dir }) => {
+      if (!launched) return;
+      const { readdir, readFile, writeFile } = await import('node:fs/promises');
+      const { fileURLToPath } = await import('node:url');
+      const root = fileURLToPath(dir);
+      for (const f of await readdir(root, { recursive: true })) {
+        if (!f.endsWith('.html')) continue;
+        const path = `${root}/${f}`;
+        const html = await readFile(path, 'utf8');
+        const out = html.replace(/<span class="verify">([^<]*)<\/span>/g, '$1');
+        if (out !== html) await writeFile(path, out);
+      }
+    },
+  },
+};
+
 const adsHosts = ads
   ? ' https://www.googletagmanager.com https://www.google.com https://googleads.g.doubleclick.net https://www.googleadservices.com'
   : '';
@@ -33,6 +56,7 @@ export default defineConfig({
   devToolbar: { enabled: false },
   // No code blocks on this site; Shiki's inline styles would also break the security policy.
   markdown: { syntaxHighlight: false },
+  integrations: [unwrapVerify],
   // A content security policy in a <meta> tag, with hashes for every inline script and style.
   // frame-ancestors can't go in a meta tag: vercel.json sends it as a header.
   security: {

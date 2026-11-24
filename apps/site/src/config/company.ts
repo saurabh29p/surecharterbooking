@@ -1,7 +1,8 @@
 /**
  * Everything about the business, in one place (WEBSITE.md §4). Every page reads from here.
- * Values in [SQUARE BRACKETS] or with XXXX are placeholders listed in apps/site/PLACEHOLDERS.md;
- * preview builds show a warning banner while any remain.
+ * Values in [SQUARE BRACKETS] or with XXXX are placeholders listed in apps/site/PLACEHOLDERS.md.
+ * Anything still a placeholder is hidden on every page (see `show` below); fill in the real value
+ * and it appears everywhere on the next deploy. Preview builds list what is still hidden.
  */
 
 const env = import.meta.env;
@@ -81,7 +82,32 @@ export const HELI_PERMISSIONS_LINE =
 
 /** A value still waiting for the owner. */
 export const isPlaceholder = (v: string | null | undefined): boolean =>
-  !!v && (/\[[^\]]+\]/.test(v) || /X{4,}/.test(v));
+  !v || /\[[^\]]+\]/.test(v) || /X{4,}/.test(v);
+
+/**
+ * Switch on once hello@ and grievance@ exist as real mailboxes; until then no email address is
+ * shown anywhere and the enquiry form is the way to reach us.
+ */
+export const MAILBOXES_READY = false;
+
+/** What the site may show. Each item turns on by itself once its placeholder is replaced. */
+export const show = {
+  whatsapp: !isPlaceholder(company.whatsapp.digits),
+  phone: !isPlaceholder(company.phone.digits),
+  llpin: !isPlaceholder(company.llpin),
+  gstin: !isPlaceholder(company.gstin),
+  address: !isPlaceholder(company.address.street) && !isPlaceholder(company.address.postalCode),
+  grievanceOfficer:
+    !isPlaceholder(company.grievanceOfficer.name) &&
+    !isPlaceholder(company.grievanceOfficer.designation),
+  founder: !isPlaceholder(company.founder.name) && !isPlaceholder(company.founder.note),
+  email: MAILBOXES_READY,
+} as const;
+
+/** "48 hours" once confirmed; "a limited time" until then. */
+export const QUOTE_VALIDITY = isPlaceholder(company.quoteValidity)
+  ? 'a limited time'
+  : company.quoteValidity;
 
 /** Every placeholder still in this file, for the preview banner. */
 export function remainingPlaceholders(): string[] {
@@ -96,5 +122,6 @@ export function remainingPlaceholders(): string[] {
     ['Founder', company.founder.name],
     ['Quote validity', company.quoteValidity],
   ];
-  return checks.filter(([, v]) => isPlaceholder(v)).map(([k]) => k);
+  const missing = checks.filter(([, v]) => isPlaceholder(v)).map(([k]) => k);
+  return MAILBOXES_READY ? missing : [...missing, 'Mailboxes (hello@, grievance@)'];
 }

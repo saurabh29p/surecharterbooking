@@ -1,5 +1,5 @@
 ---
-question: "How do planners earn with Vaanika?"
+question: 'How do planners earn with Vaanika?'
 group: Planners
 order: 1
 tags: [planners]

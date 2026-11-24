@@ -4,7 +4,7 @@
  * "compact" is the home page's mockup form (extra fields folded away); "full" shows everything.
  * Works with the API's own checks and error messages; never loses what was typed.
  */
-import { company } from '../config/company';
+import { company, show } from '../config/company';
 import { whatsappLink } from '../config/site';
 import { GUEST_RANGES } from '../lib/enquiry';
 import Icon from './Icon.astro';
@@ -210,12 +210,16 @@ const wa = whatsappLink(pageName);
     </span>
     <h3 class="enq__done-title display">Thank you. Your enquiry is with us.</h3>
     <p class="enq__done-text">
-      A coordinator will reply on WhatsApp {company.replyTime}. If it’s urgent, message us now.
+      {show.whatsapp
+        ? `A coordinator will reply on WhatsApp ${company.replyTime}. If it’s urgent, message us now.`
+        : `A coordinator will reply ${company.replyTime}, on the number you gave us.`}
     </p>
-    <a class="btn btn--gold btn--lg" href={wa} data-tap="WHATSAPP" data-done-wa>
-      <Icon name="chat" size={18} stroke={2} />
-      Message us on WhatsApp
-    </a>
+    {show.whatsapp && (
+      <a class="btn btn--gold btn--lg" href={wa} data-tap="WHATSAPP" data-done-wa>
+        <Icon name="chat" size={18} stroke={2} />
+        Message us on WhatsApp
+      </a>
+    )}
   </div>
 </div>
 
@@ -486,9 +490,15 @@ const wa = whatsappLink(pageName);
     const alert = form.querySelector<HTMLElement>('[data-alert]')!;
     const text = whatsappFallbackText(values(form));
     const wa = document.querySelector<HTMLAnchorElement>('[data-tap="WHATSAPP"]');
-    const base = wa?.href.split('?')[0] ?? 'https://wa.me/';
     alert.innerHTML = '';
     alert.append(`${message} `);
+    if (!wa) {
+      // No WhatsApp number on the site yet: the form is the only way in, so keep their details.
+      alert.append('Please try again in a minute; your details are still in the form.');
+      alert.hidden = false;
+      return;
+    }
+    const base = wa.href.split('?')[0];
     const link = document.createElement('a');
     link.href = `${base}?text=${encodeURIComponent(text)}`;
     link.dataset.tap = 'WHATSAPP';

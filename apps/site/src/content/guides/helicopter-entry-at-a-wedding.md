@@ -1,6 +1,6 @@
 ---
-title: "Helicopter entry at a wedding: permissions, costs and limits"
-seoTitle: "Helicopter entry at a wedding: permissions, limits"
+title: 'Helicopter entry at a wedding: permissions, costs and limits'
+seoTitle: 'Helicopter entry at a wedding: permissions, limits'
 description: A helicopter entry needs a suitable landing spot, the operator's landing request, the venue owner's NOC and the district's nod. Weather, elections and no-fly areas can still stop it; the pilot decides.
 published: 2026-11-24
 moneyPage: /helicopter-arrivals/
@@ -14,12 +14,12 @@ A helicopter needs open, firm ground clear of trees, wires and buildings, with a
 
 ## Who handles each permission
 
-| Who | What they do |
-|---|---|
-| The operator | Checks the landing spot and files the landing request |
-| The venue owner | Gives a written no-objection certificate (NOC) |
+| Who                         | What they do                                                            |
+| --------------------------- | ----------------------------------------------------------------------- |
+| The operator                | Checks the landing spot and files the landing request                   |
+| The venue owner             | Gives a written no-objection certificate (NOC)                          |
 | The district administration | Is informed and, in practice, gives its approval; police are often told |
-| Vaanika | Coordinates all of it and tells you plainly if it can't be done |
+| Vaanika                     | Coordinates all of it and tells you plainly if it can't be done         |
 
 Permissions are **coordinated, never guaranteed**. Start <span class="verify">at least 3 to 4 weeks</span> before the wedding; in the season, earlier is better. You pay the balance for a helicopter only once the permissions are in place.
 

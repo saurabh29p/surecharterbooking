@@ -1,0 +1,85 @@
+---
+/**
+ * "Contact" at the end of every legal page. Built from config/company.ts, so each detail appears
+ * here as soon as it is filled in there (WEBSITE.md §11); nothing shows while it is a placeholder.
+ */
+import { company, show } from '../../config/company';
+import { telLink, whatsappLink } from '../../config/site';
+
+const a = company.address;
+const ids = [show.llpin && `LLPIN ${company.llpin}`, show.gstin && `GSTIN ${company.gstin}`].filter(
+  Boolean,
+);
+---
+
+<section class="lc" aria-labelledby="lc-h">
+  <h2 id="lc-h">Contact</h2>
+  <p>
+    <strong>{company.legalName}</strong>
+    {ids.length > 0 && <>, {ids.join(', ')}</>}
+    <br />
+    {show.address ? `${a.street}, ${a.city} ${a.postalCode}` : a.city}
+  </p>
+  <p>
+    Grievance officer
+    {show.grievanceOfficer
+      ? `: ${company.grievanceOfficer.name}, ${company.grievanceOfficer.designation}`
+      : ''}
+    {show.email && (
+      <>
+        {' · '}
+        <a href={`mailto:${company.email.grievance}`}>{company.email.grievance}</a>
+      </>
+    )}
+  </p>
+  <ul>
+    <li>
+      <a href="/contact/#enquire">Send us a message with the enquiry form</a> (for a complaint or a
+      privacy request, start your message with "Grievance" or "Privacy").
+    </li>
+    {show.email && (
+      <li>
+        Email <a href={`mailto:${company.email.hello}`}>{company.email.hello}</a>
+      </li>
+    )}
+    {show.whatsapp && (
+      <li>
+        <a href={whatsappLink('Legal')} data-tap="WHATSAPP">
+          WhatsApp {company.whatsapp.display}
+        </a>
+      </li>
+    )}
+    {show.phone && (
+      <li>
+        <a href={telLink} data-tap="CALL">
+          Call {company.phone.display}
+        </a>
+      </li>
+    )}
+  </ul>
+</section>
+
+<style>
+  .lc {
+    margin-top: 40px;
+    padding-top: 28px;
+    border-top: 1px solid var(--line-soft);
+  }
+
+  .lc h2 {
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--ivory);
+  }
+
+  .lc p,
+  .lc ul {
+    margin-top: 12px;
+    color: var(--text-2);
+  }
+
+  .lc ul {
+    padding-left: 1.2em;
+  }
+</style>

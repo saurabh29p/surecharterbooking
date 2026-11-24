@@ -1,5 +1,5 @@
 /** Structured data (WEBSITE.md §9). Placeholder values are left out rather than published. */
-import { company, isPlaceholder } from '../config/company';
+import { company, isPlaceholder, show } from '../config/company';
 import { SITE_URL } from '../config/site';
 
 const real = (v: string | null | undefined) => (v && !isPlaceholder(v) ? v : undefined);
@@ -27,7 +27,7 @@ export function organizationJsonLd(): object[] {
       url: SITE_URL,
       logo: `${SITE_URL}/icons/icon-512.png`,
       address,
-      email: company.email.hello,
+      email: show.email ? company.email.hello : undefined,
       telephone: phone,
       taxID: real(company.gstin),
       sameAs: sameAs.length ? sameAs : undefined,
@@ -44,7 +44,7 @@ export function organizationJsonLd(): object[] {
       parentOrganization: { '@id': orgId },
       address,
       telephone: phone,
-      email: company.email.hello,
+      email: show.email ? company.email.hello : undefined,
       areaServed: { '@type': 'Country', name: 'India' },
       sameAs: sameAs.length ? sameAs : undefined,
     },

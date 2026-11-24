@@ -1,5 +1,5 @@
 ---
-question: "How many people fit in a helicopter?"
+question: 'How many people fit in a helicopter?'
 group: Helicopters
 order: 3
 tags: [helicopters]

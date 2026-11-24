@@ -16,10 +16,10 @@ Indicgems Exim LLP ("Vaanika") acts as your agent to find, check and book a lice
 ## 2. Quotes
 
 - A quote names the operator, the aircraft type and registration, the route, timings, seats and one all-in price including GST, and lists what is not included.
-- A quote is valid for the time stated on it (usually [48] hours), because aircraft availability and prices change.
+- A quote is valid for the time stated on it, because aircraft availability and prices change.
 - A booking is confirmed only when you have accepted the quote, signed these terms and paid the advance, and we have confirmed with the operator.
 
-## 3. Payment [CA TO CONFIRM]
+## 3. Payment
 
 - **Advance** when you accept the quote and sign: usually about half, and at least what the operator asks for.
 - **Balance** 7–10 days before the flight. For helicopters, the balance only once the permissions are in place.
@@ -58,7 +58,7 @@ Neither we nor the operator are liable for delays or cancellations caused by wea
 ## 10. Liability
 
 - The operator is responsible for the carriage, under its own terms and applicable aviation law, including its insurance for passengers and baggage.
-- Our responsibility is for arranging the booking with reasonable care and skill. To the extent the law allows, our total liability for any claim is limited to the service fee we earned on the booking, and we are not liable for indirect losses such as missed events. [LAWYER TO CONFIRM]
+- Our responsibility is for arranging the booking with reasonable care and skill. To the extent the law allows, our total liability for any claim is limited to the service fee we earned on the booking, and we are not liable for indirect losses such as missed events.
 - Nothing in these terms limits liability that cannot be limited by law.
 
 ## 11. Personal data
@@ -67,8 +67,8 @@ We use your and your guests' data as the [privacy notice](/legal/privacy/) expla
 
 ## 12. Law and courts
 
-These terms are governed by the laws of India. Courts at New Delhi have exclusive jurisdiction. [LAWYER TO CONFIRM; consider arbitration seated at New Delhi]
+These terms are governed by the laws of India. Courts at New Delhi have exclusive jurisdiction.
 
 ## 13. Contact and complaints
 
-hello@flyvaanika.com · grievance officer: see the [grievance page](/legal/grievance/).
+See **Contact** at the end of this page, and the [grievance officer page](/legal/grievance/) for complaints.

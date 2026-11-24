@@ -1,6 +1,6 @@
 ---
 /** Planner and hotel sign-up → POST {API}/api/public/partners (WEBSITE.md §5). */
-import { company } from '../config/company';
+import { company, show } from '../config/company';
 import { whatsappLink } from '../config/site';
 import Icon from './Icon.astro';
 
@@ -107,10 +107,12 @@ const wa = whatsappLink(
     </span>
     <h3 class="pf__done-title display">Thank you. We’ll be in touch.</h3>
     <p>Our partnerships team will call or message you {company.replyTime}.</p>
-    <a class="btn btn--gold" href={wa} data-tap="WHATSAPP">
-      <Icon name="chat" size={18} stroke={2} />
-      Message us on WhatsApp
-    </a>
+    {show.whatsapp && (
+      <a class="btn btn--gold" href={wa} data-tap="WHATSAPP">
+        <Icon name="chat" size={18} stroke={2} />
+        Message us on WhatsApp
+      </a>
+    )}
   </div>
 </div>
 
@@ -357,13 +359,18 @@ const wa = whatsappLink(
         if (res.status === 400 && data.fields) show(form, data.fields);
         else throw new Error(data.message ?? 'failed');
       } catch {
-        alert.textContent = 'Sorry, we couldn’t send this. Please message us on WhatsApp instead. ';
-        const a = root
-          .querySelector<HTMLAnchorElement>('[data-done] a')!
-          .cloneNode(true) as HTMLAnchorElement;
-        a.className = '';
-        a.textContent = 'Open WhatsApp';
-        alert.append(a);
+        const waLink = root.querySelector<HTMLAnchorElement>('[data-done] a');
+        if (waLink) {
+          alert.textContent =
+            'Sorry, we couldn’t send this. Please message us on WhatsApp instead. ';
+          const a = waLink.cloneNode(true) as HTMLAnchorElement;
+          a.className = '';
+          a.textContent = 'Open WhatsApp';
+          alert.append(a);
+        } else {
+          alert.textContent =
+            'Sorry, we couldn’t send this. Please try again in a minute; your details are still in the form.';
+        }
         alert.hidden = false;
       } finally {
         btn.disabled = false;

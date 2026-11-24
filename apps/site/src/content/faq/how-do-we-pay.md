@@ -1,5 +1,5 @@
 ---
-question: "How do we pay?"
+question: 'How do we pay?'
 group: Payment
 order: 1
 home: 4

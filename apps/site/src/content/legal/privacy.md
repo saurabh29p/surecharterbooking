@@ -5,7 +5,7 @@ order: 1
 updated: 2026-11-24
 ---
 
-This notice explains what personal data **Indicgems Exim LLP** ("Vaanika", "we") collects, why, who receives it, how long we keep it and how you can use your rights under the **Digital Personal Data Protection Act, 2023** and the **DPDP Rules, 2025**. We are the *data fiduciary* for the data described here.
+This notice explains what personal data **Indicgems Exim LLP** ("Vaanika", "we") collects, why, who receives it, how long we keep it and how you can use your rights under the **Digital Personal Data Protection Act, 2023** and the **DPDP Rules, 2025**. We are the _data fiduciary_ for the data described here.
 
 ## The data we collect
 
@@ -40,15 +40,15 @@ Only those who need it to arrange your flight or run our business:
 - the **DGCA-approved operator** named in your quote (names, IDs, contact details for the flight);
 - **airport, security and local authorities** where they require passenger or landing details;
 - your **wedding planner**, if they introduced you, for the flight details only;
-- our **service providers**, who process data for us under contract: website and server hosting, secure file storage, email delivery, and our chartered accountant for tax filings. [LAWYER: name the providers and where they store data.]
+- our **service providers**, who process data for us under contract: website and server hosting, secure file storage, email delivery, and our chartered accountant for tax filings.
 
 We do not sell your data.
 
 ## How long we keep it
 
-- Enquiries that don't become bookings: [24 months] after the last contact. [LAWYER TO CONFIRM]
-- Copies of guest IDs: deleted automatically [30] days after the wedding. [LAWYER TO CONFIRM]
-- Booking, invoice and payment records: as long as tax and company law require (usually [8] years).
+- Enquiries that don't become bookings: 24 months after the last contact.
+- Copies of guest IDs: deleted automatically 30 days after the wedding.
+- Booking, invoice and payment records: as long as tax and company law require (usually 8 years).
 - Consent records: as long as we use the data they cover, plus the period the law requires.
 
 ## Your rights
@@ -60,9 +60,9 @@ You may ask us to:
 - erase it, unless the law requires us to keep it (for example invoices);
 - name a person to exercise your rights if you die or cannot do so yourself.
 
-You can **withdraw your consent** at any time, as easily as you gave it: write to the grievance officer or message us on WhatsApp. Withdrawing doesn't affect what we did before, but we may be unable to continue a booking that needs the data.
+You can **withdraw your consent** at any time, as easily as you gave it: contact us (see **Contact** at the end of this page). Withdrawing doesn't affect what we did before, but we may be unable to continue a booking that needs the data.
 
-We answer rights requests within [90] days, and usually much sooner.
+We answer rights requests within 90 days, and usually much sooner.
 
 ## Complaints
 
@@ -79,7 +79,3 @@ We don't knowingly collect data from children except as passengers on a booking 
 ## Changes
 
 We will post any change on this page with a new date, and tell you directly if a change affects how we use data you have already given us.
-
-## Contact
-
-Indicgems Exim LLP, [Registered address], New Delhi · grievance@flyvaanika.com · [Phone]

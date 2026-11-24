@@ -1,5 +1,5 @@
 ---
-question: "What if the weather is bad?"
+question: 'What if the weather is bad?'
 group: Cancellations
 order: 1
 home: 5

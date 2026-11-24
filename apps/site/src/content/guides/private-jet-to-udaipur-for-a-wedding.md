@@ -1,6 +1,6 @@
 ---
-title: "Private jet to Udaipur for a wedding: airports, times, tips"
-seoTitle: "Private jet to Udaipur for a wedding"
+title: 'Private jet to Udaipur for a wedding: airports, times, tips'
+seoTitle: 'Private jet to Udaipur for a wedding'
 description: Udaipur's Maharana Pratap Airport handles private jets; flights take about 1 hr 15 min from Delhi and about 1 hr 10 min from Mumbai, and most lake venues are a short drive away.
 published: 2026-11-24
 moneyPage: /destinations/udaipur/
@@ -10,12 +10,12 @@ moneyPage: /destinations/udaipur/
 
 ## Flying times
 
-| From | Approximate flying time |
-|---|---|
-| Delhi | <span class="verify">about 1 hr 15 min</span> |
-| Mumbai | <span class="verify">about 1 hr 10 min</span> |
-| Bengaluru | <span class="verify">about 2 hr</span> |
-| Kolkata | <span class="verify">about 2 hr 30 min</span> |
+| From      | Approximate flying time                       |
+| --------- | --------------------------------------------- |
+| Delhi     | <span class="verify">about 1 hr 15 min</span> |
+| Mumbai    | <span class="verify">about 1 hr 10 min</span> |
+| Bengaluru | <span class="verify">about 2 hr</span>        |
+| Kolkata   | <span class="verify">about 2 hr 30 min</span> |
 
 The exact time depends on the aircraft, the weather and air traffic.
 

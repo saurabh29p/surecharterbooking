@@ -1,5 +1,5 @@
 ---
-question: "Is Vaanika an airline or operator?"
+question: 'Is Vaanika an airline or operator?'
 group: Safety
 order: 2
 home: 2

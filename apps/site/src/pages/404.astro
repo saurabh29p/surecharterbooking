@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import Icon from '../components/Icon.astro';
+import { show } from '../config/company';
 import { whatsappLink } from '../config/site';
 import Base from '../layouts/Base.astro';
 
@@ -11,7 +12,7 @@ const destinations = (await getCollection('destinations')).sort(
 
 <Base
   title="Page not found | Vaanika"
-  description="This page doesn’t exist. Message us on WhatsApp or choose a destination."
+  description="This page doesn’t exist. Send us an enquiry or choose a destination."
   pageName="404"
 >
   <section class="nf">
@@ -19,14 +20,20 @@ const destinations = (await getCollection('destinations')).sort(
       <p class="eyebrow">Page not found</p>
       <h1 class="nf__title display">This page has flown elsewhere.</h1>
       <p class="nf__lead">
-        The link may be old or mistyped. Message us and a coordinator will help, or start from a
-        destination.
+        The link may be old or mistyped. Send us an enquiry and a coordinator will help, or start
+        from a destination.
       </p>
       <div class="nf__actions">
-        <a class="btn btn--gold btn--lg" href={whatsappLink('404')} data-tap="WHATSAPP">
-          <Icon name="chat" size={20} stroke={2} />
-          Message us on WhatsApp
-        </a>
+        {show.whatsapp ? (
+          <a class="btn btn--gold btn--lg" href={whatsappLink('404')} data-tap="WHATSAPP">
+            <Icon name="chat" size={20} stroke={2} />
+            Message us on WhatsApp
+          </a>
+        ) : (
+          <a class="btn btn--gold btn--lg" href="/contact/#enquire">
+            Plan my flight <Icon name="arrow" size={18} stroke={2} />
+          </a>
+        )}
         <a class="btn btn--outline btn--lg" href="/">
           Go to the home page
         </a>

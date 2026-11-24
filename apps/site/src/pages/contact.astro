@@ -1,45 +1,63 @@
 ---
 import EnquiryForm from '../components/EnquiryForm.astro';
 import Icon from '../components/Icon.astro';
-import { company, PAYMENT_SAFETY } from '../config/company';
+import { company, PAYMENT_SAFETY, show } from '../config/company';
 import { telLink, whatsappLink } from '../config/site';
 import Page from '../layouts/Page.astro';
 
 const a = company.address;
+const direct = show.whatsapp || show.phone || show.email;
+const title = show.whatsapp
+  ? 'Contact Vaanika: WhatsApp, call or enquire'
+  : 'Contact Vaanika: plan your wedding flight';
+const description = show.whatsapp
+  ? `Talk to a Vaanika coordinator on WhatsApp or by phone, or send the enquiry form. We reply ${company.replyTime}.`
+  : `Send the enquiry form with your date, cities and guests. A Vaanika coordinator replies ${company.replyTime}.`;
+const lead = show.whatsapp
+  ? `WhatsApp is fastest: tell us the date, the cities and how many guests are flying, and a coordinator replies ${company.replyTime} with options and one written, all-in price.`
+  : `Tell us the date, the cities and how many guests are flying, and a coordinator replies ${company.replyTime} with options and one written, all-in price.`;
 ---
 
 <Page
-  title="Contact Vaanika: WhatsApp, call or enquire"
-  description={`Talk to a Vaanika coordinator on WhatsApp or by phone, or send the enquiry form. We reply ${company.replyTime}.`}
+  title={title}
+  description={description}
   pageName="Contact"
   eyebrow="Contact & quote"
   heading="Talk to a coordinator."
-  lead={`WhatsApp is fastest: tell us the date, the cities and how many guests are flying, and a coordinator replies ${company.replyTime} with options and one written, all-in price.`}
+  lead={lead}
   crumbs={[{ name: 'Contact', path: '/contact/' }]}
   planHref="#enquire"
   noCta
 >
   <section id="enquire" class="section" aria-label="Enquiry">
-    <div class="container ct">
+    <div class:list={['container ct', { 'ct--form-first': !direct }]}>
       <div class="ct__side">
-        <div class="ct__actions">
-          <a
-            class="btn btn--gold btn--lg btn--block"
-            href={whatsappLink('Contact')}
-            data-tap="WHATSAPP"
-          >
-            <Icon name="chat" size={20} stroke={2} />
-            WhatsApp {company.whatsapp.display}
-          </a>
-          <a class="btn btn--outline btn--lg btn--block" href={telLink} data-tap="CALL">
-            <Icon name="phone" size={20} stroke={2} />
-            Call {company.phone.display}
-          </a>
-          <a class="btn btn--ghost btn--block" href={`mailto:${company.email.hello}`}>
-            <Icon name="mail" size={18} />
-            {company.email.hello}
-          </a>
-        </div>
+        {direct && (
+          <div class="ct__actions">
+            {show.whatsapp && (
+              <a
+                class="btn btn--gold btn--lg btn--block"
+                href={whatsappLink('Contact')}
+                data-tap="WHATSAPP"
+              >
+                <Icon name="chat" size={20} stroke={2} />
+                WhatsApp {company.whatsapp.display}
+              </a>
+            )}
+            {show.phone && (
+              <a class="btn btn--outline btn--lg btn--block" href={telLink} data-tap="CALL">
+                <Icon name="phone" size={20} stroke={2} />
+                Call {company.phone.display}
+              </a>
+            )}
+            {show.email && (
+              <a class="btn btn--ghost btn--block" href={`mailto:${company.email.hello}`}>
+                <Icon name="mail" size={18} />
+                {company.email.hello}
+              </a>
+            )}
+          </div>
+        )}
         <dl class="ct__facts">
           <dt>Reply time</dt>
           <dd>{company.replyTime}</dd>
@@ -47,13 +65,21 @@ const a = company.address;
           <dd>
             {company.legalName}
             <br />
-            {a.street}, {a.city} {a.postalCode}
+            {show.address ? `${a.street}, ${a.city} ${a.postalCode}` : a.city}
           </dd>
           <dt>Grievance officer</dt>
           <dd>
-            {company.grievanceOfficer.name}, {company.grievanceOfficer.designation}
-            <br />
-            <a href={`mailto:${company.email.grievance}`}>{company.email.grievance}</a> ·
+            {show.grievanceOfficer && (
+              <>
+                {company.grievanceOfficer.name}, {company.grievanceOfficer.designation}
+                <br />
+              </>
+            )}
+            {show.email && (
+              <>
+                <a href={`mailto:${company.email.grievance}`}>{company.email.grievance}</a> ·{' '}
+              </>
+            )}
             <a href="/legal/grievance/">How complaints work</a>
           </dd>
         </dl>
@@ -75,6 +101,10 @@ const a = company.address;
     grid-template-columns: 0.9fr 1.3fr;
     gap: 56px;
     align-items: start;
+  }
+
+  .ct__facts:first-child {
+    margin-top: 0;
   }
 
   .ct__actions {
@@ -121,6 +151,11 @@ const a = company.address;
     .ct {
       grid-template-columns: 1fr;
       gap: 40px;
+    }
+
+    /* With no WhatsApp/call yet, the form is the way in: put it first on phones. */
+    .ct--form-first .ct__form {
+      order: -1;
     }
   }
 </style>

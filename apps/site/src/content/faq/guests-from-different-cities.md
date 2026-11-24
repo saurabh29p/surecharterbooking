@@ -1,5 +1,5 @@
 ---
-question: "Can guests fly from different cities?"
+question: 'Can guests fly from different cities?'
 group: Booking
 order: 5
 tags: [weddings]

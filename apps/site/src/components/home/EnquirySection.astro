@@ -2,6 +2,7 @@
 /** "Your wedding, from above." with the enquiry form over the fairy-lights photo (mockup). */
 import { Image } from 'astro:assets';
 import photo from '../../assets/photos/fairy-lights.jpg';
+import { show } from '../../config/company';
 import { whatsappLink } from '../../config/site';
 import EnquiryForm from '../EnquiryForm.astro';
 import Icon from '../Icon.astro';
@@ -26,14 +27,16 @@ const { pageName } = Astro.props;
       <p class="enquire__lead">
         Tell us the date and the cities. A coordinator replies with options and one clear price.
       </p>
-      <a
-        class="btn btn--gold btn--lg enquire__wa"
-        href={whatsappLink(pageName)}
-        data-tap="WHATSAPP"
-      >
-        <Icon name="chat" size={20} stroke={2} />
-        Chat on WhatsApp
-      </a>
+      {show.whatsapp && (
+        <a
+          class="btn btn--gold btn--lg enquire__wa"
+          href={whatsappLink(pageName)}
+          data-tap="WHATSAPP"
+        >
+          <Icon name="chat" size={20} stroke={2} />
+          Chat on WhatsApp
+        </a>
+      )}
     </div>
     <div class="enquire__form">
       <EnquiryForm id="home-enquiry" pageName={pageName} />

@@ -1,5 +1,5 @@
 ---
-question: "What does the all-in price include?"
+question: 'What does the all-in price include?'
 group: Payment
 order: 3
 tags: [weddings, private]

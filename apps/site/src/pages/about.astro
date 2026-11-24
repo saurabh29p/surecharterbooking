@@ -1,29 +1,36 @@
 ---
 import { Image } from 'astro:assets';
 import meaning from '../assets/brand/logo-meaning.jpg';
-import { AGENT_LINE, company } from '../config/company';
+import { AGENT_LINE, company, show } from '../config/company';
 import { PREVIEW } from '../config/site';
 import Page from '../layouts/Page.astro';
 
 const a = company.address;
+/** Only what can be checked today: each card appears once its detail is on the site. */
+const ourContacts = [
+  show.phone ? company.phone.display : null,
+  show.email ? company.email.hello : null,
+].filter(Boolean);
 const VERIFY_US = [
   {
     title: 'Look up the LLP',
-    text: `Search Indicgems Exim LLP (LLPIN ${company.llpin}) on the Ministry of Corporate Affairs website.`,
+    text: show.llpin
+      ? `Search Indicgems Exim LLP (LLPIN ${company.llpin}) on the Ministry of Corporate Affairs website.`
+      : 'Search Indicgems Exim LLP on the Ministry of Corporate Affairs website.',
   },
-  {
+  show.gstin && {
     title: 'Check the GSTIN',
     text: `Our Delhi GSTIN ${company.gstin} is on every quote and invoice; check it on the GST portal’s “Search taxpayer” page.`,
   },
-  {
+  ourContacts.length > 0 && {
     title: 'Call the number on this site',
-    text: `We only use ${company.phone.display} and ${company.email.hello}. If someone contacts you from another number or a Gmail address in our name, call us first.`,
+    text: `We only use ${ourContacts.join(' and ')}. If someone contacts you from another number or a Gmail address in our name, call us first.`,
   },
   {
     title: 'Pay only the company',
     text: 'We only accept payments to Indicgems Exim LLP’s current account, against a GST invoice — never to a person.',
   },
-];
+].filter((c): c is { title: string; text: string } => !!c);
 ---
 
 <Page
@@ -76,32 +83,48 @@ const VERIFY_US = [
         <dl class="ab__facts">
           <dt>Legal name</dt>
           <dd>{company.legalName}</dd>
-          <dt>LLPIN</dt>
-          <dd>{company.llpin}</dd>
-          <dt>GSTIN</dt>
-          <dd>{company.gstin} (Delhi)</dd>
-          <dt>Registered address</dt>
-          <dd>
-            {a.street}, {a.city} {a.postalCode}
-          </dd>
-          <dt>Email</dt>
-          <dd>
-            <a href={`mailto:${company.email.hello}`}>{company.email.hello}</a>
-          </dd>
-          <dt>Phone</dt>
-          <dd>{company.phone.display}</dd>
+          {show.llpin && (
+            <>
+              <dt>LLPIN</dt>
+              <dd>{company.llpin}</dd>
+            </>
+          )}
+          {show.gstin && (
+            <>
+              <dt>GSTIN</dt>
+              <dd>{company.gstin} (Delhi)</dd>
+            </>
+          )}
+          <dt>{show.address ? 'Registered address' : 'Based in'}</dt>
+          <dd>{show.address ? `${a.street}, ${a.city} ${a.postalCode}` : a.city}</dd>
+          {show.email && (
+            <>
+              <dt>Email</dt>
+              <dd>
+                <a href={`mailto:${company.email.hello}`}>{company.email.hello}</a>
+              </dd>
+            </>
+          )}
+          {show.phone && (
+            <>
+              <dt>Phone</dt>
+              <dd>{company.phone.display}</dd>
+            </>
+          )}
         </dl>
         <p class="note ab__agent">{AGENT_LINE}</p>
       </div>
-      <div class="ab__founder reveal">
-        <p class="eyebrow">Founder</p>
-        <div class="ab__photo" aria-hidden="true">
-          <span>Photo</span>
+      {show.founder && (
+        <div class="ab__founder reveal">
+          <p class="eyebrow">Founder</p>
+          <div class="ab__photo" aria-hidden="true">
+            <span>Photo</span>
+          </div>
+          <h3 class="ab__name display">{company.founder.name}</h3>
+          <p class="ab__role">{company.founder.role}</p>
+          <p class="ab__note">{company.founder.note}</p>
         </div>
-        <h3 class="ab__name display">{company.founder.name}</h3>
-        <p class="ab__role">{company.founder.role}</p>
-        <p class="ab__note">{company.founder.note}</p>
-      </div>
+      )}
     </div>
   </section>
 

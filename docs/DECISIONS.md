@@ -326,3 +326,25 @@ design (`noindex`); on a launched build (local) SEO is **100** on home, weddings
 - Desktop home: 691 KB without the video (budget 1 MB), hero video 1.97 MB after the poster (budget 2.5 MB),
   JavaScript 9 KB compressed (budget 30 KB).
 - axe accessibility scan: 0 violations on 17 pages at 390 px and 1280 px.
+
+## Website launch (phase 6, 24 Nov 2026)
+- **Launched with details hidden, not placeholders.** WhatsApp and call buttons (sticky bar included),
+  LLPIN, GSTIN, address, PIN, grievance officer, founder and the hello@/grievance@ links are hidden
+  until their real values are in `apps/site/src/config/company.ts` (or `PUBLIC_WHATSAPP_NUMBER` /
+  `PUBLIC_PHONE` on Vercel; `MAILBOXES_READY` for email). One `show` object decides it for every
+  page, so filling a value switches it back on everywhere. The footer shows "Indicgems Exim LLP,
+  New Delhi" and the agent line; the enquiry form is the contact on every page.
+- **Quote validity** reads "a limited time" until `company.quoteValidity` holds the hours.
+- **Legal pages are live** with "Last updated 24 November 2026. Under legal review." Reviewer notes
+  moved out of the public text into `apps/site/LEGAL-REVIEW.md`; draft values (slabs, retention,
+  refund days) are shown as plain text. Each legal page ends with a Contact block built from the
+  same switches; until the grievance officer is named, complaints go through the enquiry form.
+- **"Verify" tags** show on preview builds only; the launched build also unwraps the Markdown
+  `<span class="verify">` (a small build-done step in `astro.config.mjs`). "About" and
+  "approximate" wording stays. The hero caption reads "Illustrative footage".
+- **Guides stay drafts**: on the launched site the Guides link and sitemap entry appear only once a
+  guide has `draft: false`.
+- **Production deploys:** the site's Vercel production branch is still `main`, which doesn't have
+  the site yet, so production is deployed from `claude/new-session-ox4tcm` on request until the
+  merge to `main`. `PUBLIC_LAUNCHED=true` is set for Production only, so preview links keep the
+  banner, the verify tags and `noindex`; the `vercel.app` addresses stay `noindex` by header.

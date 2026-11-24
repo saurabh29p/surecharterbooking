@@ -9,7 +9,7 @@ These terms cover your use of **flyvaanika.com**. Bookings are covered separatel
 
 ## Who we are
 
-This website is run by Indicgems Exim LLP, LLPIN [LLPIN], GSTIN [DELHI GSTIN], [Registered address], New Delhi. Vaanika is a brand of Indicgems Exim LLP.
+This website is run by Indicgems Exim LLP, New Delhi (company details under **Contact** at the end of this page). Vaanika is a brand of Indicgems Exim LLP.
 
 Vaanika arranges charters as an agent. Every flight is operated by a DGCA-approved NSOP operator named in your quote.
 
@@ -38,8 +38,4 @@ We take care to keep this site accurate, but to the extent the law allows we are
 
 ## Law and courts
 
-These terms are governed by the laws of India. Courts at New Delhi have jurisdiction. [LAWYER TO CONFIRM]
-
-## Contact
-
-hello@flyvaanika.com · grievance officer: see the [grievance page](/legal/grievance/).
+These terms are governed by the laws of India. Courts at New Delhi have jurisdiction.

@@ -1,5 +1,5 @@
 ---
-question: "How early should we book?"
+question: 'How early should we book?'
 group: Booking
 order: 1
 tags: [weddings]

@@ -1,5 +1,5 @@
 ---
-question: "What happens if we cancel?"
+question: 'What happens if we cancel?'
 group: Cancellations
 order: 2
 tags: [weddings]

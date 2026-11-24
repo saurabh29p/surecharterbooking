@@ -1,6 +1,6 @@
 ---
 title: How many guests fit in a private jet? Aircraft classes explained
-seoTitle: "How many guests fit in a private jet?"
+seoTitle: 'How many guests fit in a private jet?'
 description: A light jet carries about 6–7 guests, a midsize 7–8, a super-midsize 8–9 and a heavy jet 12–14; helicopters take 4–6 and group charters 50 or more. The exact aircraft decides the final count.
 published: 2026-11-24
 moneyPage: /aircraft/
@@ -10,14 +10,14 @@ moneyPage: /aircraft/
 
 ## The classes at a glance
 
-| Class | Typical guests | Good for |
-|---|---|---|
-| Helicopter | <span class="verify">about 4–6</span> | Airport to venue, the entrance |
-| Light jet | <span class="verify">about 6–7</span> | The couple and closest family |
-| Midsize jet | <span class="verify">about 7–8</span> | A family group with luggage |
-| Super-midsize jet | <span class="verify">about 8–9</span> | One family side, coast to coast |
-| Heavy jet | <span class="verify">about 12–14</span> | The full VIP circle |
-| Group charter | <span class="verify">50 and more</span> | The whole baraat |
+| Class             | Typical guests                          | Good for                        |
+| ----------------- | --------------------------------------- | ------------------------------- |
+| Helicopter        | <span class="verify">about 4–6</span>   | Airport to venue, the entrance  |
+| Light jet         | <span class="verify">about 6–7</span>   | The couple and closest family   |
+| Midsize jet       | <span class="verify">about 7–8</span>   | A family group with luggage     |
+| Super-midsize jet | <span class="verify">about 8–9</span>   | One family side, coast to coast |
+| Heavy jet         | <span class="verify">about 12–14</span> | The full VIP circle             |
+| Group charter     | <span class="verify">50 and more</span> | The whole baraat                |
 
 ## Why the number can change
 
