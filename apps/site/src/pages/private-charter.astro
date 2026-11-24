@@ -1,0 +1,127 @@
+---
+import hero from '../assets/photos/private-jet-vip.jpg';
+import FaqList from '../components/FaqList.astro';
+import FormSection from '../components/blocks/FormSection.astro';
+import AircraftTable from '../components/blocks/AircraftTable.astro';
+import { AGENT_LINE } from '../config/company';
+import { faqLd, faqsFor } from '../lib/faq';
+import { serviceJsonLd } from '../lib/jsonld';
+import Page from '../layouts/Page.astro';
+
+const description =
+  'Private and business charters with the same verified DGCA-approved operators as our weddings: discreet handling, one written price and a GST invoice for your company.';
+const faqs = await faqsFor('private');
+
+const POINTS = [
+  {
+    title: 'Same-day and short notice',
+    text: 'Tell us the time and the cities; we come back with what can fly, checked, and one price.',
+  },
+  {
+    title: 'Multi-city and round trips',
+    text: 'Several stops, waiting time on the ground and the return, in one quote.',
+  },
+  {
+    title: 'Names and plans kept private',
+    text: 'Passenger names go only to the operator and the authorities who need them. We never talk about who flies with us.',
+  },
+  {
+    title: 'GST invoice for your company',
+    text: 'Billed by Indicgems Exim LLP, a GST-registered LLP, to your company’s GSTIN.',
+  },
+];
+---
+
+<Page
+  title="Private & business jet charter in India"
+  description={description}
+  pageName="Private charter"
+  eyebrow="Private & business"
+  heading="Private and business charters. Discreet by default."
+  lead="Vaanika arranges private jets and helicopters for business travel, events and private trips across India, with the same checked operators as our weddings, one written price and a GST invoice for your company."
+  crumbs={[{ name: 'Private & business', path: '/private-charter/' }]}
+  image={hero}
+  imageAlt="Tail and engine of a private jet on a runway at dusk"
+  imagePosition="right"
+  planHref="#enquire"
+  jsonLd={[
+    serviceJsonLd({
+      name: 'Private and business jet charter',
+      description,
+      path: '/private-charter/',
+    }),
+    faqLd(faqs),
+  ]}
+  noCta
+>
+  <section class="section" aria-labelledby="why-h">
+    <div class="container">
+      <div class="section__head reveal">
+        <p class="eyebrow">How we handle it</p>
+        <h2 id="why-h" class="h2">
+          The same standard, without the wedding.
+        </h2>
+      </div>
+      <div class="grid-cards">
+        {POINTS.map((p) => (
+          <div class="card reveal">
+            <h3>{p.title}</h3>
+            <p>{p.text}</p>
+          </div>
+        ))}
+      </div>
+      <p class="note pc__agent">{AGENT_LINE}</p>
+    </div>
+  </section>
+
+  <section class="section section--alt" aria-labelledby="ac-h">
+    <div class="container">
+      <div class="section__head reveal">
+        <h2 id="ac-h" class="h2">
+          Which aircraft.
+        </h2>
+      </div>
+      <div class="pc__table reveal">
+        <AircraftTable />
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="faq-h">
+    <div class="container pc__narrow">
+      <h2 id="faq-h" class="h2">
+        Questions
+      </h2>
+      <div class="pc__faq">
+        <FaqList items={faqs} />
+      </div>
+    </div>
+  </section>
+
+  <FormSection
+    pageName="Private charter"
+    intent="private"
+    variant="full"
+    heading="Talk to us privately."
+    text="Share the date, the cities and the number of passengers. We reply on WhatsApp with options and one written price."
+  />
+</Page>
+
+<style>
+  .pc__agent {
+    margin-top: 28px;
+    max-width: 760px;
+  }
+
+  .pc__table {
+    margin-top: 32px;
+  }
+
+  .pc__narrow {
+    max-width: 880px;
+  }
+
+  .pc__faq {
+    margin-top: 32px;
+  }
+</style>

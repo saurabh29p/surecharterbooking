@@ -1,0 +1,79 @@
+---
+/** Who handles each helicopter permission, and the honest limits (WEBSITE.md §7). */
+import { HELI_LIMITS, HELI_PERMISSIONS } from '../../data/facts';
+---
+
+<div class="table-scroll">
+  <table class="facts">
+    <caption class="visually-hidden">Who handles each helicopter landing permission</caption>
+    <thead>
+      <tr>
+        <th scope="col">Who</th>
+        <th scope="col">What they do</th>
+      </tr>
+    </thead>
+    <tbody>
+      {HELI_PERMISSIONS.map((r) => (
+        <tr>
+          <th scope="row" class="heli__who">
+            {r.who}
+          </th>
+          <td>{r.does}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+<p class="heli__coord">
+  Landing permissions are <strong>coordinated</strong>, never guaranteed: the final word belongs to
+  the authorities, the weather and the pilot. For helicopters, you pay the balance only once the
+  permissions are in place.
+</p>
+<h3 class="heli__limits-title">What can still stop a helicopter</h3>
+<ul class="heli__limits">
+  {HELI_LIMITS.map((l) => (
+    <li>{l}</li>
+  ))}
+</ul>
+
+<style>
+  .heli__who {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--ivory);
+    white-space: nowrap;
+  }
+
+  .heli__coord {
+    margin-top: 18px;
+    color: var(--text-3);
+  }
+
+  .heli__coord strong {
+    color: var(--gold-light);
+  }
+
+  .heli__limits-title {
+    margin-top: 28px;
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .heli__limits {
+    margin-top: 10px;
+    padding-left: 1.2em;
+    color: var(--text-3);
+  }
+
+  .heli__limits li + li {
+    margin-top: 6px;
+  }
+
+  @media (max-width: 599px) {
+    .heli__who {
+      white-space: normal;
+    }
+  }
+</style>

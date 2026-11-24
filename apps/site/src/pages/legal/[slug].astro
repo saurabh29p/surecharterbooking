@@ -1,0 +1,127 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import { LEGAL_LINKS, PREVIEW } from '../../config/site';
+import Page from '../../layouts/Page.astro';
+
+export async function getStaticPaths() {
+  return (await getCollection('legal')).map((l) => ({
+    params: { slug: l.id },
+    props: { entry: l },
+  }));
+}
+
+interface Props {
+  entry: CollectionEntry<'legal'>;
+}
+
+const { entry } = Astro.props;
+const l = entry.data;
+const { Content } = await render(entry);
+const updated = l.updated.toLocaleDateString('en-IN', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+---
+
+<Page
+  title={`${l.title} | Vaanika`}
+  description={l.description}
+  pageName={l.title}
+  eyebrow="Legal"
+  heading={l.title}
+  lead={l.description}
+  crumbs={[{ name: l.title, path: `/legal/${entry.id}/` }]}
+>
+  <section class="section">
+    <div class="container lg">
+      <div>
+        {PREVIEW && (
+          <p class="lg__draft" role="note">
+            <strong>DRAFT — pending legal review.</strong> This text is a starting point for our
+            lawyer, not legal advice, and does not go live until the lawyer approves it.
+          </p>
+        )}
+        <p class="lg__updated">Last updated {updated}</p>
+        <div class="prose lg__prose">
+          <Content />
+        </div>
+      </div>
+      <nav class="lg__nav" aria-label="Legal pages">
+        <ul>
+          {LEGAL_LINKS.map((n) => (
+            <li>
+              <a href={n.href} aria-current={n.href === `/legal/${entry.id}/` ? 'page' : undefined}>
+                {n.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </div>
+  </section>
+</Page>
+
+<style>
+  .lg {
+    display: grid;
+    grid-template-columns: 1fr 240px;
+    gap: 56px;
+    align-items: start;
+  }
+
+  .lg__draft {
+    margin-bottom: 20px;
+    padding: 14px 16px;
+    border: 1px dashed var(--gold);
+    border-radius: 12px;
+    background: rgba(212, 178, 106, 0.1);
+    color: var(--gold-light);
+    font-size: 14.5px;
+  }
+
+  .lg__updated {
+    font-size: 13px;
+    color: var(--muted-2);
+  }
+
+  .lg__prose {
+    margin-top: 18px;
+  }
+
+  .lg__nav {
+    position: sticky;
+    top: calc(var(--header-h) + 24px);
+  }
+
+  .lg__nav ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-left: 1px solid var(--line);
+  }
+
+  .lg__nav a {
+    display: block;
+    padding: 8px 0 8px 16px;
+    color: var(--ivory-2);
+    text-decoration: none;
+    font-size: 14.5px;
+  }
+
+  .lg__nav a:hover,
+  .lg__nav a[aria-current='page'] {
+    color: var(--gold-light);
+  }
+
+  @media (max-width: 899px) {
+    .lg {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+
+    .lg__nav {
+      position: static;
+    }
+  }
+</style>

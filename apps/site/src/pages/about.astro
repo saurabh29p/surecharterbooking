@@ -1,0 +1,226 @@
+---
+import { Image } from 'astro:assets';
+import meaning from '../assets/brand/logo-meaning.jpg';
+import { AGENT_LINE, company } from '../config/company';
+import { PREVIEW } from '../config/site';
+import Page from '../layouts/Page.astro';
+
+const a = company.address;
+const VERIFY_US = [
+  {
+    title: 'Look up the LLP',
+    text: `Search Indicgems Exim LLP (LLPIN ${company.llpin}) on the Ministry of Corporate Affairs website.`,
+  },
+  {
+    title: 'Check the GSTIN',
+    text: `Our Delhi GSTIN ${company.gstin} is on every quote and invoice; check it on the GST portal’s “Search taxpayer” page.`,
+  },
+  {
+    title: 'Call the number on this site',
+    text: `We only use ${company.phone.display} and ${company.email.hello}. If someone contacts you from another number or a Gmail address in our name, call us first.`,
+  },
+  {
+    title: 'Pay only the company',
+    text: 'We only accept payments to Indicgems Exim LLP’s current account, against a GST invoice — never to a person.',
+  },
+];
+---
+
+<Page
+  title="About Vaanika, a brand of Indicgems Exim LLP"
+  description="Vaanika is a brand of Indicgems Exim LLP, New Delhi. We arrange private jets and helicopters for Indian weddings as the client’s agent, with DGCA-approved NSOP operators."
+  pageName="About"
+  eyebrow="About Vaanika"
+  heading="A wedding specialist that tells you who flies you."
+  lead={`${company.brandLine} We arrange private jets and helicopters for Indian destination weddings and private trips, as the client’s agent, with DGCA-approved operators named in every quote.`}
+  crumbs={[{ name: 'About', path: '/about/' }]}
+>
+  <section class="section" aria-labelledby="name-h">
+    <div class="container ab__split">
+      <figure class="ab__img reveal">
+        <Image
+          src={meaning}
+          alt="The Vaanika lotus: an ivory petal for Saraswati, a gold petal for Lakshmi, a blue petal for Kali and a crescent moon"
+          widths={[400, 640, 900]}
+          sizes="(max-width: 899px) 100vw, 480px"
+          loading="lazy"
+        />
+      </figure>
+      <div class="reveal">
+        <p class="eyebrow">Why “Vaanika”</p>
+        <h2 id="name-h" class="h2">
+          Vaani and Kalika, and the gold of Lakshmi.
+        </h2>
+        <div class="prose ab__prose">
+          <p>
+            Vaanika joins <strong>Vaani</strong>, the voice of Maa Saraswati, and{' '}
+            <strong>Kalika</strong>, Maa Kali. Our lotus has three petals: ivory for Saraswati, gold
+            for Lakshmi and shyama blue for Kali, with Kali’s crescent moon above.
+          </p>
+          <p>
+            Clear words, a protected journey and an auspicious beginning: that is what we try to
+            give every family we fly.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt" aria-labelledby="co-h">
+    <div class="container ab__split ab__split--even">
+      <div class="reveal">
+        <p class="eyebrow">The company</p>
+        <h2 id="co-h" class="h2">
+          Who you are dealing with.
+        </h2>
+        <dl class="ab__facts">
+          <dt>Legal name</dt>
+          <dd>{company.legalName}</dd>
+          <dt>LLPIN</dt>
+          <dd>{company.llpin}</dd>
+          <dt>GSTIN</dt>
+          <dd>{company.gstin} (Delhi)</dd>
+          <dt>Registered address</dt>
+          <dd>
+            {a.street}, {a.city} {a.postalCode}
+          </dd>
+          <dt>Email</dt>
+          <dd>
+            <a href={`mailto:${company.email.hello}`}>{company.email.hello}</a>
+          </dd>
+          <dt>Phone</dt>
+          <dd>{company.phone.display}</dd>
+        </dl>
+        <p class="note ab__agent">{AGENT_LINE}</p>
+      </div>
+      <div class="ab__founder reveal">
+        <p class="eyebrow">Founder</p>
+        <div class="ab__photo" aria-hidden="true">
+          <span>Photo</span>
+        </div>
+        <h3 class="ab__name display">{company.founder.name}</h3>
+        <p class="ab__role">{company.founder.role}</p>
+        <p class="ab__note">{company.founder.note}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="verify-h">
+    <div class="container">
+      <div class="section__head reveal">
+        <p class="eyebrow">Check us in five minutes</p>
+        <h2 id="verify-h" class="h2">
+          How to verify Vaanika.
+        </h2>
+      </div>
+      <div class="grid-cards">
+        {VERIFY_US.map((v) => (
+          <div class="card reveal">
+            <h3>{v.title}</h3>
+            <p>{v.text}</p>
+          </div>
+        ))}
+      </div>
+      {PREVIEW && (
+        <p class="note ab__testimonial">
+          [REAL TESTIMONIAL — add when we have one] (hidden on the live site until then)
+        </p>
+      )}
+    </div>
+  </section>
+</Page>
+
+<style>
+  .ab__split {
+    display: grid;
+    grid-template-columns: minmax(260px, 0.8fr) 1.2fr;
+    gap: 64px;
+    align-items: center;
+  }
+
+  .ab__split--even {
+    grid-template-columns: 1.3fr 1fr;
+    align-items: start;
+  }
+
+  .ab__img {
+    border-radius: var(--radius-big);
+    overflow: hidden;
+    border: 1px solid var(--line);
+  }
+
+  .ab__prose {
+    margin-top: 20px;
+  }
+
+  .ab__facts {
+    margin-top: 24px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 10px 20px;
+    font-size: 15.5px;
+  }
+
+  .ab__facts dt {
+    color: var(--gold);
+    font-weight: 700;
+  }
+
+  .ab__facts dd {
+    margin: 0;
+    color: var(--text-2);
+  }
+
+  .ab__agent {
+    margin-top: 24px;
+  }
+
+  .ab__founder {
+    padding: 28px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-card);
+    background: var(--panel);
+  }
+
+  .ab__photo {
+    margin-top: 16px;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 1px dashed var(--gold-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--faint);
+    font-size: 13px;
+  }
+
+  .ab__name {
+    margin-top: 18px;
+    font-size: 26px;
+  }
+
+  .ab__role {
+    color: var(--gold);
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .ab__note {
+    margin-top: 12px;
+    color: var(--text-3);
+  }
+
+  .ab__testimonial {
+    margin-top: 32px;
+    border-style: dashed;
+  }
+
+  @media (max-width: 899px) {
+    .ab__split,
+    .ab__split--even {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+  }
+</style>

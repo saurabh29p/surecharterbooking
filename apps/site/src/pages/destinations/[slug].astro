@@ -1,0 +1,191 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import Icon from '../../components/Icon.astro';
+import Verify from '../../components/Verify.astro';
+import FormSection from '../../components/blocks/FormSection.astro';
+import Page from '../../layouts/Page.astro';
+
+export async function getStaticPaths() {
+  const all = await getCollection('destinations');
+  return all.map((d) => ({ params: { slug: d.id }, props: { entry: d } }));
+}
+
+interface Props {
+  entry: CollectionEntry<'destinations'>;
+}
+
+const { entry } = Astro.props;
+const d = entry.data;
+const { Content } = await render(entry);
+---
+
+<Page
+  title={d.title}
+  description={d.description}
+  pageName={d.name}
+  eyebrow={`Destinations · ${d.name}`}
+  heading={`Private jet & helicopter to ${d.name} for your wedding.`}
+  lead={d.description}
+  crumbs={[
+    { name: 'Destinations', path: '/destinations/' },
+    { name: d.name, path: `/destinations/${entry.id}/` },
+  ]}
+  image={d.image}
+  imageAlt={d.imageAlt}
+  planHref="#enquire"
+  noCta
+>
+  <section class="section" aria-labelledby="facts-h">
+    <div class="container dest__grid">
+      <div>
+        <h2 id="facts-h" class="h2 dest__h2">
+          {d.name} at a glance
+        </h2>
+        <div class="table-scroll dest__table">
+          <table class="facts num">
+            <caption class="visually-hidden">
+              Approximate private jet flying times to{d.name}
+            </caption>
+            <thead>
+              <tr>
+                <th scope="col">From</th>
+                <th scope="col">Approximate flying time</th>
+              </tr>
+            </thead>
+            <tbody>
+              {d.times.map((t) => (
+                <tr>
+                  <td>{t.from}</td>
+                  <td>
+                    <Verify>{t.time}</Verify>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <dl class="dest__facts">
+          <dt>Nearest airport</dt>
+          <dd>
+            <Verify>{d.airport}</Verify>
+          </dd>
+          <dt>Best season</dt>
+          <dd>
+            <Verify>{d.season}</Verify>
+          </dd>
+        </dl>
+        <p class="dest__note">
+          Flying times are approximate and depend on the aircraft, the weather and the airports
+          used.
+        </p>
+      </div>
+      <div class="prose">
+        <Content />
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt section--tight" aria-label="Next steps">
+    <div class="container dest__links">
+      <a class="card card--link card-lift" href="/weddings/">
+        <h3>
+          Wedding flights <Icon name="arrow" size={18} />
+        </h3>
+        <p>Group sizes, what the quote includes and how payment works.</p>
+      </a>
+      <a class="card card--link card-lift" href="/helicopter-arrivals/">
+        <h3>
+          Helicopter arrivals <Icon name="arrow" size={18} />
+        </h3>
+        <p>Who handles each landing permission, and the Shreeji Arrival.</p>
+      </a>
+      <a class="card card--link card-lift" href="/contact/">
+        <h3>
+          Talk to a coordinator <Icon name="arrow" size={18} />
+        </h3>
+        <p>WhatsApp, call or the form. One written, all-in price.</p>
+      </a>
+    </div>
+  </section>
+
+  <FormSection
+    pageName={d.name}
+    heading={`Plan your ${d.name} wedding flights.`}
+    text="Tell us the date, the cities and how many guests are flying. A coordinator replies with options and one written price."
+  />
+</Page>
+
+<style>
+  .dest__grid {
+    display: grid;
+    grid-template-columns: minmax(280px, 0.9fr) 1.4fr;
+    gap: 64px;
+    align-items: start;
+  }
+
+  .dest__h2 {
+    margin-top: 0;
+    font-size: clamp(26px, 3vw, 36px);
+  }
+
+  .dest__table {
+    margin-top: 20px;
+  }
+
+  .dest__facts {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 10px 16px;
+    font-size: 15px;
+  }
+
+  .dest__facts dt {
+    color: var(--gold);
+    font-weight: 700;
+  }
+
+  .dest__facts dd {
+    margin: 0;
+    color: var(--text-2);
+  }
+
+  .dest__note {
+    margin-top: 16px;
+    font-size: 13.5px;
+    color: var(--faint);
+  }
+
+  .dest__links {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+
+  .dest__links h3 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .dest__links :global(svg) {
+    color: var(--gold);
+    transition: transform 0.2s var(--ease-out);
+  }
+
+  .dest__links a:hover :global(svg) {
+    transform: translateX(4px);
+  }
+
+  @media (max-width: 899px) {
+    .dest__grid,
+    .dest__links {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+
+    .dest__links {
+      gap: 14px;
+    }
+  }
+</style>

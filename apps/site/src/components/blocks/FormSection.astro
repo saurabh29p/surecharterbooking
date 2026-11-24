@@ -1,0 +1,85 @@
+---
+/** An enquiry form section for inner pages (id="enquire", so "Plan my flight" jumps here). */
+import { whatsappLink } from '../../config/site';
+import EnquiryForm from '../EnquiryForm.astro';
+import Icon from '../Icon.astro';
+
+interface Props {
+  pageName: string;
+  heading?: string;
+  text?: string;
+  intent?: 'wedding' | 'private';
+  variant?: 'compact' | 'full';
+}
+
+const {
+  pageName,
+  heading = 'Tell us the date and the cities.',
+  text = 'A coordinator replies with options and one written, all-in price.',
+  intent = 'wedding',
+  variant = 'compact',
+} = Astro.props;
+---
+
+<section id="enquire" class="section section--alt fsec" aria-labelledby="enquire-h">
+  <div class="container fsec__inner">
+    <div class="fsec__text">
+      <h2 id="enquire-h" class="h2">
+        {heading}
+      </h2>
+      <p class="lead fsec__lead">{text}</p>
+      <a class="btn btn--gold btn--lg fsec__wa" href={whatsappLink(pageName)} data-tap="WHATSAPP">
+        <Icon name="chat" size={20} stroke={2} />
+        Chat on WhatsApp
+      </a>
+    </div>
+    <div class="fsec__form">
+      <EnquiryForm
+        id={`${pageName.toLowerCase().replace(/[^a-z]+/g, '-')}-form`}
+        pageName={pageName}
+        intent={intent}
+        variant={variant}
+        label={intent === 'private' ? 'Private charter enquiry' : 'Wedding flight enquiry'}
+      />
+    </div>
+  </div>
+</section>
+
+<style>
+  .fsec__inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 56px;
+    align-items: center;
+  }
+
+  .fsec__text {
+    flex: 1 1 380px;
+    min-width: 0;
+  }
+
+  .fsec__lead {
+    margin-top: 18px;
+    max-width: 460px;
+  }
+
+  .fsec__wa {
+    margin-top: 28px;
+  }
+
+  .fsec__form {
+    flex: 1 1 460px;
+    min-width: 0;
+  }
+
+  @media (max-width: 767px) {
+    .fsec__inner {
+      gap: 28px;
+    }
+
+    .fsec__text,
+    .fsec__form {
+      flex-basis: 100%;
+    }
+  }
+</style>

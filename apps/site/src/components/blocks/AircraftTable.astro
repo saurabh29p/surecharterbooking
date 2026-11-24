@@ -1,0 +1,65 @@
+---
+/** Seats, range and typical use per aircraft class (estimates, marked to verify). */
+import { AIRCRAFT_CLASSES } from '../../data/facts';
+import Verify from '../Verify.astro';
+
+interface Props {
+  /** Leave out the helicopters (e.g. on a jet-only comparison). */
+  jetsOnly?: boolean;
+}
+
+const rows = Astro.props.jetsOnly
+  ? AIRCRAFT_CLASSES.filter((c) => !c.name.startsWith('Helicopter'))
+  : AIRCRAFT_CLASSES;
+---
+
+<div class="table-scroll">
+  <table class="facts num">
+    <caption class="visually-hidden">Aircraft classes: typical seats, range and use</caption>
+    <thead>
+      <tr>
+        <th scope="col">Class</th>
+        <th scope="col">Typical guests</th>
+        <th scope="col">Typical range</th>
+        <th scope="col">Good for</th>
+      </tr>
+    </thead>
+    <tbody>
+      {rows.map((c) => (
+        <tr>
+          <th scope="row" class="ac__name">
+            {c.name}
+          </th>
+          <td>
+            <Verify>{c.seats}</Verify>
+          </td>
+          <td>
+            <Verify>{c.range}</Verify>
+          </td>
+          <td>{c.use}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+<p class="ac__note">
+  Approximate figures. The exact aircraft decides the final guest count, luggage and range; your
+  quote names it.
+</p>
+
+<style>
+  .ac__name {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--ivory);
+    min-width: 160px;
+  }
+
+  .ac__note {
+    margin-top: 12px;
+    font-size: 13.5px;
+    color: var(--faint);
+  }
+</style>

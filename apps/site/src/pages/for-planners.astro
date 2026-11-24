@@ -1,0 +1,147 @@
+---
+import hero from '../assets/photos/marigold.jpg';
+import FaqList from '../components/FaqList.astro';
+import PlannerForm from '../components/PlannerForm.astro';
+import { company } from '../config/company';
+import { faqLd, faqsFor } from '../lib/faq';
+import Page from '../layouts/Page.astro';
+
+const faqs = await faqsFor('planners');
+
+const OFFER = [
+  {
+    title: 'You stay the host',
+    text: 'We work under your name with your client. Quotes can carry your firm’s name alongside ours, and we never go around you.',
+  },
+  {
+    title: 'Commission on every confirmed flight',
+    text: 'Agreed in writing before the first wedding, and paid once the client’s payment reaches us.',
+  },
+  {
+    title: 'Operators, permissions, paperwork',
+    text: 'We check the operator and the aircraft, coordinate helicopter permissions with the venue, and handle the passenger list and invoices.',
+  },
+  {
+    title: 'Fast answers',
+    text: `Options and one written price ${company.replyTime}, so you can answer your client the same day.`,
+  },
+];
+
+const HOW = [
+  'Send us the dates, cities and guest counts on WhatsApp.',
+  'We send a quote you can share with your client, under your name if you like.',
+  'The client signs and pays Indicgems Exim LLP directly; you are never out of pocket.',
+  'We coordinate with your team until everyone lands; your commission follows the client’s payment.',
+];
+---
+
+<Page
+  title="Private jets & helicopters for wedding planners"
+  description="Wedding planners and hotel teams: add private jet and helicopter arrivals to your weddings. You stay the host, earn a commission on every confirmed flight, and we handle the rest."
+  pageName="For planners"
+  eyebrow="For wedding planners"
+  heading="Add a sky arrival to your weddings. You stay the host."
+  lead="Vaanika gives wedding planners and hotel wedding teams private jets and helicopter arrivals for their clients: we handle operators, permissions, timings and paperwork under your name, and you earn a commission on every confirmed flight, paid when the client’s payment reaches us."
+  crumbs={[{ name: 'For planners', path: '/for-planners/' }]}
+  image={hero}
+  imageAlt="Marigold and jasmine garlands at a wedding"
+  planHref="#partner"
+  jsonLd={[faqLd(faqs)]}
+  noCta
+>
+  <section class="section" aria-labelledby="offer-h">
+    <div class="container">
+      <div class="section__head reveal">
+        <p class="eyebrow">What you get</p>
+        <h2 id="offer-h" class="h2">
+          A partner for the arrivals, not a competitor.
+        </h2>
+      </div>
+      <div class="grid-cards">
+        {OFFER.map((o) => (
+          <div class="card reveal">
+            <h3>{o.title}</h3>
+            <p>{o.text}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt" aria-labelledby="how-h">
+    <div class="container fp__split">
+      <div class="reveal">
+        <p class="eyebrow">How it works</p>
+        <h2 id="how-h" class="h2">
+          Four steps with your client.
+        </h2>
+        <ol class="fp__how">
+          {HOW.map((h) => (
+            <li>{h}</li>
+          ))}
+        </ol>
+      </div>
+      <div class="reveal">
+        <h2 class="fp__faq-title display">Planner questions</h2>
+        <FaqList items={faqs} />
+      </div>
+    </div>
+  </section>
+
+  <section id="partner" class="section" aria-labelledby="partner-h">
+    <div class="container fp__form-wrap">
+      <div class="fp__form-text">
+        <h2 id="partner-h" class="h2">
+          Become a partner planner.
+        </h2>
+        <p class="lead">
+          Tell us about your firm. We’ll call to agree the commission in writing and share a sample
+          quote under your name.
+        </p>
+      </div>
+      <PlannerForm />
+    </div>
+  </section>
+</Page>
+
+<style>
+  .fp__split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+  }
+
+  .fp__how {
+    margin-top: 24px;
+    padding-left: 1.3em;
+    color: var(--text-3);
+  }
+
+  .fp__how li + li {
+    margin-top: 10px;
+  }
+
+  .fp__faq-title {
+    font-size: 28px;
+    margin-bottom: 18px;
+  }
+
+  .fp__form-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 56px;
+    align-items: start;
+  }
+
+  .fp__form-text .lead {
+    margin-top: 18px;
+  }
+
+  @media (max-width: 899px) {
+    .fp__split,
+    .fp__form-wrap {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+  }
+</style>

@@ -1,0 +1,238 @@
+---
+import { Image } from 'astro:assets';
+import hero from '../assets/photos/helicopter-sunset.jpg';
+import shreeji from '../assets/photos/shreeji-arrival-composite.jpg';
+import FaqList from '../components/FaqList.astro';
+import FormSection from '../components/blocks/FormSection.astro';
+import HeliPermissions from '../components/blocks/HeliPermissions.astro';
+import { HELI_PERMISSIONS_LINE } from '../config/company';
+import { faqLd, faqsFor } from '../lib/faq';
+import { serviceJsonLd } from '../lib/jsonld';
+import Page from '../layouts/Page.astro';
+
+const description =
+  'A helicopter entrance at an Indian wedding needs a suitable landing spot, the operator’s landing request, the venue owner’s NOC and the district’s nod. Vaanika coordinates all of it.';
+const faqs = await faqsFor('helicopters');
+
+const SERVICES = [
+  {
+    title: 'Airport to venue',
+    text: 'Guests land at the nearest airport and arrive at the venue by helicopter, skipping the drive.',
+  },
+  {
+    title: 'The bride or groom’s entrance',
+    text: 'A landing timed to the music, where every guest can see — the Shreeji Arrival.',
+  },
+  {
+    title: 'Flower shower',
+    text: 'Petals over the ceremony, where a separate approval allows it.',
+  },
+  {
+    title: 'Guest joyrides',
+    text: 'Short flights over the lake or the fort between functions, in daylight.',
+  },
+];
+
+const SHREEJI = [
+  'A first site visit by the operator, and a landing spot agreed with your venue',
+  'The landing request, the venue owner’s NOC and the district’s nod, coordinated by us',
+  'A minute-by-minute plan with your planner, DJ and photographer',
+  'A flower shower, where permission allows',
+  'A weather plan agreed in advance, with a road fallback',
+];
+---
+
+<Page
+  title="Helicopter arrivals for Indian weddings"
+  description={description}
+  pageName="Helicopter arrivals"
+  eyebrow="Helicopter arrivals"
+  heading="A helicopter entrance, planned properly."
+  lead="Yes, a helicopter can land at many wedding venues — at a suitable spot, with the operator’s landing request, the venue owner’s NOC and the district’s nod in place before you pay in full. We coordinate every step and tell you plainly if it can’t be done."
+  crumbs={[{ name: 'Helicopter arrivals', path: '/helicopter-arrivals/' }]}
+  image={hero}
+  imageAlt="A helicopter flying at sunset"
+  planHref="#enquire"
+  jsonLd={[
+    serviceJsonLd({
+      name: 'Helicopter arrivals for weddings',
+      description,
+      path: '/helicopter-arrivals/',
+    }),
+    faqLd(faqs),
+  ]}
+  noCta
+>
+  <section class="section" aria-labelledby="svc-h">
+    <div class="container">
+      <div class="section__head reveal">
+        <p class="eyebrow">What a helicopter can do</p>
+        <h2 id="svc-h" class="h2">
+          Four ways to use a helicopter at a wedding.
+        </h2>
+      </div>
+      <div class="grid-cards">
+        {SERVICES.map((s) => (
+          <div class="card reveal">
+            <h3>{s.title}</h3>
+            <p>{s.text}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt" aria-labelledby="who-h">
+    <div class="container heli__narrow">
+      <div class="reveal">
+        <p class="eyebrow">Permissions</p>
+        <h2 id="who-h" class="h2">
+          Who handles each permission.
+        </h2>
+        <p class="lead heli__lead">{HELI_PERMISSIONS_LINE}</p>
+      </div>
+      <div class="heli__table reveal">
+        <HeliPermissions />
+      </div>
+    </div>
+  </section>
+
+  <section id="shreeji" class="heli-shreeji" aria-labelledby="shreeji-h">
+    <div class="container heli-shreeji__inner">
+      <figure class="heli-shreeji__photo reveal">
+        <Image
+          src={shreeji}
+          alt="A bride and groom walking from a black helicopter parked on a lawn"
+          widths={[480, 768, 1100]}
+          sizes="(max-width: 899px) 100vw, 50vw"
+          loading="lazy"
+        />
+        <figcaption class="illustrative">Illustrative composite</figcaption>
+      </figure>
+      <div class="reveal">
+        <p class="eyebrow">Signature experience</p>
+        <h2 id="shreeji-h" class="h2">
+          The Shreeji Arrival
+        </h2>
+        <p class="lead heli__lead">
+          The bride or groom arrives by helicopter, timed to the music, with a flower shower where
+          permission allows. Every Shreeji Arrival is planned for its venue; what it usually
+          includes:
+        </p>
+        <ul class="heli__list">
+          {SHREEJI.map((s) => (
+            <li>{s}</li>
+          ))}
+        </ul>
+        <a class="btn btn--outline btn--lg heli__btn" href="#enquire">
+          Ask about the Shreeji Arrival
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt" aria-labelledby="faq-h">
+    <div class="container heli__narrow">
+      <h2 id="faq-h" class="h2">
+        Helicopter questions
+      </h2>
+      <div class="heli__faq">
+        <FaqList items={faqs} />
+      </div>
+      <p class="heli__more">
+        <a href="/guides/helicopter-entry-at-a-wedding/">
+          Read the guide: helicopter entry at a wedding
+        </a>
+      </p>
+    </div>
+  </section>
+
+  <FormSection
+    pageName="Helicopter arrivals"
+    heading="Tell us the venue and the date."
+    text="We check the landing spot with an operator and come back with what’s possible, the permissions needed and one written price."
+  />
+</Page>
+
+<style>
+  .heli__narrow {
+    max-width: 900px;
+  }
+
+  .heli__lead {
+    margin-top: 18px;
+  }
+
+  .heli__table {
+    margin-top: 32px;
+  }
+
+  .heli-shreeji {
+    padding: 96px 0;
+  }
+
+  .heli-shreeji__inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 56px;
+    align-items: center;
+  }
+
+  .heli-shreeji__photo {
+    position: relative;
+    border-radius: var(--radius-big);
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+  }
+
+  .heli-shreeji__photo :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 70% center;
+  }
+
+  .heli-shreeji__photo figcaption {
+    position: absolute;
+    right: 12px;
+    bottom: 10px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(5, 7, 15, 0.55);
+  }
+
+  .heli__list {
+    margin-top: 18px;
+    padding-left: 1.2em;
+    color: var(--text-3);
+  }
+
+  .heli__list li + li {
+    margin-top: 6px;
+  }
+
+  .heli__btn {
+    margin-top: 28px;
+  }
+
+  .heli__faq {
+    margin-top: 32px;
+  }
+
+  .heli__more {
+    margin-top: 18px;
+    font-weight: 600;
+    font-size: 15px;
+  }
+
+  @media (max-width: 899px) {
+    .heli-shreeji {
+      padding: 64px 0;
+    }
+
+    .heli-shreeji__inner {
+      grid-template-columns: 1fr;
+      gap: 28px;
+    }
+  }
+</style>

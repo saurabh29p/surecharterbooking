@@ -1,0 +1,156 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import hero from '../../assets/photos/udaipur-night.jpg';
+import Icon from '../../components/Icon.astro';
+import Verify from '../../components/Verify.astro';
+import Page from '../../layouts/Page.astro';
+
+const items = (await getCollection('destinations')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<Page
+  title="Wedding destinations by private jet & helicopter"
+  description="Private jet flying times to Udaipur, Jaipur and Goa from Delhi, Mumbai, Bengaluru and Kolkata, with the nearest airports and helicopter notes for each wedding destination."
+  pageName="Destinations"
+  eyebrow="Destinations"
+  heading="From your city to the mandap in hours, not a day."
+  lead="By private jet, Udaipur is about 1 hr 15 min from Delhi, Jaipur about 45 minutes, and Goa about an hour from Mumbai or Bengaluru. Each destination page lists approximate times from four cities, the nearest airport and what helicopters can do there."
+  crumbs={[{ name: 'Destinations', path: '/destinations/' }]}
+  image={hero}
+  imageAlt="Udaipur lake palaces lit up at night"
+>
+  <section class="section" aria-label="Destinations">
+    <div class="container dh__grid">
+      {items.map((d) => (
+        <a class="dh__card card-lift reveal" href={`/destinations/${d.id}/`}>
+          <div class="dh__photo photo-zoom">
+            <Image
+              src={d.data.image}
+              alt={d.data.imageAlt}
+              widths={[400, 600, 900]}
+              sizes="(max-width: 899px) 100vw, 400px"
+              loading="lazy"
+            />
+            <span class="illustrative dh__ill">Illustrative</span>
+          </div>
+          <div class="dh__body">
+            <h2 class="dh__name display">
+              {d.data.name}
+              <Icon name="arrow" size={22} />
+            </h2>
+            <ul class="dh__times num">
+              {d.data.times.map((t) => (
+                <li>
+                  <span>From {t.from}</span>
+                  <Verify>{t.time}</Verify>
+                </li>
+              ))}
+            </ul>
+            <p class="dh__airport">{d.data.airport}</p>
+          </div>
+        </a>
+      ))}
+    </div>
+    <p class="container dh__note">
+      Approximate flying times by private jet. More destinations (Jodhpur, Kerala, Rishikesh, the
+      Andamans) are coming; ask us about any of them now.
+    </p>
+  </section>
+</Page>
+
+<style>
+  .dh__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+  }
+
+  .dh__card {
+    display: block;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-big);
+    overflow: hidden;
+    background: var(--panel);
+    color: var(--ivory);
+    text-decoration: none;
+  }
+
+  .dh__card:hover {
+    color: var(--ivory);
+  }
+
+  .dh__photo {
+    position: relative;
+    height: 240px;
+  }
+
+  .dh__ill {
+    position: absolute;
+    right: 12px;
+    bottom: 10px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(5, 7, 15, 0.55);
+    font-size: 10.5px;
+  }
+
+  .dh__body {
+    padding: 24px 26px 28px;
+  }
+
+  .dh__name {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 32px;
+  }
+
+  .dh__name :global(svg) {
+    color: var(--gold);
+    transition: transform 0.2s var(--ease-out);
+  }
+
+  .dh__card:hover .dh__name :global(svg) {
+    transform: translateX(4px);
+  }
+
+  .dh__times {
+    margin: 14px 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: 14.5px;
+  }
+
+  .dh__times li {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--line-faint);
+    color: var(--text-2);
+  }
+
+  .dh__times li span:first-child {
+    color: var(--muted);
+  }
+
+  .dh__airport {
+    margin-top: 14px;
+    font-size: 13.5px;
+    color: var(--muted-2);
+  }
+
+  .dh__note {
+    margin-top: 28px;
+    font-size: 14px;
+    color: var(--faint);
+  }
+
+  @media (max-width: 899px) {
+    .dh__grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+  }
+</style>

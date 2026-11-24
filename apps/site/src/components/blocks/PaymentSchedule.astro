@@ -1,0 +1,72 @@
+---
+/** The payment schedule and the payment-safety note (WEBSITE.md §7). [CA TO CONFIRM] */
+import { PAYMENT_SAFETY } from '../../config/company';
+import { PAYMENT_METHODS, PAYMENT_SCHEDULE } from '../../data/facts';
+
+interface Props {
+  headingLevel?: 'h2' | 'h3';
+}
+
+const { headingLevel: H = 'h2' } = Astro.props;
+---
+
+<div class="pay">
+  <H class="pay__title display">How you pay</H>
+  <div class="table-scroll pay__table">
+    <table class="facts">
+      <caption class="visually-hidden">Payment schedule</caption>
+      <thead>
+        <tr>
+          <th scope="col">When</th>
+          <th scope="col">What you pay</th>
+        </tr>
+      </thead>
+      <tbody>
+        {PAYMENT_SCHEDULE.map((r) => (
+          <tr>
+            <td>{r.when}</td>
+            <td>{r.what}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  <ul class="pay__methods">
+    {PAYMENT_METHODS.map((m) => (
+      <li>{m}</li>
+    ))}
+  </ul>
+  <p class="note pay__safety">
+    <strong>Payment safety.</strong> {PAYMENT_SAFETY}
+  </p>
+</div>
+
+<style>
+  .pay__title {
+    font-size: clamp(26px, 3vw, 36px);
+    line-height: 1.15;
+  }
+
+  .pay__table {
+    margin-top: 22px;
+  }
+
+  .pay__methods {
+    margin-top: 18px;
+    padding-left: 1.2em;
+    color: var(--text-3);
+    font-size: 15.5px;
+  }
+
+  .pay__methods li + li {
+    margin-top: 4px;
+  }
+
+  .pay__safety {
+    margin-top: 18px;
+  }
+
+  .pay__safety strong {
+    color: var(--gold-light);
+  }
+</style>

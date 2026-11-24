@@ -261,3 +261,27 @@ Defaults taken while building; each can be changed. Questions sent to the owner 
   (`@shubhjets/*`), the Railway project `shubhjets`, the bucket, database names and the JWT issuer stay.
   Renaming them buys nothing and risks breaking deploys. Only what clients, planners or the public see
   becomes Vaanika (phase 5).
+
+## Website (phase 3, Nov 2026)
+- **All launch pages are built**: weddings, helicopter arrivals, destinations hub + Udaipur, Jaipur, Goa,
+  aircraft, our standard (how we work), for planners, private & business, FAQ (20 questions), about,
+  contact, guides hub + 4 guides, 6 legal pages, 404.
+- **One set of facts:** the four checks, the four steps, the payment schedule, the aircraft classes and
+  who handles each helicopter permission live in `apps/site/src/data/facts.ts`, so every page says the
+  same thing (and AI answers find one consistent version).
+- **Aircraft classes:** home keeps the mockup's five; `/aircraft/` lists seven (single- and twin-engine
+  helicopters, light, midsize, super-midsize, heavy, group charter).
+- **Private & business enquiries** use the same enquiry endpoint with travel wording ("Travel date",
+  "Passengers", "Going to"); the message starts "Private or business charter enquiry." so the desk can
+  tell them apart. A separate enquiry type can come later if volumes justify it.
+- **Planner sign-up** posts to the existing partner endpoint with the same checks, consent and optional
+  marketing opt-in.
+- **FAQ** is one Markdown file per question with a group and tags (`weddings`, `helicopters`, `planners`,
+  `private`); each page shows its tagged questions with FAQPage markup.
+- **Guides are drafts** (`draft: true`): visible on previews with a "Draft" label, hidden on the launched
+  site until their figures are checked and the flag is turned off.
+- **Legal pages** show "DRAFT — pending legal review" on previews; brackets such as `[LAWYER TO CONFIRM]`
+  mark what the lawyer fills in. The legal text repeats some company details as brackets (address, phone);
+  they are not filled automatically from `company.ts`, so the lawyer's final text should carry them.
+- **Estimates in Markdown** are wrapped in `<span class="verify">…</span>`; preview builds tag them,
+  the launched site shows plain text. All are listed in `apps/site/VERIFY.md` (35 rows).

@@ -1,0 +1,91 @@
+---
+import Icon from '../../components/Icon.astro';
+import { PREVIEW } from '../../config/site';
+import { visibleGuides } from '../../lib/content';
+import Page from '../../layouts/Page.astro';
+
+const guides = await visibleGuides();
+const date = (d: Date) =>
+  d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+---
+
+<Page
+  title="Guides: planning wedding flights in India"
+  description="Plain answers to wedding flight questions: NSOP operators, helicopter entries, flying to Udaipur and how many guests fit in a private jet."
+  pageName="Guides"
+  eyebrow="Guides"
+  heading="Planning wedding flights, answered plainly."
+  lead="Short guides to the questions families and planners ask most: who is allowed to fly you, what a helicopter entry needs, and how to get everyone there on time."
+  crumbs={[{ name: 'Guides', path: '/guides/' }]}
+>
+  <section class="section" aria-label="Guides">
+    <div class="container gl">
+      {guides.map((g) => (
+        <a class="card card--link card-lift gl__item reveal" href={`/guides/${g.id}/`}>
+          <p class="gl__meta">
+            {date(g.data.published)}
+            {PREVIEW && g.data.draft && <span class="gl__draft">Draft</span>}
+          </p>
+          <h2 class="gl__title display">
+            {g.data.title}
+            <Icon name="arrow" size={20} />
+          </h2>
+          <p>{g.data.description}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+</Page>
+
+<style>
+  .gl {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+  }
+
+  .gl__meta {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    font-size: 13px;
+    color: var(--muted-2);
+  }
+
+  .gl__draft {
+    padding: 1px 8px;
+    border-radius: 999px;
+    background: rgba(212, 178, 106, 0.18);
+    color: var(--gold-light);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .gl__title {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    font-size: 24px;
+    line-height: 1.25;
+  }
+
+  .gl__title :global(svg) {
+    flex: none;
+    margin-top: 4px;
+    color: var(--gold);
+    transition: transform 0.2s var(--ease-out);
+  }
+
+  .gl__item:hover .gl__title :global(svg) {
+    transform: translateX(4px);
+  }
+
+  @media (max-width: 899px) {
+    .gl {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

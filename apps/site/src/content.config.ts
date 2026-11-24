@@ -13,6 +13,8 @@ const faq = defineCollection({
     order: z.number(),
     /** Position in the home page's "Questions families ask" (five of them); leave out to skip. */
     home: z.number().optional(),
+    /** Other pages that show this question. */
+    tags: z.array(z.enum(['weddings', 'helicopters', 'planners', 'private'])).default([]),
   }),
 });
 
@@ -39,6 +41,8 @@ const guides = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/guides' }),
   schema: z.object({
     title: z.string(),
+    /** The <title>: at most 50 characters, so " | Vaanika" keeps it within 60. */
+    seoTitle: z.string().max(50),
     description: z.string(),
     published: z.coerce.date(),
     updated: z.coerce.date().optional(),

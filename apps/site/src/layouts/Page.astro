@@ -1,0 +1,297 @@
+---
+/**
+ * Inner pages: breadcrumbs, one H1 with an answer-first lead, the page's sections, and a closing
+ * call to action. Adds BreadcrumbList structured data (WEBSITE.md §9).
+ */
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import Icon from '../components/Icon.astro';
+import { whatsappLink } from '../config/site';
+import { breadcrumbJsonLd } from '../lib/jsonld';
+import Base from './Base.astro';
+
+interface Crumb {
+  name: string;
+  path: string;
+}
+
+interface Props {
+  title: string;
+  description: string;
+  pageName: string;
+  eyebrow: string;
+  heading: string;
+  /** The answer-first paragraph under the H1. */
+  lead: string;
+  crumbs: Crumb[];
+  image?: ImageMetadata;
+  imageAlt?: string;
+  /** Which part of the photo to keep in view (CSS classes, so the security policy stays strict). */
+  imagePosition?: 'center' | 'left' | 'right' | 'top';
+  planHref?: string;
+  jsonLd?: object[];
+  /** Hide the closing "talk to us" band (pages that end with a form). */
+  noCta?: boolean;
+}
+
+const {
+  title,
+  description,
+  pageName,
+  eyebrow,
+  heading,
+  lead,
+  crumbs,
+  image,
+  imageAlt = '',
+  imagePosition = 'center',
+  planHref = '/contact/#enquire',
+  jsonLd = [],
+  noCta = false,
+} = Astro.props;
+const trail = [{ name: 'Home', path: '/' }, ...crumbs];
+---
+
+<Base
+  title={title}
+  description={description}
+  pageName={pageName}
+  planHref={planHref}
+  jsonLd={[breadcrumbJsonLd(trail), ...jsonLd]}
+>
+  <slot name="head" slot="head" />
+  <section class:list={['phero', { 'phero--image': !!image }]} aria-labelledby="page-h">
+    {image && (
+      <figure class="phero__media" aria-hidden="true">
+        <Image
+          src={image}
+          alt={imageAlt}
+          widths={[480, 768, 1024, 1440]}
+          sizes="100vw"
+          loading="eager"
+          fetchpriority="high"
+          class={`pos-${imagePosition}`}
+        />
+        <figcaption class="illustrative phero__ill">Illustrative</figcaption>
+      </figure>
+    )}
+    <div class="container phero__inner">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <ol>
+          {trail.map((c, i) => (
+            <li>
+              {i < trail.length - 1 ? (
+                <a href={c.path}>{c.name}</a>
+              ) : (
+                <span aria-current="page">{c.name}</span>
+              )}
+            </li>
+          ))}
+        </ol>
+      </nav>
+      <p class="eyebrow phero__eyebrow">{eyebrow}</p>
+      <h1 id="page-h" class="phero__title display">
+        {heading}
+      </h1>
+      <p class="phero__lead">{lead}</p>
+      <slot name="hero-actions" />
+    </div>
+  </section>
+
+  <slot />
+
+  {!noCta && (
+    <section class="cta" aria-labelledby="cta-h">
+      <div class="container cta__inner">
+        <div>
+          <h2 id="cta-h" class="cta__title display">
+            Tell us the date and the cities.
+          </h2>
+          <p class="cta__text">A coordinator replies with options and one written, all-in price.</p>
+        </div>
+        <div class="cta__actions">
+          <a class="btn btn--gold btn--lg" href="/contact/#enquire">
+            Plan my flight <Icon name="arrow" size={18} stroke={2} class="btn__arrow" />
+          </a>
+          <a class="btn btn--outline btn--lg" href={whatsappLink(pageName)} data-tap="WHATSAPP">
+            <Icon name="chat" size={18} stroke={2} />
+            WhatsApp
+          </a>
+        </div>
+      </div>
+    </section>
+  )}
+</Base>
+
+<style>
+  .phero {
+    position: relative;
+    padding: 56px 0 72px;
+    border-bottom: 1px solid var(--line-faint);
+    overflow: hidden;
+  }
+
+  .phero--image {
+    min-height: 520px;
+    display: flex;
+    align-items: flex-end;
+    padding-top: 140px;
+  }
+
+  .phero__media {
+    position: absolute;
+    inset: 0;
+  }
+
+  .phero__media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .phero__media :global(.pos-left) {
+    object-position: 25% center;
+  }
+
+  .phero__media :global(.pos-right) {
+    object-position: 75% center;
+  }
+
+  .phero__media :global(.pos-top) {
+    object-position: center 25%;
+  }
+
+  .phero__media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(
+        90deg,
+        rgba(5, 7, 15, 0.92) 0%,
+        rgba(5, 7, 15, 0.6) 45%,
+        rgba(5, 7, 15, 0.1) 80%
+      ),
+      linear-gradient(0deg, rgba(11, 16, 32, 1) 0%, rgba(11, 16, 32, 0) 40%);
+  }
+
+  .phero__ill {
+    position: absolute;
+    right: calc(var(--gutter) + 84px);
+    bottom: 18px;
+    z-index: 2;
+  }
+
+  .phero__inner {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+  }
+
+  .crumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0 0 28px;
+    padding: 0;
+    list-style: none;
+    font-size: 13px;
+    color: var(--muted-2);
+  }
+
+  .crumbs li + li::before {
+    content: '/';
+    margin-right: 6px;
+    color: var(--faint);
+  }
+
+  .crumbs a {
+    color: var(--ivory-2);
+    text-decoration: none;
+  }
+
+  .crumbs a:hover {
+    color: var(--gold-light);
+    text-decoration: underline;
+  }
+
+  .phero__title {
+    margin-top: 16px;
+    max-width: 900px;
+    font-size: clamp(38px, 5.2vw, 72px);
+    line-height: 1.05;
+    text-wrap: balance;
+  }
+
+  .phero__lead {
+    margin-top: 22px;
+    max-width: 680px;
+    font-size: 19px;
+    line-height: 1.65;
+    color: var(--text-2);
+  }
+
+  .cta {
+    padding: 88px 0;
+    background: linear-gradient(135deg, #1a1530, #0e1328 60%);
+    border-top: 1px solid var(--line);
+  }
+
+  .cta__inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .cta__title {
+    font-size: clamp(30px, 3.6vw, 46px);
+    line-height: 1.1;
+  }
+
+  .cta__text {
+    margin-top: 12px;
+    color: var(--text-3);
+  }
+
+  .cta__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  @media (max-width: 767px) {
+    .phero {
+      padding: 32px 0 48px;
+    }
+
+    .phero--image {
+      min-height: 440px;
+      padding-top: 120px;
+    }
+
+    .phero__media::after {
+      background: linear-gradient(
+        0deg,
+        #0b1020 0%,
+        rgba(11, 16, 32, 0.82) 45%,
+        rgba(11, 16, 32, 0.25) 100%
+      );
+    }
+
+    .phero__ill {
+      top: 12px;
+      right: var(--gutter);
+      bottom: auto;
+    }
+
+    .phero__lead {
+      font-size: 16.5px;
+    }
+
+    .cta {
+      padding: 64px 0;
+    }
+  }
+</style>

@@ -25,6 +25,8 @@ export default defineConfig({
   build: { format: 'directory', inlineStylesheets: 'always' },
   compressHTML: true,
   devToolbar: { enabled: false },
+  // No code blocks on this site; Shiki's inline styles would also break the security policy.
+  markdown: { syntaxHighlight: false },
   // A content security policy in a <meta> tag, with hashes for every inline script and style.
   // frame-ancestors can't go in a meta tag: vercel.json sends it as a header.
   security: {

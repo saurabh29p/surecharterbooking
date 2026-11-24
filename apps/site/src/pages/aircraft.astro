@@ -1,0 +1,86 @@
+---
+import hero from '../assets/photos/jet-cabin.jpg';
+import AircraftTable from '../components/blocks/AircraftTable.astro';
+import Page from '../layouts/Page.astro';
+
+const NOTES = [
+  {
+    title: 'The aircraft decides the count',
+    text: 'Seats, luggage space and range differ between models in the same class. Your quote names the exact aircraft.',
+  },
+  {
+    title: 'Luggage needs planning',
+    text: 'Wedding luggage is heavy. Tell us early about outfits, gifts and boxes; smaller jets may need a second, luggage-only run.',
+  },
+  {
+    title: 'Helicopters carry less in the heat',
+    text: 'Heat and altitude reduce what a helicopter can lift, so the operator confirms the final passenger number nearer the day.',
+  },
+  {
+    title: 'No logos, no tail numbers here',
+    text: 'We never show an operator’s logo or an aircraft registration on this site; you see both on your quote.',
+  },
+];
+---
+
+<Page
+  title="Private jet & helicopter classes: seats and range"
+  description="From helicopters for 4–6 guests to heavy jets for 12–14 and group charters for 50 or more: typical seats, range and use for each aircraft class."
+  pageName="Aircraft"
+  eyebrow="Jets & helicopters"
+  heading="Which aircraft for how many guests."
+  lead="A helicopter carries about 4–6 guests, a light jet about 6–7, a midsize 7–8, a super-midsize 8–9 and a heavy jet 12–14; group charters take 50 or more. The exact aircraft in your quote decides the final count."
+  crumbs={[{ name: 'Jets & helicopters', path: '/aircraft/' }]}
+  image={hero}
+  imageAlt="Cream leather seats inside a private jet cabin"
+>
+  <section class="section" aria-labelledby="classes-h">
+    <div class="container">
+      <div class="section__head reveal">
+        <p class="eyebrow">Aircraft classes</p>
+        <h2 id="classes-h" class="h2">
+          Seats, range and what each is good for.
+        </h2>
+      </div>
+      <div class="ac__table reveal">
+        <AircraftTable />
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt" aria-labelledby="notes-h">
+    <div class="container">
+      <div class="section__head reveal">
+        <h2 id="notes-h" class="h2">
+          Good to know before you choose.
+        </h2>
+      </div>
+      <div class="grid-cards">
+        {NOTES.map((n) => (
+          <div class="card reveal">
+            <h3>{n.title}</h3>
+            <p>{n.text}</p>
+          </div>
+        ))}
+      </div>
+      <p class="ac__more">
+        <a href="/guides/how-many-guests-fit-in-a-private-jet/">
+          Read the guide: how many guests fit in a private jet?
+        </a>{' '}
+        · <a href="/helicopter-arrivals/">Helicopter arrivals</a>
+      </p>
+    </div>
+  </section>
+</Page>
+
+<style>
+  .ac__table {
+    margin-top: 36px;
+  }
+
+  .ac__more {
+    margin-top: 24px;
+    font-weight: 600;
+    font-size: 15px;
+  }
+</style>

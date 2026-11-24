@@ -1,0 +1,97 @@
+---
+import HowItWorks from '../components/home/HowItWorks.astro';
+import PaymentSchedule from '../components/blocks/PaymentSchedule.astro';
+import { AGENT_LINE } from '../config/company';
+import { CHECKS } from '../data/facts';
+import Page from '../layouts/Page.astro';
+---
+
+<Page
+  title="How Vaanika works: our standard and your quote"
+  description="Before any quote, Vaanika checks the operator’s DGCA permit, the aircraft’s papers and its insurance — and for helicopters, the landing permissions. Then one written, all-in price."
+  pageName="How we work"
+  eyebrow="Our standard"
+  heading="We check the operator before we quote. Every time."
+  lead="Vaanika is your agent, not an airline or an operator. Before we offer any flight we check four things: the operator’s DGCA permit, the exact aircraft’s papers, its insurance and, for helicopters, the landing permissions. Your quote names the operator and the aircraft, so you can check them too."
+  crumbs={[{ name: 'Our standard', path: '/how-we-work/' }]}
+>
+  <section class="section" aria-labelledby="checks-h">
+    <div class="container">
+      <div class="section__head reveal">
+        <p class="eyebrow">The Vaanika Standard</p>
+        <h2 id="checks-h" class="h2">
+          The four checks.
+        </h2>
+        <p class="lead">
+          If anything doesn’t check out, we don’t offer it — however good the price.
+        </p>
+      </div>
+      <ol class="hw__checks">
+        {CHECKS.map((c, i) => (
+          <li class="card reveal">
+            <p class="hw__n num display">{String(i + 1).padStart(2, '0')}</p>
+            <h3>{c.title}</h3>
+            <p>{c.text}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <HowItWorks />
+
+  <section class="section" aria-label="Payment and our role">
+    <div class="container hw__narrow">
+      <div class="reveal">
+        <PaymentSchedule />
+      </div>
+      <div class="hw__agent reveal">
+        <h2 class="hw__agent-title display">Agent, not operator</h2>
+        <p>{AGENT_LINE}</p>
+        <p>
+          The operator holds the permits and flies the aircraft; the pilot’s decision is final. Our
+          job is to choose a checked operator, put everything in one written quote and look after
+          you until you land. Our <a href="/legal/charter-terms/">charter booking terms</a> say this
+          in full.
+        </p>
+      </div>
+    </div>
+  </section>
+</Page>
+
+<style>
+  .hw__checks {
+    margin: 44px 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 18px;
+  }
+
+  .hw__n {
+    font-size: 34px;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 14px;
+  }
+
+  .hw__narrow {
+    max-width: 880px;
+  }
+
+  .hw__agent {
+    margin-top: 56px;
+    color: var(--text-3);
+  }
+
+  .hw__agent p + p {
+    margin-top: 12px;
+  }
+
+  .hw__agent-title {
+    font-size: clamp(26px, 3vw, 36px);
+    color: var(--ivory);
+    margin-bottom: 14px;
+  }
+</style>

@@ -5,7 +5,7 @@ import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import PreviewBanner from '../components/PreviewBanner.astro';
 import StickyContact from '../components/StickyContact.astro';
-import { INDEXABLE, SITE_URL } from '../config/site';
+import { INDEXABLE, PREVIEW, SITE_URL } from '../config/site';
 
 interface Props {
   /** ≤ 60 characters, with the page's main phrase. */
@@ -36,7 +36,7 @@ const ogUrl = new URL(ogImage, SITE_URL).href;
 ---
 
 <!doctype html>
-<html lang="en-IN">
+<html lang="en-IN" class:list={[{ 'is-preview': PREVIEW }]}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />

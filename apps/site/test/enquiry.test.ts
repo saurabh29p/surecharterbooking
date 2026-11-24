@@ -139,3 +139,46 @@ describe('attribution', () => {
     });
   });
 });
+
+describe('planner sign-up → API body', () => {
+  it('matches the partner endpoint and checks with its words', async () => {
+    const { partnerBody, partnerProblems } = await import('../src/lib/partner');
+    const v = {
+      name: ' Riya ',
+      firm: ' Planner P9 ',
+      role: 'PLANNER' as const,
+      city: 'Delhi',
+      phone: '98765 43210',
+      email: '',
+      instagram: '@p9',
+      weddingsPerYear: '12',
+      message: '',
+      consent: true,
+      marketingConsent: false,
+      companyWebsite: '',
+    };
+    expect(partnerProblems(v)).toEqual({});
+    expect(partnerBody(v, 5000.4, { page: '/for-planners/', leadSource: 'WEBSITE' })).toEqual({
+      page: '/for-planners/',
+      leadSource: 'WEBSITE',
+      name: 'Riya',
+      firm: 'Planner P9',
+      role: 'PLANNER',
+      city: 'Delhi',
+      phone: '98765 43210',
+      email: null,
+      instagram: '@p9',
+      weddingsPerYear: 12,
+      message: null,
+      consent: true,
+      marketingConsent: false,
+      companyWebsite: null,
+      elapsedMs: 5000,
+    });
+    expect(partnerProblems({ ...v, firm: '', weddingsPerYear: 'lots', consent: false })).toEqual({
+      firm: 'Enter your firm or hotel name',
+      weddingsPerYear: 'Enter a number, e.g. 12',
+      consent: 'Please tick the box so we can contact you about your enquiry',
+    });
+  });
+});

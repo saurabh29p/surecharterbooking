@@ -23,7 +23,7 @@ const items = (await getCollection('destinations')).sort((a, b) => a.data.order 
       </p>
     </div>
     <div class="dest__grid">
-      {items.map((d, i) => (
+      {items.map((d) => (
         <a class="dest__card photo-zoom reveal" href={`/destinations/${d.id}/`}>
           <Image
             src={d.data.image}

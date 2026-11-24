@@ -1,0 +1,99 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import Icon from '../../components/Icon.astro';
+import { AGENT_LINE, company } from '../../config/company';
+import { PREVIEW, SITE_URL } from '../../config/site';
+import { visibleGuides } from '../../lib/content';
+import Page from '../../layouts/Page.astro';
+
+export async function getStaticPaths() {
+  return (await visibleGuides()).map((g) => ({ params: { slug: g.id }, props: { entry: g } }));
+}
+
+interface Props {
+  entry: CollectionEntry<'guides'>;
+}
+
+const { entry } = Astro.props;
+const g = entry.data;
+const { Content } = await render(entry);
+const MONEY: Record<string, string> = {
+  '/how-we-work/': 'See how we check every operator',
+  '/helicopter-arrivals/': 'Plan a helicopter arrival',
+  '/destinations/udaipur/': 'Udaipur wedding flights',
+  '/aircraft/': 'Compare aircraft classes',
+};
+const article = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: g.title,
+  description: g.description,
+  datePublished: g.published.toISOString().slice(0, 10),
+  dateModified: (g.updated ?? g.published).toISOString().slice(0, 10),
+  mainEntityOfPage: `${SITE_URL}/guides/${entry.id}/`,
+  author: { '@type': 'Organization', name: company.brand, url: SITE_URL },
+  publisher: { '@id': `${SITE_URL}/#organization` },
+  image: `${SITE_URL}/og/vaanika.jpg`,
+};
+---
+
+<Page
+  title={g.seoTitle}
+  description={g.description}
+  pageName="Guides"
+  eyebrow={PREVIEW && g.draft ? 'Guide · draft' : 'Guide'}
+  heading={g.title}
+  lead={g.description}
+  crumbs={[
+    { name: 'Guides', path: '/guides/' },
+    { name: g.title, path: `/guides/${entry.id}/` },
+  ]}
+  jsonLd={[article]}
+>
+  <article class="section">
+    <div class="container ga">
+      {PREVIEW && g.draft && (
+        <p class="note ga__draft">
+          Draft for review. Every figure marked “verify” is a best estimate to confirm with
+          operators before this guide goes live.
+        </p>
+      )}
+      <div class="prose ga__prose">
+        <Content />
+      </div>
+      <a class="card card--link card-lift ga__money" href={g.moneyPage}>
+        <h2 class="ga__money-title">
+          {MONEY[g.moneyPage] ?? 'Next step'} <Icon name="arrow" size={18} />
+        </h2>
+        <p>{AGENT_LINE}</p>
+      </a>
+    </div>
+  </article>
+</Page>
+
+<style>
+  .ga {
+    max-width: 840px;
+  }
+
+  .ga__draft {
+    margin-bottom: 28px;
+    border-style: dashed;
+  }
+
+  .ga__money {
+    margin-top: 48px;
+  }
+
+  .ga__money-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  .ga__money-title :global(svg) {
+    color: var(--gold);
+  }
+</style>

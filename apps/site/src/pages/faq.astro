@@ -1,0 +1,116 @@
+---
+import { getCollection } from 'astro:content';
+import FaqList from '../components/FaqList.astro';
+import { AGENT_LINE } from '../config/company';
+import { faqLd, sortFaqs } from '../lib/faq';
+import Page from '../layouts/Page.astro';
+
+const all = sortFaqs(await getCollection('faq'));
+const groups = [...new Set(all.map((f) => f.data.group))];
+const slug = (g: string) => g.toLowerCase();
+---
+
+<Page
+  title="Private jet & helicopter wedding FAQ"
+  description="Answers about safety, booking, payment, helicopter landings and cancellations for wedding charters arranged by Vaanika, each starting with a direct answer."
+  pageName="FAQ"
+  eyebrow="FAQ"
+  heading="Questions families and planners ask."
+  lead="Short, direct answers about safety, booking, payment, helicopter landings and cancellations. If yours isn’t here, ask us on WhatsApp."
+  crumbs={[{ name: 'FAQ', path: '/faq/' }]}
+  jsonLd={[faqLd(all)]}
+>
+  <section class="section" aria-label="Questions">
+    <div class="container faqp">
+      <nav class="faqp__nav" aria-label="Topics">
+        <ul>
+          {groups.map((g) => (
+            <li>
+              <a href={`#${slug(g)}`}>{g}</a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+      <div class="faqp__groups">
+        {groups.map((g) => (
+          <section id={slug(g)} class="faqp__group" aria-labelledby={`${slug(g)}-h`}>
+            <h2 id={`${slug(g)}-h`} class="faqp__title display">
+              {g}
+            </h2>
+            <FaqList items={all.filter((f) => f.data.group === g)} />
+          </section>
+        ))}
+        <p class="note faqp__agent">{AGENT_LINE}</p>
+      </div>
+    </div>
+  </section>
+</Page>
+
+<style>
+  .faqp {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 56px;
+    align-items: start;
+  }
+
+  .faqp__nav {
+    position: sticky;
+    top: calc(var(--header-h) + 24px);
+  }
+
+  .faqp__nav ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .faqp__nav a {
+    display: block;
+    padding: 8px 0;
+    color: var(--ivory-2);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .faqp__nav a:hover {
+    color: var(--gold-light);
+  }
+
+  .faqp__group + .faqp__group {
+    margin-top: 48px;
+  }
+
+  .faqp__title {
+    font-size: 30px;
+    margin-bottom: 8px;
+  }
+
+  .faqp__agent {
+    margin-top: 48px;
+  }
+
+  @media (max-width: 899px) {
+    .faqp {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    .faqp__nav {
+      position: static;
+    }
+
+    .faqp__nav ul {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .faqp__nav a {
+      padding: 8px 14px;
+      border: 1px solid var(--line-strong);
+      border-radius: 999px;
+      font-size: 14px;
+    }
+  }
+</style>

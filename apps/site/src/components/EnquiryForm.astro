@@ -14,21 +14,36 @@ interface Props {
   pageName: string;
   variant?: 'compact' | 'full';
   label?: string;
+  /** Private and business charters reuse the same form with travel wording. */
+  intent?: 'wedding' | 'private';
 }
 
-const { id, pageName, variant = 'compact', label = 'Wedding flight enquiry' } = Astro.props;
+const {
+  id,
+  pageName,
+  variant = 'compact',
+  label = 'Wedding flight enquiry',
+  intent = 'wedding',
+} = Astro.props;
+const priv = intent === 'private';
+const L = {
+  date: priv ? 'Travel date' : 'Wedding date',
+  guests: priv ? 'Passengers' : 'Guests flying',
+  city: priv ? 'Going to' : 'Venue or city',
+  cityHint: priv ? 'e.g. Mumbai' : 'e.g. Udaipur',
+};
 const f = (name: string) => `${id}-${name}`;
 const wa = whatsappLink(pageName);
 ---
 
-<div class="enq" data-enquiry data-page-name={pageName}>
+<div class="enq" data-enquiry data-page-name={pageName} data-intent={intent}>
   <form
     class:list={['enq__form', `enq__form--${variant}`]}
     aria-label={label}
     novalidate
     data-enquiry-form
   >
-    <fieldset class="enq__roles enq__wide">
+    <fieldset class="enq__roles enq__wide" hidden={priv}>
       <legend class="enq__legend">I am planning as</legend>
       <div class="enq__role-options">
         {[
@@ -83,12 +98,12 @@ const wa = whatsappLink(pageName);
       <span class="field__error" id={f('phone-err')} data-error="phone"></span>
     </label>
     <label class="field">
-      Wedding date
+      {L.date}
       <input id={f('date')} name="weddingDate" type="date" aria-describedby={f('date-err')} />
       <span class="field__error" id={f('date-err')} data-error="weddingDate"></span>
     </label>
     <label class="field">
-      Guests flying
+      {L.guests}
       <select id={f('guests')} name="guests" aria-describedby={f('guests-err')}>
         <option value="">Choose</option>
         {GUEST_RANGES.map((r) => (
@@ -109,12 +124,12 @@ const wa = whatsappLink(pageName);
       <span class="field__error" id={f('from-err')} data-error="guestsFrom"></span>
     </label>
     <label class="field">
-      Venue or city
+      {L.city}
       <input
         id={f('city')}
         name="weddingCity"
         type="text"
-        placeholder="e.g. Udaipur"
+        placeholder={L.cityHint}
         aria-describedby={f('city-err')}
       />
       <span class="field__error" id={f('city-err')} data-error="weddingCity"></span>
@@ -438,7 +453,10 @@ const wa = whatsappLink(pageName);
       weddingDate: s('weddingDate'),
       guests: s('guests'),
       guestsFrom: s('guestsFrom'),
-      message: s('message'),
+      message:
+        form.closest<HTMLElement>('[data-intent]')?.dataset.intent === 'private'
+          ? ['Private or business charter enquiry.', s('message')].filter(Boolean).join('\n')
+          : s('message'),
       consent: d.get('consent') === 'on',
       marketingConsent: d.get('marketingConsent') === 'on',
       companyWebsite: s('companyWebsite'),

@@ -1,0 +1,126 @@
+---
+import EnquiryForm from '../components/EnquiryForm.astro';
+import Icon from '../components/Icon.astro';
+import { company, PAYMENT_SAFETY } from '../config/company';
+import { telLink, whatsappLink } from '../config/site';
+import Page from '../layouts/Page.astro';
+
+const a = company.address;
+---
+
+<Page
+  title="Contact Vaanika: WhatsApp, call or enquire"
+  description={`Talk to a Vaanika coordinator on WhatsApp or by phone, or send the enquiry form. We reply ${company.replyTime}.`}
+  pageName="Contact"
+  eyebrow="Contact & quote"
+  heading="Talk to a coordinator."
+  lead={`WhatsApp is fastest: tell us the date, the cities and how many guests are flying, and a coordinator replies ${company.replyTime} with options and one written, all-in price.`}
+  crumbs={[{ name: 'Contact', path: '/contact/' }]}
+  planHref="#enquire"
+  noCta
+>
+  <section id="enquire" class="section" aria-label="Enquiry">
+    <div class="container ct">
+      <div class="ct__side">
+        <div class="ct__actions">
+          <a
+            class="btn btn--gold btn--lg btn--block"
+            href={whatsappLink('Contact')}
+            data-tap="WHATSAPP"
+          >
+            <Icon name="chat" size={20} stroke={2} />
+            WhatsApp {company.whatsapp.display}
+          </a>
+          <a class="btn btn--outline btn--lg btn--block" href={telLink} data-tap="CALL">
+            <Icon name="phone" size={20} stroke={2} />
+            Call {company.phone.display}
+          </a>
+          <a class="btn btn--ghost btn--block" href={`mailto:${company.email.hello}`}>
+            <Icon name="mail" size={18} />
+            {company.email.hello}
+          </a>
+        </div>
+        <dl class="ct__facts">
+          <dt>Reply time</dt>
+          <dd>{company.replyTime}</dd>
+          <dt>Office</dt>
+          <dd>
+            {company.legalName}
+            <br />
+            {a.street}, {a.city} {a.postalCode}
+          </dd>
+          <dt>Grievance officer</dt>
+          <dd>
+            {company.grievanceOfficer.name}, {company.grievanceOfficer.designation}
+            <br />
+            <a href={`mailto:${company.email.grievance}`}>{company.email.grievance}</a> ·
+            <a href="/legal/grievance/">How complaints work</a>
+          </dd>
+        </dl>
+        <p class="note ct__safety">
+          <strong>Payment safety.</strong> {PAYMENT_SAFETY}
+        </p>
+      </div>
+      <div class="ct__form">
+        <h2 class="ct__title display">Send an enquiry</h2>
+        <EnquiryForm id="contact-enquiry" pageName="Contact" variant="full" />
+      </div>
+    </div>
+  </section>
+</Page>
+
+<style>
+  .ct {
+    display: grid;
+    grid-template-columns: 0.9fr 1.3fr;
+    gap: 56px;
+    align-items: start;
+  }
+
+  .ct__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .ct__facts {
+    margin-top: 32px;
+    display: grid;
+    gap: 6px;
+    font-size: 15px;
+  }
+
+  .ct__facts dt {
+    margin-top: 10px;
+    color: var(--gold);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .ct__facts dd {
+    margin: 0;
+    color: var(--text-2);
+  }
+
+  .ct__safety {
+    margin-top: 28px;
+  }
+
+  .ct__safety strong {
+    color: var(--gold-light);
+  }
+
+  .ct__title {
+    font-size: 30px;
+    margin-bottom: 18px;
+  }
+
+  @media (max-width: 899px) {
+    .ct {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+  }
+</style>

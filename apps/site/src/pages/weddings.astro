@@ -1,0 +1,290 @@
+---
+import { getCollection } from 'astro:content';
+import hero from '../assets/photos/private-jet-sunset.jpg';
+import FaqList from '../components/FaqList.astro';
+import Verify from '../components/Verify.astro';
+import AircraftTable from '../components/blocks/AircraftTable.astro';
+import FormSection from '../components/blocks/FormSection.astro';
+import PaymentSchedule from '../components/blocks/PaymentSchedule.astro';
+import { AGENT_LINE } from '../config/company';
+import { STEPS } from '../data/facts';
+import { faqLd, faqsFor } from '../lib/faq';
+import { serviceJsonLd } from '../lib/jsonld';
+import Page from '../layouts/Page.astro';
+
+const description =
+  'Vaanika arranges private jets for wedding families and their closest guests, from any Indian city to Udaipur, Jaipur, Goa and beyond, at one written, all-in price.';
+const faqs = (await faqsFor('weddings')).slice(0, 6);
+const destinations = (await getCollection('destinations')).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+
+const WHO = [
+  {
+    title: 'The family',
+    text: 'Parents, grandparents and the couple’s siblings arrive together, rested, at a time you choose.',
+  },
+  {
+    title: 'VIP guests',
+    text: 'Elders and special guests who shouldn’t face queues, connections or long drives.',
+  },
+  {
+    title: 'The couple',
+    text: 'A quiet flight in, or a send-off after the vidaai — and, where it’s allowed, a helicopter entrance.',
+  },
+];
+
+const INCLUDED = [
+  'The aircraft and crew, named in the quote',
+  'Fuel, airport and handling charges listed in the quote',
+  'Catering on board, as agreed',
+  'GST, shown on a GST invoice',
+  'One coordinator on WhatsApp until you land',
+];
+---
+
+<Page
+  title="Private jets for weddings in India"
+  description={description}
+  pageName="Wedding flights"
+  eyebrow="Wedding flights"
+  heading="Private jets for your wedding guests."
+  lead="Your family and closest guests fly together from any Indian city to the wedding, on an aircraft we have checked, at one written, all-in price. Vaanika arranges it as your agent; a DGCA-approved operator named in your quote flies it."
+  crumbs={[{ name: 'Wedding flights', path: '/weddings/' }]}
+  image={hero}
+  imageAlt="A private jet on the tarmac at golden hour"
+  planHref="#enquire"
+  jsonLd={[
+    serviceJsonLd({ name: 'Wedding flights by private jet', description, path: '/weddings/' }),
+    faqLd(faqs),
+  ]}
+  noCta
+>
+  <section class="section" aria-labelledby="who-h">
+    <div class="container">
+      <div class="section__head reveal">
+        <p class="eyebrow">Who it suits</p>
+        <h2 id="who-h" class="h2">
+          For the people who matter most on the day.
+        </h2>
+      </div>
+      <div class="grid-cards">
+        {WHO.map((w) => (
+          <div class="card reveal">
+            <h3>{w.title}</h3>
+            <p>{w.text}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt" aria-labelledby="sizes-h">
+    <div class="container">
+      <div class="section__head reveal">
+        <p class="eyebrow">Group sizes</p>
+        <h2 id="sizes-h" class="h2">
+          How many guests per aircraft.
+        </h2>
+        <p class="lead">
+          Pick by the number of guests flying together from one city. Larger families can fly in two
+          aircraft that land minutes apart.
+        </p>
+      </div>
+      <div class="wed__table reveal">
+        <AircraftTable jetsOnly />
+      </div>
+      <p class="wed__more">
+        <a href="/aircraft/">All aircraft classes, including helicopters</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="dest-h">
+    <div class="container">
+      <div class="section__head reveal">
+        <p class="eyebrow">Destinations</p>
+        <h2 id="dest-h" class="h2">
+          Approximate flying times.
+        </h2>
+        <p class="lead">
+          By private jet; the exact time depends on the aircraft, the weather and the airports used.
+        </p>
+      </div>
+      <div class="table-scroll wed__table reveal">
+        <table class="facts num">
+          <caption class="visually-hidden">
+            Approximate private jet flying times to wedding destinations
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">To</th>
+              {destinations[0]?.data.times.map((t) => (
+                <th scope="col">From {t.from}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {destinations.map((d) => (
+              <tr>
+                <th scope="row" class="wed__dest">
+                  <a href={`/destinations/${d.id}/`}>{d.data.name}</a>
+                </th>
+                {d.data.times.map((t) => (
+                  <td>
+                    <Verify>{t.time}</Verify>
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--light on-light" aria-labelledby="quote-h">
+    <div class="container wed__split">
+      <div class="reveal">
+        <p class="eyebrow">What the quote includes</p>
+        <h2 id="quote-h" class="h2">
+          One document, one price.
+        </h2>
+        <ul class="wed__list">
+          {INCLUDED.map((i) => (
+            <li>{i}</li>
+          ))}
+        </ul>
+        <p class="wed__agent">{AGENT_LINE}</p>
+      </div>
+      <ol class="wed__steps reveal">
+        {STEPS.map((s, i) => (
+          <li>
+            <span class="num display">{i + 1}</span>
+            <div>
+              <h3>{s.title}</h3>
+              <p>{s.text}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section" aria-label="Payment">
+    <div class="container wed__narrow reveal">
+      <PaymentSchedule />
+    </div>
+  </section>
+
+  <section class="section section--alt" aria-labelledby="faq-h">
+    <div class="container wed__narrow">
+      <h2 id="faq-h" class="h2">
+        Wedding flight questions
+      </h2>
+      <div class="wed__faq">
+        <FaqList items={faqs} />
+      </div>
+      <p class="wed__more">
+        <a href="/faq/">All questions and answers</a>
+      </p>
+    </div>
+  </section>
+
+  <FormSection pageName="Wedding flights" />
+</Page>
+
+<style>
+  .wed__table {
+    margin-top: 36px;
+  }
+
+  .wed__more {
+    margin-top: 18px;
+    font-weight: 600;
+    font-size: 15px;
+  }
+
+  .wed__dest a {
+    color: var(--ivory);
+    font-size: 15px;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  .wed__split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+  }
+
+  .wed__list {
+    margin-top: 24px;
+    padding-left: 1.2em;
+    color: var(--navy-text);
+  }
+
+  .wed__list li + li {
+    margin-top: 8px;
+  }
+
+  .wed__agent {
+    margin-top: 24px;
+    padding: 14px 16px;
+    border: 1px solid var(--cream-line);
+    border-radius: 14px;
+    background: #fff;
+    font-size: 14.5px;
+    color: var(--navy-text);
+  }
+
+  .wed__steps {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .wed__steps li {
+    display: flex;
+    gap: 22px;
+    padding: 20px 0;
+    border-top: 1px solid var(--cream-line);
+  }
+
+  .wed__steps li:last-child {
+    border-bottom: 1px solid var(--cream-line);
+  }
+
+  .wed__steps .num {
+    width: 30px;
+    flex: none;
+    font-size: 28px;
+    color: var(--gold-dark);
+    line-height: 1.1;
+  }
+
+  .wed__steps h3 {
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .wed__steps p {
+    margin-top: 4px;
+    color: var(--navy-text);
+  }
+
+  .wed__narrow {
+    max-width: 880px;
+  }
+
+  .wed__faq {
+    margin-top: 32px;
+  }
+
+  @media (max-width: 899px) {
+    .wed__split {
+      grid-template-columns: 1fr;
+      gap: 36px;
+    }
+  }
+</style>

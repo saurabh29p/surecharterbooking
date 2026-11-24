@@ -20,8 +20,12 @@ Most live in `src/config/company.ts`; phone numbers come from Vercel environment
 | Google Ads conversion ID | Vercel env `PUBLIC_GOOGLE_ADS_ID` (optional) | none |
 | Real photos and video | `src/assets/photos/`, `public/video/` (same file names) | Unsplash placeholders, captioned "Illustrative" |
 | Real testimonials | not shown anywhere until real (`[REAL TESTIMONIAL — add when we have one]`) | none |
-| Lawyer-approved legal text | `src/content/legal/*.md` | drafts (phase 3) |
+| Lawyer-approved legal text | `src/content/legal/*.md` (six drafts; brackets like `[LAWYER TO CONFIRM]`, `[Registered address]`, `[30] days` mark what to fill) | drafts, "DRAFT — pending legal review" on previews |
+| Guides | `src/content/guides/*.md`: set `draft: false` once their figures are checked | 4 drafts, hidden on the launched site until then |
+| Founder photo | `src/pages/about.astro` (circle placeholder) | placeholder |
 | CA-approved payment wording | payment schedule text (marked `[CA TO CONFIRM]` in code) | draft |
+
+**Co-branded quotes:** the planner page offers quotes "under your firm's name alongside ours". The desk's quote PDF doesn't add a planner's name yet; that's a small desk change to make before the first planner asks.
 
 The sample quote on the home page keeps `[REG]`, `[OPERATOR NAME]` and `₹ [YOUR PRICE]` on purpose:
 it shows what every quote contains without naming a real operator or aircraft.

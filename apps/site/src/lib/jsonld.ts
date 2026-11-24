@@ -63,3 +63,41 @@ export function breadcrumbJsonLd(items: Array<{ name: string; path: string }>): 
     })),
   };
 }
+
+/** Plain text from a FAQ answer's Markdown (links, HTML and comments removed). */
+export function plainText(md: string): string {
+  return md
+    .replace(/<!--[\s\S]*?-->/g, '')
+    .replace(/<[^>]+>/g, '')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/[*_`#>]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/** FAQPage markup (for meaning; Google no longer shows FAQ rich results). */
+export function faqJsonLd(items: Array<{ question: string; answer: string }>): object {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: items.map((i) => ({
+      '@type': 'Question',
+      name: i.question,
+      acceptedAnswer: { '@type': 'Answer', text: plainText(i.answer) },
+    })),
+  };
+}
+
+/** A service page (weddings, helicopter arrivals, private charter). */
+export function serviceJsonLd(s: { name: string; description: string; path: string }): object {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: s.name,
+    description: s.description,
+    url: `${SITE_URL}${s.path}`,
+    serviceType: 'Private charter arrangement (agent)',
+    areaServed: { '@type': 'Country', name: 'India' },
+    provider: { '@id': `${SITE_URL}/#vaanika` },
+  };
+}
