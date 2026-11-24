@@ -310,7 +310,8 @@ Measured 24 Nov 2026 on the Vercel preview, Lighthouse mobile (simulated mid-ran
 | Helicopter arrivals | 99 | 100 | 92* | 2.0 s | 0 ms | 0 | 170 KB |
 | Contact | 100 | 100 | 92* | 1.9 s | 0 ms | 0 | 94 KB |
 
-\* only the preview toolbar's blocked script; fixed by switching the toolbar off. SEO on previews is 61 by
+\* only the preview toolbar's blocked script. After switching the toolbar off (re-measured): home 99 / 100 /
+**100** (LCP 1.6 s, CLS 0), Udaipur 100 / 100 / **100** (LCP 1.9 s). SEO on previews is 61 by
 design (`noindex`); on a launched build (local) SEO is **100** on home, weddings, Udaipur and FAQ.
 
 - Interaction (INP proxy, phone, CPU slowed 4×): worst 88 ms (opening the menu); typing and form taps 16–64 ms.
