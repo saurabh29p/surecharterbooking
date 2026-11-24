@@ -285,3 +285,35 @@ Defaults taken while building; each can be changed. Questions sent to the owner 
   they are not filled automatically from `company.ts`, so the lawyer's final text should carry them.
 - **Estimates in Markdown** are wrapped in `<span class="verify">…</span>`; preview builds tag them,
   the launched site shows plain text. All are listed in `apps/site/VERIFY.md` (35 rows).
+
+## Website (phase 4: SEO, speed, accessibility, Nov 2026)
+- **robots.txt and sitemap.xml follow the launch switch.** Previews: `Disallow: /`, no sitemap, `noindex`
+  meta. Launched build: allow all, Googlebot, Bingbot, OAI-SearchBot and PerplexityBot named, sitemap with
+  every page (draft guides left out). The `X-Robots-Tag: noindex` header is sent on every host except
+  flyvaanika.com, so vercel.app previews are never indexed, even after launch.
+- **Share images** (1200 × 630) are made at build time from the logo kit and page photos; photo versions
+  carry "Illustrative".
+- **Analytics and Ads stay off until switched on:** `PUBLIC_ANALYTICS=vercel` loads Vercel Web Analytics and
+  Speed Insights (cookieless; turn them on in Vercel first, they may cost money on the plan);
+  `PUBLIC_GOOGLE_ADS_ID` plus `PUBLIC_GOOGLE_ADS_LABELS` ("enquiry:…,whatsapp:…,call:…,partner:…") load the
+  Ads tag and fire conversions. The security policy opens to Google's hosts only when Ads is on.
+- **Vercel's preview toolbar is switched off** for the site project: it injected a script our security
+  policy (rightly) blocked.
+
+Measured 24 Nov 2026 on the Vercel preview, Lighthouse mobile (simulated mid-range phone, slow 4G):
+
+| Page | Performance | Accessibility | Best practices | LCP | TBT | CLS | Weight |
+|---|---|---|---|---|---|---|---|
+| Home (median of 3) | 99 | 100 | 92* | 2.0 s | 10 ms | 0 | 253 KB |
+| Wedding flights | 99 | 100 | 92* | 2.0 s | 0 ms | 0 | 115 KB |
+| Udaipur | 96 | 100 | 92* | 2.3 s | 160 ms | 0 | 185 KB |
+| Helicopter arrivals | 99 | 100 | 92* | 2.0 s | 0 ms | 0 | 170 KB |
+| Contact | 100 | 100 | 92* | 1.9 s | 0 ms | 0 | 94 KB |
+
+\* only the preview toolbar's blocked script; fixed by switching the toolbar off. SEO on previews is 61 by
+design (`noindex`); on a launched build (local) SEO is **100** on home, weddings, Udaipur and FAQ.
+
+- Interaction (INP proxy, phone, CPU slowed 4×): worst 88 ms (opening the menu); typing and form taps 16–64 ms.
+- Desktop home: 691 KB without the video (budget 1 MB), hero video 1.97 MB after the poster (budget 2.5 MB),
+  JavaScript 9 KB compressed (budget 30 KB).
+- axe accessibility scan: 0 violations on 17 pages at 390 px and 1280 px.
