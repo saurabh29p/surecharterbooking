@@ -6,6 +6,7 @@ import {
   type OutwardQuote,
 } from '@shubhjets/shared';
 import { esc } from '../documents/brand.js';
+import { brandLogo } from '../documents/vaanika-logo.js';
 import { webFonts } from '../pdf/pdf.service.js';
 
 export interface SharePageInput {
@@ -66,10 +67,15 @@ input[type=text]{width:100%;font-size:16px;padding:12px;border:1px solid #cfc7b6
 .check input{width:22px;height:22px;margin-top:2px;flex:0 0 22px}
 .note{background:var(--ivory);border-radius:10px;padding:10px 12px;font-size:14px}
 .ok{background:#dcf2e4;color:#145c36}.warn{background:#fff1e0;color:#6b4300}.err{background:#fde2df;color:#8a1c12}
+.wm-logo{display:block;height:45px;width:auto}
 .foot{text-align:center;font-size:12px;color:var(--muted);margin-top:16px}
 @media (prefers-reduced-motion:reduce){.btn{transition:none}}
 </style></head><body>
-<header class="band"><div class="wm">${esc(brand)}</div><div class="tag">Private jets for Indian weddings</div></header>
+<header class="band">${
+    brandLogo(null, brand)
+      ? `<img class="wm-logo" src="${brandLogo(null, brand)}" alt="${esc(brand)}" width="160" height="45">`
+      : `<div class="wm">${esc(brand)}</div>`
+  }<div class="tag">Private jets &amp; helicopters for Indian weddings</div></header>
 <main class="wrap">${body}</main></body></html>`;
 }
 

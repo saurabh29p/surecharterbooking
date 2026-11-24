@@ -96,7 +96,7 @@ describe('quote PDF: branded document and the rule-4 text scan', () => {
     const res = await getPdf(`/api/quotes/${q.id}/pdf`);
     expect(res.headers['content-type']).toBe('application/pdf');
     expect(res.headers['content-disposition']).toBe(
-      'attachment; filename="ShubhJets-Quote-W-102-Q1.pdf"',
+      'attachment; filename="Vaanika-Quote-W-102-Q1.pdf"',
     );
     const bytes = res.body as Buffer;
     expect(bytes.subarray(0, 5).toString()).toBe('%PDF-');
@@ -104,7 +104,7 @@ describe('quote PDF: branded document and the rule-4 text scan', () => {
 
     // What the client must see.
     for (const shown of [
-      'ShubhJets',
+      'Vaanika',
       'Client C2',
       'New Delhi',
       'Jaipur',

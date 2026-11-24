@@ -24,7 +24,7 @@ import {
 import { EnquiriesService } from './enquiries.service.js';
 
 /**
- * What the public website (shubhjets.com) posts to. No login; rate-limited per network; the
+ * What the public website (flyvaanika.com) posts to. No login; rate-limited per network; the
  * website's origin is allowed by CORS for /api/public/* only (see app.setup.ts).
  */
 @Public()

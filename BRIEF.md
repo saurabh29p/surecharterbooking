@@ -1,4 +1,4 @@
-# BRIEF — ShubhJets Wedding Charter Desk (internal system)
+# BRIEF — Vaanika Wedding Charter Desk (internal system)
 
 Prompt for Claude Code. Build a small, fast, mobile-first internal tool for ONE niche:
 **private jet flights for Indian destination weddings, sold through wedding planners.**
@@ -19,7 +19,7 @@ The public website is a separate app in the same repo: see `WEBSITE.md`.
 4. After each step, tell me in plain language what works, what doesn't, and what you need from me.
 
 ## 1. Business context
-- Brand: **ShubhJets** (a service of **Indicgems Exim LLP**, India). Name pending trademark check; keep the brand name in one config value.
+- Brand: **Vaanika** ("Vaanika is a brand of Indicgems Exim LLP.", India), domain `flyvaanika.com`. Keep the brand name in one config value. Internal code names (`@shubhjets/*`, the Railway project, database names) stay as they are.
 - We are a **charter broker**: we do NOT own or operate aircraft. We get rates from licensed operators, add our margin (default 10%), and arrange the flights.
 - Operators must hold a DGCA **Non-Scheduled Operator Permit (NSOP)**. DGCA requires operators to publish aircraft age, maintenance history and pilot experience on their websites, and publishes NSOP safety rankings.
 - Niche: destination weddings, peak season November–March.
@@ -100,7 +100,7 @@ Email + password (argon2), rate-limited; admin seeded from env; session/JWT with
 4. **Operators**: list filterable by route/category/status; verification checklist; documents; expiry alerts.
 5. **Settings**: brand, GST and invoicing model, target, default markup, default commission, quote validity, ID retention days, secure-link expiry, approved AI providers, AI cap, AI models per job.
 
-### 5.5 Documents (PDF, branded ShubhJets)
+### 5.5 Documents (PDF, branded Vaanika)
 - **Multi-leg wedding quote**: all legs, aircraft, named operator, per-leg and total price, GST, validity (default 24 h), cancellation terms.
 - **GST invoice**.
 - **Rate request** to operator (route, date, passengers, category, timings).
@@ -168,7 +168,7 @@ Corporate / family-office clients, international trips, empty-legs board, client
 
 ## 8. Seed data and tests
 - Fake data only: "Planner P1–P4", "Hotel H1", "Operator A–D", weddings "W-101–W-106" in different statuses with legs, rates, payments and shares. Never real company names or real NSOP numbers.
-- Settings seed: brand ShubhJets, markup 10%, commission 20% of margin, quote validity 24 h, target ₹20,00,000/month, GST placeholders (flagged), ID retention 30 days, secure-link expiry 14 days, AI cap ₹2,000.
+- Settings seed: brand Vaanika, markup 10%, commission 20% of margin, quote validity 24 h, target ₹20,00,000/month, GST placeholders (flagged), ID retention 30 days, secure-link expiry 14 days, AI cap ₹2,000.
 - Tests: every hard rule in 5.2 (including rule 4 on shared documents); every AI prohibition; money formatting; margin/GST/commission maths; CSV import and duplicates; share links (expiry, revoke); AI gateway validation, retry, fallback and escalation; the full flow enquiry → rates → quote → signed & paid → flying → done.
 
 ## 9. Definition of done

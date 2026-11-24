@@ -1,4 +1,5 @@
 import { brandFonts } from '../pdf/pdf.service.js';
+import { brandLogo } from './vaanika-logo.js';
 
 /** Escape text for HTML. */
 export const esc = (s: string | null | undefined) =>
@@ -23,15 +24,16 @@ export interface DocumentShell {
 }
 
 /**
- * The ShubhJets document look shared by agreements, invoices and rate requests (the quote has
+ * The brand's document look shared by agreements, invoices and rate requests (the quote has
  * its own phone-first layout): midnight band with the Bodoni Moda wordmark in champagne gold,
  * Manrope text, gold rules.
  */
 export function documentHtml(d: DocumentShell): string {
   const size = d.page === 'A5' ? '148mm 210mm' : '210mm 297mm';
   const pad = d.page === 'A5' ? '9mm' : '16mm';
-  const brand = d.logo
-    ? `<img class="logo" src="${d.logo}" alt="${esc(d.brandName)}">`
+  const logo = brandLogo(d.logo, d.brandName);
+  const brand = logo
+    ? `<img class="logo" src="${logo}" alt="${esc(d.brandName)}">`
     : `<div class="wordmark">${esc(d.brandName)}</div>`;
   return `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><title>${esc(d.title)}</title>
@@ -69,7 +71,7 @@ ${d.css ?? ''}
 </style></head>
 <body>
 ${d.watermark ? `<div class="watermark">${esc(d.watermark)}</div>` : ''}
-<header class="band">${brand}<div class="tag">Private jets for Indian weddings</div></header>
+<header class="band">${brand}<div class="tag">Private jets &amp; helicopters for Indian weddings</div></header>
 <main class="sheet">
 <div class="doc-title">${esc(d.title)}</div>
 ${d.subtitle ? `<div class="doc-sub">${esc(d.subtitle)}</div>` : ''}

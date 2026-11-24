@@ -930,7 +930,7 @@ const issueBlocker = computed(() =>
       :open="shareOpen"
       :document-id="q?.documentId ?? null"
       :title="`quote ${q?.reference ?? ''}`"
-      :filename="`ShubhJets-Quote-${(q?.reference ?? '').replace(' · ', '-')}.pdf`"
+      :filename="`Vaanika-Quote-${(q?.reference ?? '').replace(' · ', '-')}.pdf`"
       @close="shareOpen = false"
       @shared="onShared"
     />

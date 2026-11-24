@@ -5,7 +5,7 @@ import { newProfileForm, toBody, validators } from '../src/composables/profileFo
 describe('profile form', () => {
   it('starts with Delhi, the SJ prefix and the brand name', () => {
     const f = newProfileForm();
-    expect(f).toMatchObject({ stateCode: '07', invoicePrefix: 'SJ', brandName: 'ShubhJets' });
+    expect(f).toMatchObject({ stateCode: '07', invoicePrefix: 'VK', brandName: 'Vaanika' });
   });
 
   it('sends only the fields of the saved step; empty text clears', () => {
@@ -13,7 +13,7 @@ describe('profile form', () => {
     f.legalName = '  Example Exim LLP ';
     f.signatoryName = 'Partner One';
     expect(toBody(f, ['business'])).toEqual({
-      brandName: 'ShubhJets',
+      brandName: 'Vaanika',
       legalName: 'Example Exim LLP',
       stateCode: '07',
       gstin: '',

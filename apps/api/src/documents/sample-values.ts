@@ -1,3 +1,4 @@
+import { DEFAULT_BRAND } from '@shubhjets/shared';
 import type { AgreementKind } from '@shubhjets/shared';
 import { itineraryTable, paymentTable, scheduleTable } from './blocks.js';
 import type { PlaceholderValues } from './markdown.js';
@@ -9,7 +10,7 @@ export function sampleValues(kind: AgreementKind): PlaceholderValues {
   const us = {
     date: '18 November 2026',
     place: 'New Delhi',
-    'us.brand': 'ShubhJets',
+    'us.brand': DEFAULT_BRAND,
     'us.legal_name': 'Sample Exim LLP',
     'us.llpin': 'AAA-0000',
     'us.gstin': '07AAAAA0000A1Z5',

@@ -1,7 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import {
+  brandLine,
   CATEGORY_LABELS,
+  DEFAULT_BRAND,
   formatDate,
   HELI_SERVICE_LABELS,
   siteLabel,
@@ -76,7 +78,7 @@ export class RateRequestDocsService {
     const profile = rq.business_profile_id
       ? await this.profiles.get(rq.business_profile_id)
       : await this.profiles.getDefault();
-    const brand = profile?.brandName ?? 'ShubhJets';
+    const brand = profile?.brandName ?? DEFAULT_BRAND;
 
     const heli = legs.some((l) => l.from_site || l.to_site || l.service_type);
     const rows = legs
@@ -134,7 +136,7 @@ export class RateRequestDocsService {
         .sign span { font-weight: 400; color: var(--muted); font-size: 8.4pt; }`,
     });
     const pdf = await this.pdf.render(html, {
-      footer: profile?.legalName ? `${brand} is a service of ${profile.legalName}` : brand,
+      footer: brandLine(brand, profile?.legalName),
     });
 
     return this.ds.transaction(async (m) => {

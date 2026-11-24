@@ -310,7 +310,7 @@ describe('end to end: a website enquiry becomes a flown wedding', () => {
     ]);
     await api.patch('/settings', { values: { 'gst.sac': '996412' }, confirmGst: true }).expect(200);
     const inv = (await api.post(`/weddings/${weddingId}/invoices`).expect(201)).body;
-    expect(inv.number).toMatch(/^SJ\/2026-27\/\d{4}$/);
+    expect(inv.number).toMatch(/^VK\/2026-27\/\d{4}$/);
     expect(await actionsFor(code)).toEqual([]);
   });
 

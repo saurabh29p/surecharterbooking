@@ -13,7 +13,7 @@ const H = 3_600_000;
 const rules: TodayRules = {
   now: NOW,
   today: '2026-11-18',
-  brand: 'ShubhJets',
+  brand: 'Vaanika',
   chaseAfterHours: 2,
   quoteWarnHours: 6,
   guestIdsDueDays: 7,

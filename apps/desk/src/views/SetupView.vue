@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import logoOnLight from '../assets/logo-on-light.svg?url';
 import type { BusinessProfileView } from '@shubhjets/shared';
 import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
@@ -101,7 +102,7 @@ async function next(save: boolean) {
 <template>
   <div class="container-tight py-4 px-3">
     <div class="text-center mb-3">
-      <span class="sj-wordmark sj-wordmark--light fs-2">ShubhJets</span>
+      <img :src="logoOnLight" alt="Vaanika" width="180" height="50" class="sj-brand-lg" />
     </div>
     <div class="card">
       <div class="card-body">

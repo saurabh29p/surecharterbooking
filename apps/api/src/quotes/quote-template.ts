@@ -1,13 +1,17 @@
 import {
+  agentLine,
+  brandLine,
   describeSchedule,
   formatBps,
   formatDate,
   formatDateTime,
   formatINR,
+  paymentSafetyNote,
+  siteLabel,
   type OutwardQuote,
   type OutwardQuoteLeg,
-  siteLabel,
 } from '@shubhjets/shared';
+import { brandLogo } from '../documents/vaanika-logo.js';
 import { brandFonts } from '../pdf/pdf.service.js';
 
 /**
@@ -86,8 +90,9 @@ export function renderQuoteHtml(q: OutwardQuote): string {
   const cancel = describeSchedule(q.cancellation.schedule);
   const included = lines(q.inclusions);
   const excluded = lines(q.exclusions);
-  const brand = b.logo
-    ? `<img class="logo" src="${b.logo}" alt="${esc(b.brandName)}">`
+  const logo = brandLogo(b.logo, b.brandName);
+  const brand = logo
+    ? `<img class="logo" src="${logo}" alt="${esc(b.brandName)}">`
     : `<div class="wordmark">${esc(b.brandName)}</div>`;
 
   return `<!doctype html>
@@ -158,6 +163,7 @@ table { width: 100%; border-collapse: collapse; }
 .pay td:last-child { text-align: right; font-weight: 700; white-space: nowrap; }
 .bank { margin-top: 2.6mm; border-top: 0.4pt solid #ddd3bf; padding-top: 2.4mm; font-size: 8.4pt; line-height: 1.55; }
 .bank b { font-weight: 700; }
+.bank-safety { margin-top: 1.6mm; font-size: 7.6pt; line-height: 1.45; color: #5d584f; }
 .two { display: flex; gap: 4mm; }
 .two > div { flex: 1; min-width: 0; }
 ul { margin: 0; padding-left: 4mm; }
@@ -179,7 +185,7 @@ li { margin: .6mm 0; font-size: 8.8pt; }
 ${q.preview ? '<div class="watermark">PREVIEW · NOT SENT</div>' : ''}
 <header class="hero">
   <div class="top">
-    <div>${brand}<div class="tag">Private jets for Indian weddings</div></div>
+    <div>${brand}<div class="tag">Private jets &amp; helicopters for Indian weddings</div></div>
     <div class="ref"><strong>Quotation</strong>${esc(q.reference)}<br>${esc(formatDate(q.issuedAt.slice(0, 10)))}</div>
   </div>
   <div class="for">
@@ -219,7 +225,7 @@ ${q.preview ? '<div class="watermark">PREVIEW · NOT SENT</div>' : ''}
     ${
       q.bank
         ? `<div class="bank">Bank transfer to <b>${esc(q.bank.accountName)}</b><br>
-           ${esc(q.bank.bankName)}${q.bank.branch ? `, ${esc(q.bank.branch)}` : ''} · A/c <b>${esc(q.bank.accountNumber)}</b> · IFSC <b>${esc(q.bank.ifsc)}</b></div>`
+           ${esc(q.bank.bankName)}${q.bank.branch ? `, ${esc(q.bank.branch)}` : ''} · A/c <b>${esc(q.bank.accountNumber)}</b> · IFSC <b>${esc(q.bank.ifsc)}</b></div><div class="bank-safety">${esc(paymentSafetyNote(b.legalName ?? b.brandName))}</div>`
         : ''
     }
   </div>
@@ -241,7 +247,7 @@ ${q.preview ? '<div class="watermark">PREVIEW · NOT SENT</div>' : ''}
 
   <h2>Good to know</h2>
   <div class="notes">
-    <p>${esc(b.brandName)} arranges your charter as a broker. Each flight is operated by the licensed operator named above, holder of a DGCA Non-Scheduled Operator Permit, which keeps full operational control. The pilot-in-command has the final say on safety, weather and timing.</p>
+    <p>${esc(agentLine(b.brandName))} The operator named above holds the DGCA Non-Scheduled Operator Permit and keeps full operational control; the pilot-in-command has the final say on safety, weather and timing.</p>
     <p>Aircraft, timings and prices are held only once the booking is confirmed with payment; until then they depend on availability.</p>
     <p>Every guest needs a valid government photo ID. We will ask for names and ID details before the flight.</p>
   </div>
@@ -258,7 +264,7 @@ ${q.preview ? '<div class="watermark">PREVIEW · NOT SENT</div>' : ''}
 export function quoteFooter(q: OutwardQuote): string {
   const b = q.business;
   return [
-    b.legalName ? `${b.brandName} is a service of ${b.legalName}` : b.brandName,
+    brandLine(b.brandName, b.legalName),
     b.llpin ? `LLPIN ${b.llpin}` : null,
     b.gstin ? `GSTIN ${b.gstin}` : null,
   ]

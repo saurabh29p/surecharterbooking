@@ -121,7 +121,7 @@ try {
       const { data } = await call('POST', '/business-profiles', {
         json: {
           label: `E2E ${RUN}`,
-          brandName: 'ShubhJets',
+          brandName: 'Vaanika',
           legalName: 'E2E Test Charters LLP',
           llpin: 'AAA-0000',
           gstin: '07AAAFE0000B1ZO',

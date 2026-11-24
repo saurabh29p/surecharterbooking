@@ -146,7 +146,7 @@ export class BusinessProfilesService {
         signatoryName: input.signatoryName ?? null,
         signatoryDesignation: input.signatoryDesignation ?? null,
         arbitrationSeatCity: input.arbitrationSeatCity ?? null,
-        invoicePrefix: input.invoicePrefix ?? 'SJ',
+        invoicePrefix: input.invoicePrefix ?? 'VK',
         isDefault: isFirst,
         archivedAt: null,
         logoFileId: null,
@@ -230,7 +230,7 @@ export class BusinessProfilesService {
     return this.toView(await this.repo.save(p));
   }
 
-  /** Replace the logo shown on PDFs (instead of the ShubhJets wordmark). The old file is deleted. */
+  /** Replace the logo shown on PDFs (instead of the Vaanika logo). The old file is deleted. */
   async setLogo(
     id: string,
     upload: { buffer: Buffer; originalName: string },
@@ -273,7 +273,7 @@ export class BusinessProfilesService {
   }
 
   /**
-   * Reserve the next invoice number for a profile, e.g. "SJ/2026-27/0001".
+   * Reserve the next invoice number for a profile, e.g. "VK/2026-27/0001".
    * Numbering is per profile and restarts every financial year (1 April). Call inside the
    * transaction that creates the invoice so a failed invoice doesn't burn a number.
    */

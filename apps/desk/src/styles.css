@@ -538,6 +538,25 @@ a:hover {
 }
 
 /* The gold wordmark needs the darker gold on light backgrounds to stay readable. */
+/* The Vaanika logo (design/logo files, never redrawn). */
+.sj-brand {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 6px;
+}
+
+.sj-brand img {
+  display: block;
+  height: 42px;
+  width: auto;
+}
+
+.sj-brand-lg {
+  display: inline-block;
+  height: auto;
+  max-width: 100%;
+}
+
 .sj-wordmark--light {
   color: var(--sj-gold-dark);
 }

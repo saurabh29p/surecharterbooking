@@ -42,7 +42,7 @@ describe('audit log', () => {
   describe('automatic change tracking', () => {
     it('logs creation with the user who did it, and secrets redacted', async () => {
       const res = await authed(t.http().post('/api/business-profiles')).send({
-        brandName: 'ShubhJets',
+        brandName: 'Vaanika',
         bankDetails: {
           accountName: 'X',
           accountNumber: '123456789012',
@@ -60,7 +60,7 @@ describe('audit log', () => {
         action: 'CREATED',
       });
       expect(row!.diff).toMatchObject({
-        brandName: 'ShubhJets',
+        brandName: 'Vaanika',
         stateCode: '07',
         bankDetailsEnc: '[redacted]',
         bankHint: 'Example Bank ••••9012',

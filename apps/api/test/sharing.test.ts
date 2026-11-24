@@ -262,7 +262,7 @@ describe('secure share links, the link page and "I accept"', () => {
       const saved = { ...email.options };
       email.options = {
         apiKey: 're_test',
-        from: 'ShubhJets <quotes@example.test>',
+        from: 'Vaanika <quotes@example.test>',
         replyTo: 'owner@example.test',
         url: 'https://resend.example.test',
       };
@@ -285,14 +285,14 @@ describe('secure share links, the link page and "I accept"', () => {
         expect(headers['Idempotency-Key']).toBe(`share-${res.body.shareId}`);
         const body = JSON.parse(String(calls[0]!.init.body));
         expect(body).toMatchObject({
-          from: 'ShubhJets <quotes@example.test>',
+          from: 'Vaanika <quotes@example.test>',
           to: ['c2@example.test'],
           reply_to: 'owner@example.test',
         });
-        expect(body.subject).toBe('Your charter quote W-102 · Q1 · ShubhJets');
+        expect(body.subject).toBe('Your charter quote W-102 · Q1 · Vaanika');
         expect(body.text).toContain(res.body.url);
         expect(body.html).toContain(`href="${res.body.url}"`);
-        expect(body.attachments[0].filename).toBe('ShubhJets-Quote-W-102-Q1.pdf');
+        expect(body.attachments[0].filename).toBe('Vaanika-Quote-W-102-Q1.pdf');
         expect(Buffer.from(body.attachments[0].content, 'base64').subarray(0, 5).toString()).toBe(
           '%PDF-',
         );

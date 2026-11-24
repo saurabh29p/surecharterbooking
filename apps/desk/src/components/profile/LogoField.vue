@@ -6,7 +6,7 @@ import { useToast } from '../../composables/toast';
 import SjButton from '../SjButton.vue';
 import SjConfirm from '../SjConfirm.vue';
 
-/** Logo for PDFs from this profile; falls back to the ShubhJets wordmark. */
+/** Logo for PDFs from this profile; falls back to the Vaanika logo. */
 const props = defineProps<{ profile: BusinessProfileView }>();
 const emit = defineEmits<{ updated: [BusinessProfileView] }>();
 const toast = useToast();
@@ -63,7 +63,7 @@ async function remove() {
         method: 'DELETE',
       }),
     );
-    toast.success('Logo removed; PDFs use the ShubhJets wordmark');
+    toast.success('Logo removed; PDFs use the Vaanika logo');
   } catch (err) {
     toast.error(err instanceof ApiError ? err.message : "Couldn't remove the logo");
   } finally {
@@ -77,7 +77,7 @@ async function remove() {
   <div class="d-flex align-items-center gap-3 flex-wrap">
     <div class="sj-logo-box" aria-label="Logo preview">
       <img v-if="src" :src="src" alt="Current logo" width="120" height="56" />
-      <span v-else class="sj-wordmark fs-3">{{ profile.brandName || 'ShubhJets' }}</span>
+      <span v-else class="sj-wordmark fs-3">{{ profile.brandName || 'Vaanika' }}</span>
     </div>
     <div class="d-flex gap-2 flex-wrap">
       <input
@@ -108,7 +108,7 @@ async function remove() {
     <SjConfirm
       :open="confirmRemove"
       title="Remove the logo?"
-      body="The file is deleted and PDFs go back to the ShubhJets wordmark. You can upload a logo again any time."
+      body="The file is deleted and PDFs go back to the Vaanika logo. You can upload a logo again any time."
       confirm-label="Remove logo"
       :busy="removing"
       @confirm="remove"

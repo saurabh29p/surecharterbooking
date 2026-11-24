@@ -1,3 +1,4 @@
+import { DEFAULT_BRAND } from '@shubhjets/shared';
 import { Body, Controller, Get, Param, Post, Req, Res } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import type { Request, Response } from 'express';
@@ -36,7 +37,7 @@ export class PublicShareController {
     const f = await this.sharing.pdf(token);
     res.set(PAGE_HEADERS);
     if (!f) {
-      res.status(410).type('html').send(renderLinkGone('ShubhJets', 'EXPIRED'));
+      res.status(410).type('html').send(renderLinkGone(DEFAULT_BRAND, 'EXPIRED'));
       return;
     }
     res

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import logoOnLight from '../assets/logo-on-light.svg?url';
 import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { ApiError } from '../api/client';
@@ -53,7 +54,7 @@ async function submit() {
   <div class="sj-login">
     <div class="sj-login__card">
       <div class="text-center mb-4">
-        <div class="sj-wordmark sj-wordmark--light fs-1">ShubhJets</div>
+        <img :src="logoOnLight" alt="Vaanika" width="220" height="62" class="sj-brand-lg" />
         <div class="text-secondary">Wedding Charter Desk</div>
       </div>
       <form novalidate @submit.prevent="submit">

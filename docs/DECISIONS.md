@@ -45,7 +45,7 @@ Answers to the build questions (17 Nov 2026) and other choices made during the b
 - **Login limits:** 10 attempts per 15 minutes per network, and an email is locked for 15 minutes after 8 wrong passwords. Both are in memory, which is fine for one API instance.
 - **Business profiles are archived, never deleted**, because weddings, quotes and invoices keep pointing at the profile they used.
 - **Reference data (airports, default settings) ships in a migration**, so production has it without running the fake seed.
-- **Logo upload** waits for file storage (step 4); until then documents use the ShubhJets wordmark.
+- **Logo upload** waits for file storage (step 4); until then documents use the brand wordmark (now the Vaanika logo, phase 5).
 - **Seed data skips documents and shares** until PDFs and sharing exist (steps 8–11).
 
 ## Deploy reminders (raise these when we deploy)
@@ -147,7 +147,7 @@ Measured on the deployed test app as a mid-range Android on 4G (Lighthouse's mob
 
 - **Deploy:** the API is one Docker image (Node 22.23.4, same as development; Chromium for PDFs), configured by
   `railway.json`; migrations run on start. The desk is a static Vercel build that forwards `/api` and `/s` to the
-  API. Addresses: `app.shubhjets.com` (desk and secure links), `api.shubhjets.com` (API), `shubhjets.com` (website).
+  API. Addresses: `app.flyvaanika.com` (desk and secure links), `api.flyvaanika.com` (API), `flyvaanika.com` (website).
   The API now reads Railway's `PORT`, and refuses to start in production without an https desk address.
 - **Rate limits behind Vercel:** `TRUST_PROXY=true` trusts Railway's edge only, so desk requests (through Vercel)
   are limited per Vercel address and website requests per visitor. Trusting more hops would let anyone fake their
@@ -176,7 +176,7 @@ Measured on the deployed test app as a mid-range Android on 4G (Lighthouse's mob
   route flying in the next 120 days (return flights count as the same route).
 
 ## Build choices (step 12)
-- **Public endpoints** (no login, for shubhjets.com): `POST /api/public/enquiries` (enquiry form),
+- **Public endpoints** (no login, for flyvaanika.com): `POST /api/public/enquiries` (enquiry form),
   `POST /api/public/partners` (planners and hotels sign-up), `POST /api/public/events` (WhatsApp and call taps,
   sent with `navigator.sendBeacon`). Only the origins in `SITE_ORIGINS` may call them from a browser, and without
   cookies; the desk's endpoints never answer the website's origin.
@@ -261,6 +261,14 @@ Defaults taken while building; each can be changed. Questions sent to the owner 
   (`@shubhjets/*`), the Railway project `shubhjets`, the bucket, database names and the JWT issuer stay.
   Renaming them buys nothing and risks breaking deploys. Only what clients, planners or the public see
   becomes Vaanika (phase 5).
+- **Phase 5 brand change, what moved:** quote, invoice, agreement and rate-request PDFs, share pages and
+  messages now use the Vaanika logo (`design/logo/svg/…-for-dark-bg.svg`, embedded unchanged) and the footer
+  line "Vaanika is a brand of Indicgems Exim LLP." The quote's "Good to know" starts with the WEBSITE.md §7
+  agent line, and the payment-safety note sits under the bank details (the only place bank details appear).
+  A migration renames a profile still called ShubhJets to Vaanika. New profiles default to invoice prefix
+  `VK`; an existing profile **keeps its prefix** (`SJ` on the test database), because changing it mid-year
+  would start a second numbering series. Change it in Settings → Business profile before the first real
+  invoice. The desk shows the logo on the login, setup and top bar, and has the Vaanika favicon.
 
 ## Website (phase 3, Nov 2026)
 - **All launch pages are built**: weddings, helicopter arrivals, destinations hub + Udaipur, Jaipur, Goa,

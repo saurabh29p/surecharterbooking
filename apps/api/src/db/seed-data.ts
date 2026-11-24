@@ -165,7 +165,7 @@ export async function seed(
     };
     const profile = await ins(m, 'business_profile', {
       label: 'Delhi',
-      brand_name: 'ShubhJets',
+      brand_name: 'Vaanika',
       legal_name: 'Example Exim LLP',
       llpin: 'AAA-0000',
       gstin: fakeGstin('07', 'AAAFE0000A'),
@@ -176,7 +176,7 @@ export async function seed(
       signatory_name: 'Demo Partner',
       signatory_designation: 'Designated Partner',
       arbitration_seat_city: 'New Delhi',
-      invoice_prefix: 'SJ',
+      invoice_prefix: 'VK',
       is_default: true,
       created_by: owner,
     });

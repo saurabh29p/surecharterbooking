@@ -50,7 +50,7 @@ const emptyBank = () => ({
 export function newProfileForm(view?: BusinessProfileView | null): ProfileFormState {
   return reactive({
     label: view?.label ?? '',
-    brandName: view?.brandName ?? 'ShubhJets',
+    brandName: view?.brandName ?? 'Vaanika',
     legalName: view?.legalName ?? '',
     llpin: view?.llpin ?? '',
     gstin: view?.gstin ?? '',
@@ -59,7 +59,7 @@ export function newProfileForm(view?: BusinessProfileView | null): ProfileFormSt
     signatoryName: view?.signatoryName ?? '',
     signatoryDesignation: view?.signatoryDesignation ?? '',
     arbitrationSeatCity: view?.arbitrationSeatCity ?? '',
-    invoicePrefix: view?.invoicePrefix ?? 'SJ',
+    invoicePrefix: view?.invoicePrefix ?? 'VK',
     bank: emptyBank(),
   });
 }

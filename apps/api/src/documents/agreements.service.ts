@@ -2,6 +2,8 @@ import { ConflictException, Injectable, NotFoundException } from '@nestjs/common
 import { InjectDataSource } from '@nestjs/typeorm';
 import {
   AGREEMENT_LABELS,
+  brandLine,
+  DEFAULT_BRAND,
   DRAFT_WATERMARK,
   formatBps,
   formatINR,
@@ -77,7 +79,7 @@ export class AgreementsService {
       text: {
         date: longDate(this.now()),
         place: profile.arbitrationSeatCity,
-        'us.brand': profile.brandName ?? 'ShubhJets',
+        'us.brand': profile.brandName ?? DEFAULT_BRAND,
         'us.legal_name': profile.legalName,
         'us.llpin': profile.llpin,
         'us.gstin': profile.gstin,
@@ -269,7 +271,7 @@ export class AgreementsService {
         kind,
         body: template.bodyMd,
         values: v.values,
-        brandName: v.profile.brandName ?? 'ShubhJets',
+        brandName: v.profile.brandName ?? DEFAULT_BRAND,
         subtitle: `${v.subjectName} · Version ${version}`,
         watermark: template.lawyerApproved ? null : DRAFT_WATERMARK,
       });
@@ -283,8 +285,8 @@ export class AgreementsService {
 
       const footer = [
         v.profile.legalName
-          ? `${v.profile.brandName ?? 'ShubhJets'} is a service of ${v.profile.legalName}`
-          : (v.profile.brandName ?? 'ShubhJets'),
+          ? brandLine(v.profile.brandName ?? DEFAULT_BRAND, v.profile.legalName)
+          : (v.profile.brandName ?? DEFAULT_BRAND),
         v.profile.llpin ? `LLPIN ${v.profile.llpin}` : null,
         v.profile.gstin ? `GSTIN ${v.profile.gstin}` : null,
       ]
@@ -303,7 +305,7 @@ export class AgreementsService {
       const file = await this.files.upload(
         {
           buffer: pdf,
-          originalName: `${safe(v.profile.brandName ?? 'ShubhJets')}-${short}-${safe(v.subjectName)}-v${version}.pdf`,
+          originalName: `${safe(v.profile.brandName ?? DEFAULT_BRAND)}-${short}-${safe(v.subjectName)}-v${version}.pdf`,
           purpose: 'document',
         },
         m,

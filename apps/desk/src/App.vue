@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import logoOnDark from './assets/logo-on-dark.svg?url';
 import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router';
 import SjBanner from './components/SjBanner.vue';
 import SjToasts from './components/SjToasts.vue';
@@ -40,12 +41,9 @@ const isActive = (to: string) => {
   <template v-else>
     <header class="sj-topbar">
       <div class="container-xl sj-topbar__inner">
-        <RouterLink
-          to="/"
-          class="sj-wordmark fs-2 text-decoration-none"
-          aria-label="ShubhJets, go to Today"
-          >ShubhJets</RouterLink
-        >
+        <RouterLink to="/" class="sj-brand text-decoration-none" aria-label="Vaanika, go to Today"
+          ><img :src="logoOnDark" alt="" width="150" height="42"
+        /></RouterLink>
         <nav class="sj-topnav d-none d-md-flex gap-1" aria-label="Main">
           <RouterLink
             v-for="t in tabs"

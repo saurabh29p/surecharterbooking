@@ -83,12 +83,12 @@ describe('GST invoices and rate request PDFs', () => {
   it('issues a full-value tax invoice with every required detail and no internal figures', async () => {
     await confirmGst();
     const res = await issue().expect(201);
-    expect(res.body.number).toBe('SJ/2026-27/0001');
+    expect(res.body.number).toBe('VK/2026-27/0001');
     const text = await pdfText(res.body.documentId);
     const flat = text.replace(/\s+/g, ' ');
     for (const shown of [
       'Tax invoice',
-      'SJ/2026-27/0001',
+      'VK/2026-27/0001',
       'Example Exim LLP',
       'BILL TO',
       'Client C4',
@@ -124,12 +124,12 @@ describe('GST invoices and rate request PDFs', () => {
     const first = (await issue().expect(201)).body;
     const again = await issue().expect(409);
     expect(again.body.message).toBe(
-      'Already invoiced: SJ/2026-27/0001. Cancel it first to issue a new one.',
+      'Already invoiced: VK/2026-27/0001. Cancel it first to issue a new one.',
     );
     await authed(t.http().post(`/api/invoices/${first.id}/cancel`))
       .send({ reason: 'Wrong billing name' })
       .expect(204);
-    expect((await issue().expect(201)).body.number).toBe('SJ/2026-27/0002');
+    expect((await issue().expect(201)).body.number).toBe('VK/2026-27/0002');
     const list = (await authed(t.http().get(`/api/weddings/${ids['W-104']}/invoices`)).expect(200))
       .body;
     expect(
@@ -138,19 +138,19 @@ describe('GST invoices and rate request PDFs', () => {
         i.cancelReason,
       ]),
     ).toEqual([
-      ['SJ/2026-27/0002', null],
-      ['SJ/2026-27/0001', 'Wrong billing name'],
+      ['VK/2026-27/0002', null],
+      ['VK/2026-27/0001', 'Wrong billing name'],
     ]);
     // An invoice dated in the previous financial year starts that year's own sequence.
     await authed(t.http().post(`/api/invoices/${list.invoices[0].id}/cancel`))
       .send({ reason: 'Dated wrongly' })
       .expect(204);
     expect((await issue('W-104', { issuedOn: '2026-03-31' }).expect(201)).body.number).toBe(
-      'SJ/2025-26/0001',
+      'VK/2025-26/0001',
     );
     await issue('W-105').expect(201);
     const [last] = await t.ds.query(`SELECT number FROM invoice ORDER BY created_at DESC LIMIT 1`);
-    expect(last.number).toBe('SJ/2026-27/0003');
+    expect(last.number).toBe('VK/2026-27/0003');
     await issue('W-106', { issuedOn: '2026-12-01' }).expect(409);
   });
 

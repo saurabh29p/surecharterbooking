@@ -1,6 +1,7 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import {
+  DEFAULT_BRAND,
   financialYear,
   formatInvoiceNumber,
   GST_KEYS,
@@ -25,7 +26,7 @@ const safe = (s: string) => s.replace(/[^A-Za-z0-9-]+/g, '-').replace(/^-|-$/g, 
 
 /**
  * GST tax invoices (BRIEF.md §5.5, rule 5): full-value invoices from the accepted quote, numbered
- * per business profile and financial year (SJ/2026-27/0001, restarting each 1 April). Blocked until
+ * per business profile and financial year (VK/2026-27/0001, restarting each 1 April). Blocked until
  * the profile has its GSTIN and address, the CA has confirmed the GST rate and SAC code, and the
  * client's billing address is known. Numbers are never reused; a mistake is cancelled, not deleted.
  */
@@ -146,7 +147,7 @@ export class InvoicesService {
         number,
         issuedOn: date,
         supplier: {
-          brandName: p.brand_name ?? 'ShubhJets',
+          brandName: p.brand_name ?? DEFAULT_BRAND,
           legalName: p.legal_name,
           address: p.registered_address,
           gstin: p.gstin,
@@ -194,7 +195,7 @@ export class InvoicesService {
       const file = await this.files.upload(
         {
           buffer: pdf,
-          originalName: `${safe(p.brand_name ?? 'ShubhJets')}-Invoice-${safe(number)}.pdf`,
+          originalName: `${safe(p.brand_name ?? DEFAULT_BRAND)}-Invoice-${safe(number)}.pdf`,
           purpose: 'document',
         },
         m,

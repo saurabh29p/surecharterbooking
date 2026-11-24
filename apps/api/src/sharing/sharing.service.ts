@@ -8,11 +8,13 @@ import {
 } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import {
+  brandLine,
+  DEFAULT_BRAND,
   DOCUMENT_TYPE_LABELS,
   formatDateTime,
   formatINR,
-  LIVE_QUOTE_STATUSES,
   linkState,
+  LIVE_QUOTE_STATUSES,
   mailtoUrl,
   shareMessage,
   shareSubject,
@@ -128,7 +130,7 @@ export class SharingService {
       invoiceNumber: d.invoice_number,
       weddingCode: d.code,
       city: d.venue_city,
-      brand: d.brand_name ?? 'ShubhJets',
+      brand: d.brand_name ?? DEFAULT_BRAND,
       legalName: d.legal_name,
       gstin: d.gstin,
       recipient: {
@@ -381,7 +383,7 @@ export class SharingService {
   async open(token: string, opts: { count: boolean } = { count: true }) {
     const m = this.ds.manager;
     const s = await this.byToken(m, token);
-    if (!s) return { state: 'UNKNOWN' as const, brand: 'ShubhJets' };
+    if (!s) return { state: 'UNKNOWN' as const, brand: DEFAULT_BRAND };
     const info = await this.info(s.document_id, m);
     const state = linkState({ expiresAt: s.expires_at, revokedAt: s.revoked_at }, this.now());
     if (state !== 'ACTIVE') return { state, brand: info.brand };
@@ -411,7 +413,7 @@ export class SharingService {
       brand: info.brand,
       legalLine:
         [
-          info.legalName ? `${info.brand} is a service of ${info.legalName}` : null,
+          info.legalName ? brandLine(info.brand, info.legalName) : null,
           info.gstin ? `GSTIN ${info.gstin}` : null,
         ]
           .filter(Boolean)

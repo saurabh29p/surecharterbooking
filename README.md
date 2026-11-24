@@ -1,11 +1,11 @@
-# ShubhJets — Wedding Charter Desk
+# Vaanika — Wedding Charter Desk
 
 Private jets for Indian destination weddings, sold through wedding planners.
 A service of Indicgems Exim LLP.
 
 This repo will hold:
 - `apps/desk` + `apps/api`: the internal system (see [BRIEF.md](BRIEF.md))
-- `apps/site`: the public ShubhJets website (see [WEBSITE.md](WEBSITE.md))
+- `apps/site`: the public Vaanika website (see [WEBSITE.md](WEBSITE.md))
 - UI/UX standards for both: [UX.md](UX.md)
 
 ## Start building with Claude Code
@@ -176,7 +176,7 @@ The public website posts to three endpoints that need no login:
 | `POST /api/public/partners` | "For planners & hotels" form → a partner to follow up today |
 | `POST /api/public/events` | WhatsApp / call taps (`{"kind":"WHATSAPP","page":"/", "utmSource":…}`), counted per lead source |
 
-- Set `SITE_ORIGINS` to the website's addresses (e.g. `https://shubhjets.com,https://www.shubhjets.com`).
+- Set `SITE_ORIGINS` to the website's addresses (e.g. `https://flyvaanika.com,https://www.flyvaanika.com`).
   Only these may call the endpoints from a browser.
 - Both forms need `consent: true`. Send an empty hidden `companyWebsite` field and `elapsedMs` (how long the form was
   open); filled hidden fields and forms sent in under 2.5 seconds are treated as spam but still get `{ ok: true }`.

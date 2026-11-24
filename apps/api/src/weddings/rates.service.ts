@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import {
+  DEFAULT_BRAND,
   formatDateTime,
   isHelicopter,
   rankOperatorsForLeg,
@@ -162,7 +163,8 @@ export class RatesService {
       [operatorId],
     );
     const [brand] = await m.query(
-      `SELECT coalesce(brand_name, 'ShubhJets') AS name FROM business_profile WHERE is_default`,
+      `SELECT coalesce(brand_name, $1) AS name FROM business_profile WHERE is_default`,
+      [DEFAULT_BRAND],
     );
     const legs: {
       seq: number;
@@ -189,7 +191,7 @@ export class RatesService {
       operatorName: op.name,
       weddingCode: w.code,
       venueCity: w.venueCity,
-      brand: brand?.name ?? 'ShubhJets',
+      brand: brand?.name ?? DEFAULT_BRAND,
       legs: legs.map((l) => ({
         seq: l.seq,
         from: l.from_iata,

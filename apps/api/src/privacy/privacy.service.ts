@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { quoteReference } from '@shubhjets/shared';
+import { DEFAULT_BRAND, quoteReference } from '@shubhjets/shared';
 import type { DataSource, EntityManager } from 'typeorm';
 import { AuditService } from '../audit/audit.service.js';
 import { FilesService } from '../files/files.service.js';
@@ -176,8 +176,7 @@ export class PrivacyService {
     );
     const base = {
       exportedAt: this.now(),
-      about:
-        'A copy of the personal data ShubhJets holds about you, under the Digital Personal Data Protection Act, 2023.',
+      about: `A copy of the personal data ${DEFAULT_BRAND} holds about you, under the Digital Personal Data Protection Act, 2023.`,
       consents,
       enquiries,
       documentsSentToYou: shares,

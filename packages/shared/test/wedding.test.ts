@@ -81,7 +81,7 @@ describe('rate request message', () => {
       operatorName: 'Operator A',
       weddingCode: 'W-102',
       venueCity: 'Jaipur',
-      brand: 'ShubhJets',
+      brand: 'Vaanika',
       legs: [
         {
           seq: 1,
@@ -109,7 +109,7 @@ describe('rate request message', () => {
         },
       ],
     });
-    expect(text).toContain('Rate request from ShubhJets for a wedding in Jaipur (ref W-102):');
+    expect(text).toContain('Rate request from Vaanika for a wedding in Jaipur (ref W-102):');
     expect(text).toContain(
       '• Leg 1: New Delhi (DEL) → Jaipur (JAI), 8 Dec 2026, 09:00–12:00, 8 passengers, midsize jet or larger',
     );

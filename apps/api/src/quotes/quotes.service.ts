@@ -1,12 +1,12 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import {
-  HELI_SERVICE_LABELS,
-  hourlyInternalAmounts,
-  type HourlyPricing,
   computeQuoteTotals,
+  DEFAULT_BRAND,
   describeGap,
   formatDateTime,
+  HELI_SERVICE_LABELS,
+  hourlyInternalAmounts,
   LIVE_QUOTE_STATUSES,
   looserGaps,
   paymentParts,
@@ -14,6 +14,7 @@ import {
   quoteReference,
   sameSchedule,
   strictestSchedule,
+  type HourlyPricing,
   type CancellationSchedule,
   type CommissionBasis,
   type CommissionDefault,
@@ -885,7 +886,7 @@ export class QuotesService {
       ).toISOString(),
       preview: q.status === 'DRAFT',
       business: {
-        brandName: profile.brandName ?? 'ShubhJets',
+        brandName: profile.brandName ?? DEFAULT_BRAND,
         legalName: profile.legalName,
         llpin: profile.llpin,
         gstin: profile.gstin,

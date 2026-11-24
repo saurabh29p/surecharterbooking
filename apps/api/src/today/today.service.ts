@@ -1,20 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import {
-  LEAD_SOURCES,
-  PARTNER_STATUSES,
-  WEDDING_STATUSES,
   addDays,
   buildTodayActions,
+  DEFAULT_BRAND,
   heliChecksMissing,
   istToInstant,
+  LEAD_SOURCES,
   monthRange,
   monthTracker,
   operatorExpiries,
+  PARTNER_STATUSES,
   quoteReference,
   seasonRange,
   snoozeUntil,
   toIstDate,
+  WEDDING_STATUSES,
   type AircraftCategory,
   type Contact,
   type HeliChecks,
@@ -121,7 +122,7 @@ export class TodayService {
     return {
       now,
       today,
-      brand: profile?.brandName ?? 'ShubhJets',
+      brand: profile?.brandName ?? DEFAULT_BRAND,
       chaseAfterHours: chase,
       quoteWarnHours: warn,
       guestIdsDueDays: ids,

@@ -16,7 +16,7 @@ describe('share messages', () => {
       shareMessage({
         type: 'QUOTE',
         recipientName: 'Asha',
-        brand: 'ShubhJets',
+        brand: 'Vaanika',
         city: 'Jaipur',
         reference: 'W-102 · Q1',
         total: '₹12,33,100',
@@ -24,7 +24,7 @@ describe('share messages', () => {
         link,
       }),
     ).toBe(
-      `Namaste Asha,\n\nhere is our quote W-102 · Q1 for the Jaipur wedding flights: ₹12,33,100 including GST, valid until 19 Nov 2026, 2:30 pm IST. You can view it and accept it here:\n${link}\n\nThank you,\nShubhJets`,
+      `Namaste Asha,\n\nhere is our quote W-102 · Q1 for the Jaipur wedding flights: ₹12,33,100 including GST, valid until 19 Nov 2026, 2:30 pm IST. You can view it and accept it here:\n${link}\n\nThank you,\nVaanika`,
     );
   });
 
@@ -38,7 +38,7 @@ describe('share messages', () => {
     ] as const) {
       const m = shareMessage({
         type,
-        brand: 'ShubhJets',
+        brand: 'Vaanika',
         weddingCode: 'W-104',
         reference: 'SJ/2026-27/0001',
         link,
@@ -47,9 +47,9 @@ describe('share messages', () => {
       expect(m).toContain(link);
       expect(m).not.toMatch(/margin|net rate|commission/i);
     }
-    expect(
-      shareSubject({ type: 'INVOICE', brand: 'ShubhJets', reference: 'SJ/2026-27/0001' }),
-    ).toBe('Tax invoice SJ/2026-27/0001 · ShubhJets');
+    expect(shareSubject({ type: 'INVOICE', brand: 'Vaanika', reference: 'SJ/2026-27/0001' })).toBe(
+      'Tax invoice SJ/2026-27/0001 · Vaanika',
+    );
   });
 });
 

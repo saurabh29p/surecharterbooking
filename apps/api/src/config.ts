@@ -35,7 +35,7 @@ const EnvSchema = z
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
     API_PORT: z.coerce.number().int().positive().default(3000),
     DESK_ORIGIN: z.string().url().default('http://localhost:5173'),
-    /** The public website(s) allowed to post enquiries, comma-separated (e.g. https://shubhjets.com,https://www.shubhjets.com). */
+    /** The public website(s) allowed to post enquiries, comma-separated (e.g. https://flyvaanika.com,https://www.flyvaanika.com). */
     SITE_ORIGINS: z
       .string()
       .default('http://localhost:4321')
@@ -50,7 +50,7 @@ const EnvSchema = z
     /** Email from the app (Resend). Without a key the desk falls back to the phone's mail app. */
     RESEND_API_KEY: emptyAsUndefined(z.string().optional()),
     RESEND_API_URL: z.string().url().default('https://api.resend.com'),
-    /** Verified sender, e.g. "ShubhJets <quotes@yourdomain.in>". */
+    /** Verified sender, e.g. "Vaanika <quotes@flyvaanika.com>". */
     EMAIL_FROM: emptyAsUndefined(z.string().optional()),
     EMAIL_REPLY_TO: emptyAsUndefined(z.string().email().optional()),
     DATABASE_URL: z.string().url(),

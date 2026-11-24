@@ -7,6 +7,7 @@ import {
 import { InjectDataSource } from '@nestjs/typeorm';
 import {
   AGREEMENT_LABELS,
+  DEFAULT_BRAND,
   PLACEHOLDERS,
   templateProblems,
   toIstDate,
@@ -167,7 +168,7 @@ export class TemplatesService {
       kind,
       body,
       values: sampleValues(kind),
-      brandName: 'ShubhJets',
+      brandName: DEFAULT_BRAND,
       subtitle: 'Preview with sample data',
       watermark: 'PREVIEW · SAMPLE DATA',
     });

@@ -40,7 +40,7 @@ const fy = financialYear(new Date());
       :maxlength="10"
       :validate="validators.invoicePrefix"
       :server-error="errors.invoicePrefix"
-      :hint="`Invoices will be numbered ${(form.invoicePrefix || 'SJ').toUpperCase()}/${fy}/0001, restarting each 1 April`"
+      :hint="`Invoices will be numbered ${(form.invoicePrefix || 'VK').toUpperCase()}/${fy}/0001, restarting each 1 April`"
     />
   </div>
 </template>

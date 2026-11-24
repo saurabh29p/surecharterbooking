@@ -18,3 +18,4 @@ export * from './sharing.js';
 export * from './enquiry.js';
 export * from './today.js';
 export * from './helicopter.js';
+export * from './brand.js';

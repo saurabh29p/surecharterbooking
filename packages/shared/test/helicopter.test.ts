@@ -173,7 +173,7 @@ describe('helicopters', () => {
     const actions = buildTodayActions(facts, {
       now: new Date('2026-11-18T04:30:00Z'),
       today: '2026-11-18',
-      brand: 'ShubhJets',
+      brand: 'Vaanika',
       chaseAfterHours: 2,
       quoteWarnHours: 6,
       guestIdsDueDays: 7,

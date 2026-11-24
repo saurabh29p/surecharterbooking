@@ -61,7 +61,7 @@ describe('business profiles', () => {
         label: 'Delhi',
         stateCode: '07',
         isDefault: true,
-        invoicePrefix: 'SJ',
+        invoicePrefix: 'VK',
         gstin: null,
       });
       expect(res.body.readiness.missing).toEqual([
@@ -75,7 +75,7 @@ describe('business profiles', () => {
     });
 
     it('fills in later, step by step, and clears a field with an empty string', async () => {
-      const { body: p } = await api.create({ brandName: 'ShubhJets' }).expect(201);
+      const { body: p } = await api.create({ brandName: 'Vaanika' }).expect(201);
       await api
         .update(p.id, {
           legalName: 'Example Exim LLP',
@@ -238,10 +238,10 @@ describe('business profiles', () => {
         .expect(201);
       const next = (id: string, date: string) =>
         t.ds.transaction((m) => svc.nextInvoiceNumber(m, id, date));
-      expect((await next(delhi.id, '2026-12-12')).number).toBe('SJ/2026-27/0001');
-      expect((await next(delhi.id, '2027-03-31')).number).toBe('SJ/2026-27/0002');
+      expect((await next(delhi.id, '2026-12-12')).number).toBe('VK/2026-27/0001');
+      expect((await next(delhi.id, '2027-03-31')).number).toBe('VK/2026-27/0002');
       expect((await next(haryana.id, '2027-01-05')).number).toBe('SJHR/2026-27/0001');
-      expect((await next(delhi.id, '2027-04-01')).number).toBe('SJ/2027-28/0001');
+      expect((await next(delhi.id, '2027-04-01')).number).toBe('VK/2027-28/0001');
     });
 
     it('do not burn a number when the invoice transaction fails', async () => {
@@ -257,7 +257,7 @@ describe('business profiles', () => {
       ).rejects.toThrow('PDF failed');
       expect(
         (await t.ds.transaction((m) => svc.nextInvoiceNumber(m, p.id, '2026-12-12'))).number,
-      ).toBe('SJ/2026-27/0001');
+      ).toBe('VK/2026-27/0001');
     });
   });
 });

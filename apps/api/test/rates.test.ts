@@ -80,7 +80,7 @@ describe('rates: requests, replies, comparison and choice', () => {
       ).body;
       expect(res).toHaveLength(2);
       expect(res[0].message).toContain(
-        'Rate request from ShubhJets for a wedding in Udaipur (ref W-101):',
+        'Rate request from Vaanika for a wedding in Udaipur (ref W-101):',
       );
       expect(res[0].message).toContain('• Leg 1: New Delhi (DEL) → Udaipur (UDR)');
       expect(res[0].whatsappUrl).toMatch(
