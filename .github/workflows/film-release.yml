@@ -1,0 +1,74 @@
+name: Film release
+
+# Rebuilds the Vaanika brand film from video/ (deterministic renders + the committed voice, music
+# and fonts) and attaches the files to a GitHub release. The large videos never enter git.
+# Trigger: push a tag named film-v* (for example: git tag film-v1.0 && git push origin film-v1.0).
+on:
+  push:
+    tags: ['film-v*']
+
+permissions:
+  contents: write
+
+jobs:
+  plate:
+    name: Render ${{ matrix.comp }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    strategy:
+      fail-fast: true
+      matrix:
+        comp: [FilmPlate, ReelsPlate, HeroLoop]
+    defaults:
+      run:
+        working-directory: video
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: video/package-lock.json
+      - run: npm ci
+      - run: npx remotion browser ensure
+      - run: node scripts/render.mjs ${{ matrix.comp }} out/renders/${{ matrix.comp }}.mov --concurrency=1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: plate-${{ matrix.comp }}
+          path: video/out/renders/${{ matrix.comp }}.mov
+          retention-days: 3
+          compression-level: 0
+
+  release:
+    name: Build and publish
+    needs: plate
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    defaults:
+      run:
+        working-directory: video
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: video/package-lock.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - run: pip install numpy scipy soundfile pyloudnorm
+      - run: npm ci
+      - run: npx remotion browser ensure
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: plate-*
+          path: video/out/renders
+          merge-multiple: true
+      - run: ./scripts/build.sh
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: gh release create "$TAG" out/release/* --title "Vaanika brand film ($TAG)" --notes-file RELEASE_NOTES.md

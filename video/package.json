@@ -1,0 +1,27 @@
+{
+  "name": "vaanika-film",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Vaanika brand film: Remotion + Three.js, original score and voiceover made in code.",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "still": "node scripts/stills.mjs",
+    "render": "node scripts/render.mjs"
+  },
+  "dependencies": {
+    "@react-three/fiber": "9.3.0",
+    "@remotion/cli": "4.0.547",
+    "@remotion/renderer": "4.0.547",
+    "@remotion/bundler": "4.0.547",
+    "@remotion/three": "4.0.547",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
+    "remotion": "4.0.547",
+    "three": "0.179.1"
+  },
+  "devDependencies": {
+    "@types/react": "19.1.10",
+    "@types/three": "0.179.0",
+    "typescript": "5.9.2"
+  }
+}

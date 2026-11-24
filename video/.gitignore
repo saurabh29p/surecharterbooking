@@ -1,0 +1,8 @@
+# Generated renders and large media stay out of git (attached to the GitHub release instead).
+node_modules/
+out/
+audio/mix.wav
+audio/stems/
+*.mov
+*.mp4
+!web/*.mp4
