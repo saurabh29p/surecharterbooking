@@ -42,7 +42,7 @@ export const S5Contrail: React.FC<{ variant: Variant }> = () => {
   const { width, height } = useVideoConfig();
   const { cam, look, fov } = contrailCamera(t, portrait);
   // light wipe: a diagonal gold edge crossing the frame left to right; midnight behind it
-  const wipe = easeInOutCubic(ramp(t, SWEEP, DUR - 0.35));
+  const wipe = easeInOutCubic(ramp(t, SWEEP, DUR - 0.12));
   const edge = lerp(-0.35, 1.35, wipe);
   const trail = (side: number) => {
     const pts: THREE.Vector3[] = [];
@@ -76,10 +76,10 @@ export const S5Contrail: React.FC<{ variant: Variant }> = () => {
           <div style={{
             position: 'absolute', inset: '-40%',
             background: `linear-gradient(${portrait ? 160 : 105}deg, rgba(244,227,181,0) ${edge * 100 * 0.556 + 20.5}%, rgba(255,226,160,0.85) ${edge * 100 * 0.556 + 23.2}%, rgba(217,188,120,0.25) ${edge * 100 * 0.556 + 24.5}%, rgba(244,227,181,0) ${edge * 100 * 0.556 + 27}%)`,
-            opacity: smooth(ramp(t, SWEEP - 0.05, SWEEP + 0.2)) * (1 - smooth(ramp(t, DUR - 0.45, DUR - 0.05))),
+            opacity: smooth(ramp(t, SWEEP - 0.05, SWEEP + 0.2)) * (1 - smooth(ramp(t, DUR - 0.25, DUR))),
             mixBlendMode: 'screen', filter: 'blur(6px)',
           }} />
-          <CenterGlow x={width / 2} y={height * (portrait ? 0.44 : 0.5)} size={height * (portrait ? 0.16 : 0.24)} opacity={0.85 * smooth(ramp(t, DUR - 1.1, DUR))} />
+          <CenterGlow x={width / 2} y={height * (portrait ? 0.44 : 0.5)} size={height * (portrait ? 0.16 : 0.24)} opacity={0.95 * smooth(ramp(t, SWEEP + 0.15, DUR - 0.2))} />
         </AbsoluteFill>
       )}
     </AbsoluteFill>

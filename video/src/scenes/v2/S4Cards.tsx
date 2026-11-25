@@ -43,7 +43,7 @@ const GoldIcon: React.FC<{ kind: Icon; size: number; glow: number }> = ({ kind, 
 const Card: React.FC<{ i: number; t: number; w: number; h: number; portrait: boolean }> = ({ i, t, w, h, portrait }) => {
   const c = CARDS[i];
   const arrive = easeOutCubic(ramp(t, IN[i], IN[i] + 0.7));
-  const op = smooth(ramp(t, IN[i], IN[i] + 0.45));
+  const op = smooth(ramp(t, IN[i], IN[i] + 0.35));
   const lit = smooth(ramp(t, LIT[i] - 0.1, LIT[i] + 0.35)) * (i < 3 ? 1 - 0.75 * smooth(ramp(t, LIT[i + 1] - 0.1, LIT[i + 1] + 0.4)) : 1);
   const sweep = lerp(-25, 125, ramp(t, LIT[i] - 0.05, LIT[i] + 1.1));
   const exit = 0;

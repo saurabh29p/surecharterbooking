@@ -80,7 +80,7 @@ const World: React.FC<{ tau: number; s: number }> = ({ tau, s }) => {
       </group>
       {[1, -1].map((sd) => (
         <Ribbon key={sd} points={trail(sd)} time={tau} width={(u) => 0.15 + (1 - u) * 1.1}
-          alpha={(u) => smooth(ramp(u, 0.1, 0.75)) * smooth(ramp(1 - u, 0.04, 0.3)) * 0.55 * trailOn} color="#e8b56a" core="#ffe6b8" intensity={0.9} />
+          alpha={(u) => smooth(ramp(u, 0.1, 0.75)) * smooth(ramp(1 - u, 0.04, 0.3)) * 0.55 * trailOn} color="#e8b56a" core="#ffe6b8" intensity={0.9} nearFade={[14, 40]} />
       ))}
     </>
   );

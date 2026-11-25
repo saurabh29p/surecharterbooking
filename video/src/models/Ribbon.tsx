@@ -16,7 +16,9 @@ export const Ribbon: React.FC<{
   intensity?: number;
   time?: number;
   maxPoints?: number;
-}> = ({ points, width, alpha, color = '#e2b867', core = '#fff1cf', intensity = 1, time = 0, maxPoints = 400 }) => {
+  /** Fade out within this distance range from the camera [gone, full] (metres): no fans near the lens. */
+  nearFade?: [number, number];
+}> = ({ points, width, alpha, color = '#e2b867', core = '#fff1cf', intensity = 1, time = 0, maxPoints = 400, nearFade = [0, 0] }) => {
   const { geo, mat } = useMemo(() => {
     const geo = new THREE.BufferGeometry();
     const n = maxPoints;
@@ -33,9 +35,9 @@ export const Ribbon: React.FC<{
     geo.boundingSphere = new THREE.Sphere(new THREE.Vector3(), 1e6);
     const mat = new THREE.ShaderMaterial({
       transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
-      uniforms: { uCol: { value: new THREE.Color() }, uCore: { value: new THREE.Color() }, uI: { value: 1 }, uTime: { value: 0 } },
+      uniforms: { uCol: { value: new THREE.Color() }, uCore: { value: new THREE.Color() }, uI: { value: 1 }, uTime: { value: 0 }, uNear: { value: new THREE.Vector2() } },
       vertexShader: /* glsl */ `
-        attribute vec3 aTan; attribute vec3 aSide; attribute float aS; varying float vV; varying float vS; varying float vA; varying float vW;
+        attribute vec3 aTan; attribute vec3 aSide; attribute float aS; uniform vec2 uNear; varying float vV; varying float vS; varying float vA; varying float vW;
         void main(){
           vec3 wp = (modelMatrix * vec4(position, 1.)).xyz;
           vec3 view = normalize(cameraPosition - wp);
@@ -45,6 +47,7 @@ export const Ribbon: React.FC<{
           vV = aSide.x; vS = aS; vW = aSide.y;
           // seen end-on a camera-facing ribbon fans out into a wedge: fade those parts
           vA = aSide.z * smoothstep(.985, .9, abs(dot(t, view)));
+          if (uNear.y > 0.) vA *= smoothstep(uNear.x, uNear.y, length(cameraPosition - wp));
           gl_Position = projectionMatrix * viewMatrix * vec4(wp, 1.);
         }`,
       fragmentShader: /* glsl */ `
@@ -88,6 +91,7 @@ export const Ribbon: React.FC<{
   mat.uniforms.uCore.value.set(core);
   mat.uniforms.uI.value = intensity;
   mat.uniforms.uTime.value = time;
+  (mat.uniforms.uNear.value as THREE.Vector2).set(nearFade[0], nearFade[1]);
   if (n < 2) return null;
   return <mesh geometry={geo} material={mat} frustumCulled={false} renderOrder={7} />;
 };

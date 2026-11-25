@@ -41,12 +41,7 @@
     "jetRotate": 7.5,
     "jetLiftoff": 7.8,
     "heliTouchdown": 13.75,
-    "cardsIn": [
-      15.0,
-      15.25,
-      15.5,
-      15.75
-    ],
+    "cardsIn":[14.8,15.0,15.2,15.4],
     "cards": [
       15.42,
       17.42,
