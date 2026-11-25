@@ -87,4 +87,10 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           if [ "$GITHUB_REF_TYPE" = tag ]; then TAG="$GITHUB_REF_NAME"; else TAG="$(tr -d '[:space:]' < RELEASE_VERSION)"; fi
-          gh release create "$TAG" out/release/* --target "$GITHUB_SHA" --title "Vaanika brand film ($TAG)" --notes-file RELEASE_NOTES.md
+          # re-running for the same version replaces the files (touch RELEASE_VERSION to rebuild)
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" out/release/* --clobber
+            gh release edit "$TAG" --notes-file RELEASE_NOTES.md
+          else
+            gh release create "$TAG" out/release/* --target "$GITHUB_SHA" --title "Vaanika brand film ($TAG)" --notes-file RELEASE_NOTES.md
+          fi
