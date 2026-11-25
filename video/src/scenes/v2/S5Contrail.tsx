@@ -1,5 +1,6 @@
 import React from 'react';
-import { AbsoluteFill } from 'remotion';
+import { AbsoluteFill, useVideoConfig } from 'remotion';
+import { CenterGlow } from '../../overlay/CenterGlow';
 import * as THREE from 'three';
 import { HdriSky, useHdrEnv } from '../../lib/hdri';
 import { useBg, useOverlay, usePlate } from '../../lib/layer';
@@ -38,6 +39,7 @@ export const S5Contrail: React.FC<{ variant: Variant }> = () => {
   const t = useTime();
   const bg = useBg(); const plate = usePlate(); const overlay = useOverlay();
   const portrait = useIsPortrait();
+  const { width, height } = useVideoConfig();
   const { cam, look, fov } = contrailCamera(t, portrait);
   // light wipe: a diagonal gold edge crossing the frame left to right; midnight behind it
   const wipe = easeInOutCubic(ramp(t, SWEEP, DUR - 0.35));
@@ -63,9 +65,12 @@ export const S5Contrail: React.FC<{ variant: Variant }> = () => {
       {overlay && (
         <AbsoluteFill style={{ pointerEvents: 'none' }}>
           {/* midnight follows the gold edge; the edge itself is a narrow band, never a full-frame flash */}
+          {/* behind the edge: the logo scene's own midnight backdrop (radial), so the cut at the bloom is seamless */}
           <div style={{
-            position: 'absolute', inset: '-40%',
-            background: `linear-gradient(${portrait ? 160 : 105}deg, #0B1020 0%, #0B1020 ${edge * 100 * 0.556 + 22}%, rgba(11,16,32,0) ${edge * 100 * 0.556 + 26}%)`,
+            position: 'absolute', inset: 0,
+            background: 'radial-gradient(ellipse 75% 75% at 50% 50%, #1a2048 0%, #121838 45%, #090c18 100%)',
+            WebkitMaskImage: `linear-gradient(${portrait ? 160 : 105}deg, #000 0%, #000 ${edge * 100 - 2}%, transparent ${edge * 100 + 5}%)`,
+            maskImage: `linear-gradient(${portrait ? 160 : 105}deg, #000 0%, #000 ${edge * 100 - 2}%, transparent ${edge * 100 + 5}%)`,
             opacity: wipe > 0 ? 1 : 0,
           }} />
           <div style={{
@@ -74,6 +79,7 @@ export const S5Contrail: React.FC<{ variant: Variant }> = () => {
             opacity: smooth(ramp(t, SWEEP - 0.05, SWEEP + 0.2)) * (1 - smooth(ramp(t, DUR - 0.45, DUR - 0.05))),
             mixBlendMode: 'screen', filter: 'blur(6px)',
           }} />
+          <CenterGlow x={width / 2} y={height * (portrait ? 0.44 : 0.5)} size={height * (portrait ? 0.16 : 0.24)} opacity={0.85 * smooth(ramp(t, DUR - 1.1, DUR))} />
         </AbsoluteFill>
       )}
     </AbsoluteFill>

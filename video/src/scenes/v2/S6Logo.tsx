@@ -8,6 +8,7 @@ import { GoldDust } from '../../models/GoldDust';
 import { ElState, LogoMark3D, MarkName, useMark } from '../../models/LogoMark3D';
 import { Sparkle } from '../../models/Sparkle';
 import { EndCard, endCardLayout } from '../../overlay/EndCard';
+import { CenterGlow } from '../../overlay/CenterGlow';
 import type { Variant } from '../../Film';
 
 const T0 = TL.scenes.logo[0];
@@ -83,6 +84,7 @@ export const S6Logo: React.FC<{ variant: Variant }> = () => {
           <Sparkle position={crescentWorld} size={unitPx * wpp * 70} intensity={spark} rotation={tau * 0.4} />
         </group>
       </Stage>}
+      {overlay && <CenterGlow x={width / 2} y={height * (portrait ? 0.44 : 0.5)} size={height * (portrait ? 0.16 : 0.24)} opacity={0.85 * (1 - smooth(ramp(tau, 0.05, 0.8)))} />}
       {overlay && <AbsoluteFill>
         <EndCard markOpacity={crossfade} wordAt={at(E.wordmark)} tagAt={at(E.privateAviation)} flyAt={at(E.flyVaanika)} urlAt={at(E.url)} sweep={endSweep} drift={drift} />
       </AbsoluteFill>}

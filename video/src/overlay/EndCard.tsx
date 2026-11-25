@@ -59,7 +59,7 @@ export const EndCard: React.FC<{ markOpacity: number; wordAt: number; tagAt: num
       </div>
       <div style={{
         position: 'absolute', left: 0, right: 0, top: below + (portrait ? 96 : 50), textAlign: 'center',
-        fontFamily: SERIF, fontStyle: 'italic', fontWeight: 500, fontSize: portrait ? 104 : 88, lineHeight: 1.1,
+        fontFamily: SERIF, fontStyle: 'italic', fontWeight: 500, fontSize: portrait ? 104 : 96, lineHeight: 1.1,
         fontVariationSettings: '"opsz" 72', opacity: fly, transform: `translateY(${(1 - fly) * 16}px)`, filter: `blur(${(1 - fly) * 6}px)`,
       }}>
         <span style={{
@@ -68,9 +68,9 @@ export const EndCard: React.FC<{ markOpacity: number; wordAt: number; tagAt: num
         }}>Fly Vaanika.</span>
       </div>
       <div style={{
-        position: 'absolute', left: 0, right: 0, top: below + (portrait ? 240 : 168), textAlign: 'center',
-        fontFamily: SANS, fontWeight: 600, fontSize: portrait ? 44 : 36, letterSpacing: '0.3em', color: '#F3EDE2',
-        opacity: url * 0.97, transform: `translateY(${(1 - url) * 10}px)`, paddingLeft: '0.3em',
+        position: 'absolute', left: 0, right: 0, top: below + (portrait ? 240 : 180), textAlign: 'center',
+        fontFamily: SANS, fontWeight: 600, fontSize: portrait ? 46 : 44, letterSpacing: '0.26em', color: '#F3EDE2',
+        opacity: url * 0.97, transform: `translateY(${(1 - url) * 10}px)`, paddingLeft: '0.26em',
       }}>
         FLYVAANIKA.COM
       </div>
