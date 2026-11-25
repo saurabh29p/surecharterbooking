@@ -70,7 +70,7 @@ const hullPatch = (d0: number, d1: number, a0: number, a1: number, off: number, 
 /** Lifting surface with an airfoil section; aChord attribute (0 = leading edge) for the metal strip. */
 const surface = (rootLE: number, rootTE: number, tipLE: number, tipTE: number, span: number, rootT: number, tipT: number, dihedral: number) => {
   const NS = 24, NC = 28;
-  const pos: number[] = [], chord: number[] = [], idx: number[] = [];
+  const pos: number[] = [], chord: number[] = [], spanA: number[] = [], sideA: number[] = [], idx: number[] = [];
   for (let i = 0; i <= NS; i++) {
     const k = i / NS;
     const le = rootLE + (tipLE - rootLE) * k, te = rootTE + (tipTE - rootTE) * k;
@@ -84,7 +84,7 @@ const surface = (rootLE: number, rootTE: number, tipLE: number, tipTE: number, s
         const camber = t * 0.25 * Math.sin(Math.PI * cc);
         const y = (side === 0 ? thick : -thick) + camber + span * k * Math.tan(dihedral);
         pos.push(-x, y, span * k);
-        chord.push(cc);
+        chord.push(cc); spanA.push(k); sideA.push(side);
       }
   }
   const row = (NC + 1) * 2;
@@ -92,6 +92,8 @@ const surface = (rootLE: number, rootTE: number, tipLE: number, tipTE: number, s
   const g = new THREE.BufferGeometry();
   g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
   g.setAttribute('aChord', new THREE.Float32BufferAttribute(chord, 1));
+  g.setAttribute('aSpan', new THREE.Float32BufferAttribute(spanA, 1));
+  g.setAttribute('aLower', new THREE.Float32BufferAttribute(sideA, 1));
   g.setIndex(idx);
   g.computeVertexNormals();
   return g;
@@ -135,8 +137,23 @@ export const JetV2: React.FC<{ gear?: number; strobe?: number; beacon?: number; 
     const plain = new THREE.MeshPhysicalMaterial({ color: '#f3f1ec', roughness: 0.22, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.04, envMapIntensity: 1.0 });
     const wing = new THREE.MeshPhysicalMaterial({ color: '#e6e5e1', roughness: 0.28, metalness: 0.1, clearcoat: 0.9, clearcoatRoughness: 0.06, envMapIntensity: 1.0 });
     wing.onBeforeCompile = (sh) => {
-      sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nattribute float aChord; varying float vChord;').replace('#include <begin_vertex>', '#include <begin_vertex>\nvChord = aChord;');
-      sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying float vChord;').replace('#include <metalnessmap_fragment>', `#include <metalnessmap_fragment>
+      sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nattribute float aChord, aSpan, aLower; varying float vChord, vSpan, vLower;').replace('#include <begin_vertex>', '#include <begin_vertex>\nvChord = aChord; vSpan = aSpan; vLower = aLower;');
+      sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying float vChord, vSpan, vLower;').replace('#include <metalnessmap_fragment>', `#include <metalnessmap_fragment>
+        {
+          // panels: span-wise skin joints, the spar lines, flap-track fairings under the trailing edge,
+          // and a soft occlusion toward the wing root (all stronger on the underside)
+          float joints = smoothstep(.006, .0, abs(fract(vSpan * 9.) - .5) - .494);
+          float spars = smoothstep(.004, .0, abs(vChord - .18)) + smoothstep(.004, .0, abs(vChord - .62));
+          float tracks = 0.;
+          for (int i = 0; i < 3; i++) { float sp = .28 + float(i) * .2; tracks += smoothstep(.035, .022, abs(vSpan - sp)) * smoothstep(.6, .68, vChord); }
+          diffuseColor.rgb *= 1. - .05 * vLower * step(.5, fract(vSpan * 4.5));
+          float lines = clamp(joints * .7 + spars * .5, 0., 1.) * (.35 + .65 * vLower);
+          diffuseColor.rgb *= 1. - .35 * lines;
+          diffuseColor.rgb = mix(diffuseColor.rgb, vec3(.42, .43, .46), clamp(tracks, 0., 1.) * vLower);
+          diffuseColor.rgb *= mix(1., mix(.5, 1., smoothstep(.0, .22, vSpan)), vLower);
+          diffuseColor.rgb *= mix(1., .82 + .18 * smoothstep(1., .3, vChord), vLower);
+          roughnessFactor = mix(roughnessFactor, .45, vLower * .6);
+        }
         float le = smoothstep(.075, .055, vChord);
         diffuseColor.rgb = mix(diffuseColor.rgb, vec3(.82, .83, .86), le); metalnessFactor = mix(metalnessFactor, 1., le); roughnessFactor = mix(roughnessFactor, .14, le);
         float flap = smoothstep(.005, .0, abs(vChord - .78)) * .6; diffuseColor.rgb *= 1. - flap * .5;`);

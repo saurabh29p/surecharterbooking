@@ -43,7 +43,7 @@ export const Runway: React.FC<{ time: number; extent?: [number, number] }> = ({ 
           vec3 field = mix(vec3(.12, .1, .07), vec3(.2, .17, .11), vn(vW.xz * .03)) * (.8 + .4 * texture2D(tDiff, uv * .3).r);
           vec3 base = mix(field, asph, onR);
           float pm = paintMask();
-          diffuseColor.rgb = mix(base, vec3(.78, .78, .74) * (.85 + .15 * texture2D(tDiff, uv * 2.).r), pm);`)
+          diffuseColor.rgb = mix(base, vec3(.55, .55, .52) * (.85 + .15 * texture2D(tDiff, uv * 2.).r), pm);`)
         .replace('#include <roughnessmap_fragment>', `float roughnessFactor = mix(.95, .62 + .3 * texture2D(tRough, uv).g, onR);
           roughnessFactor = mix(roughnessFactor, .55, pm);`)
         .replace('#include <normal_fragment_maps>', `{

@@ -10,14 +10,16 @@ export const Moon: React.FC<{ dir: THREE.Vector3; angle: number; intensity?: num
     vertexShader: `varying vec2 vUv; void main(){ vUv = uv * 2. - 1.; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.); }`,
     fragmentShader: /* glsl */ `${NOISE} uniform float uI; varying vec2 vUv;
       void main(){
-        vec2 p = vUv * 1.6; float r = length(p);
+        vec2 p = vUv * vec2(1., -1.) * 1.6; float r = length(p);   // plane faces the origin upside down: flip so the horns point up
         float aa = .02;
         float disc = smoothstep(1. + aa, 1. - aa, r);
         float cut = smoothstep(.93 - aa, .93 + aa, length(p - vec2(0., .48)));
         float maria = .78 + .22 * fbm(p * 2.3 + 4.);
         vec3 c = vec3(1., .93, .8) * maria;
-        vec3 col = c * disc * cut * uI + c * disc * (1. - cut) * .012 * uI;
-        float halo = exp(-max(r - 1., 0.) * 4.) * .06 * uI * (1. - disc) * smoothstep(1.58, 1.15, r);
+        vec3 col = c * disc * cut * uI + c * disc * (1. - cut) * .02 * uI;
+        // the glow hugs the lit crescent only (a halo round the whole disc reads as an eclipse)
+        float lit = smoothstep(.9, 1.35, length(p - vec2(0., .48)));
+        float halo = exp(-max(r - 1., 0.) * 4.) * .06 * uI * (1. - disc) * smoothstep(1.58, 1.15, r) * lit;
         gl_FragColor = vec4(col + vec3(.8, .85, 1.) * halo, 1.);
       }`,
   }), []);

@@ -96,7 +96,8 @@ export const jetCamera = (tau: number, portrait: boolean) => {
   const k = smooth(ramp(tau, 3.0, 5.0));
   const behind = lerp(1.5, 5, smooth(ramp(tau, 0, 3))) + 36 * Math.pow(k, 1.4);
   const side = portrait ? 25 : 24;
-  const cam = new THREE.Vector3(pose.pos.x - behind, lerp(0.9, 2.4, k), lerp(side, 7, k));
+  // eye level between the wing root and tip, so the near wing reads edge-on instead of as a slab
+  const cam = new THREE.Vector3(pose.pos.x - behind, lerp(1.8, 2.6, k), lerp(side, 7, k));
   const look = pose.pos.clone().add(new THREE.Vector3(lerp(portrait ? 2.5 : -0.5, 2, k), lerp(portrait ? -0.2 : -0.7, 0.4, k), 0));
   return { s, cam, look, pose, fov: portrait ? lerp(22, 20, k) : lerp(24, 21, k) };
 };

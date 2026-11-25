@@ -86,7 +86,7 @@ const World: React.FC<{ t: number }> = ({ t }) => {
   return (
     <>
       <HdriSky name={JET_SKY} rot={JET_SKY_ROT + 1.1} equi={env?.equi ?? null} exposure={0.1} grade={DUSK_GRADE} ground="#0d1020" elevShift={-6} />
-      <directionalLight position={SUN_DIR.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), -1.1).setY(0.12).normalize().multiplyScalar(400)} color="#ffb767" intensity={3.6} />
+      <directionalLight position={SUN_DIR.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), -1.1).setY(0.12).normalize().multiplyScalar(400)} color="#ffb767" intensity={2.4} />
       <hemisphereLight args={['#33406e', '#14121a', 0.4]} />
       <group position={j} rotation={new THREE.Euler(-0.32, YAW, 0.03, 'YXZ')}>
         <JetV2 gear={0} exhaust={0.1} strobe={Math.max(0, 1 - ((t + 0.3) % 1.0) / 0.06)} beacon={0.6} />
