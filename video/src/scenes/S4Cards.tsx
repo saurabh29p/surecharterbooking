@@ -58,7 +58,7 @@ export const S4Cards: React.FC<{ variant: Variant }> = () => {
   const camZ = portrait ? lerp(14.2, 13.2, p) : lerp(14.6, 13.3, p);
   const camX = lerp(-0.4, 0.4, p);
   // the wipe follows where the comet head *appears* on screen (it flies close to the lens)
-  const screen = (x: number, y: number, z: number) => (portrait ? -(y - 0.1) : x - camX) / Math.max(camZ - z, 0.5);
+  const screen = (x: number, y: number, z: number) => (portrait ? y - 0.1 : x - camX) / Math.max(camZ - z, 0.5);
   const progress = screen(headP.x, headP.y, headP.z);
   const fadeOut = smooth(ramp(tau, END - 0.55, END));
   return (
@@ -77,7 +77,7 @@ export const S4Cards: React.FC<{ variant: Variant }> = () => {
           const sweep = tau < 6.6 ? sweep1 : sweep2;
           const pos = screen(l.x, l.y, l.z);
           const half = (portrait ? CH : CW) / 2 / (camZ - l.z);
-          const dis = smooth(ramp(progress, pos - half * 0.9, pos + half * 1.1));
+          const dis = tau < SWEEP - 0.1 ? 0 : smooth(ramp(progress, pos - half * 0.9, pos + half * 1.1));
           return (
             <group key={i} position={[l.x, l.y + (1 - e) * -1.3 + idle, l.z + (1 - e) * -1.5]} rotation={[(1 - e) * 0.55 + idle * 0.3, l.ry + (1 - e) * (i % 2 ? -0.5 : 0.5), 0]}>
               <GlassCard map={tex[i]} size={[CW, CH]} opacity={op} sweep={sweep} dissolve={dis} seed={i * 3.7} time={tau} />

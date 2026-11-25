@@ -36,7 +36,8 @@ def frames(p):
 f = frames(f'{W}/hero-loop-720p.mp4')
 steps = np.abs(np.diff(f, axis=0)).mean((1, 2))
 seam = np.abs(f[-1] - f[0]).mean()
-print(f'   hero loop: {len(f)} frames, seam diff {seam:.2f} vs median frame step {np.median(steps):.2f} (max {steps.max():.2f})')
+ok &= seam < 1.0
+print(f'   hero loop: {len(f)} frames, seam (last->first) {seam:.2f} mean luma diff; normal steps median {np.median(steps):.2f}, keyframe steps up to {steps.max():.2f}; {"invisible" if seam < 1.0 else "VISIBLE JUMP"} (< 1.0)')
 left = f[:, :, :107].mean(); right = f[:, :, 107:].mean()
 print(f'   hero loop: left third mean luma {left:.1f} vs rest {right:.1f}')
 print('ALL OK' if ok else 'SOME CHECKS FAILED')

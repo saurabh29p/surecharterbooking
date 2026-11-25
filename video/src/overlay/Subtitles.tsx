@@ -14,7 +14,7 @@ export const Subtitles: React.FC = () => {
   if (!c) return null;
   const a = smooth(ramp(t, c.start - 0.12, c.start + 0.08)) * (1 - smooth(ramp(t, c.end - 0.05, c.end + 0.12)));
   return (
-    <div style={{ position: 'absolute', left: 0, right: 0, ...(portrait ? { top: '70%' } : { bottom: '7.5%' }), display: 'flex', justifyContent: 'center', opacity: a }}>
+    <div style={{ position: 'absolute', left: 0, right: 0, ...(portrait ? { top: t > 27 ? '76%' : '70%' } : { bottom: '7.5%' }), display: 'flex', justifyContent: 'center', opacity: a }}>
       <div style={{
         maxWidth: portrait ? '84%' : '70%', textAlign: 'center', textWrap: 'balance', fontFamily: SANS, fontWeight: 600,
         fontSize: portrait ? 54 : 44, lineHeight: 1.28, color: '#F3EDE2', letterSpacing: '0.005em',

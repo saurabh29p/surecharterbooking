@@ -20,7 +20,6 @@ export const XF = 2;
 
 const CLOUDS: CloudSpec[] = [
   { pos: [120, 70, -160], size: [260, 70], seed: 3.3, opacity: 0.55, lit: '#5f6894', shadow: '#0f1430', rim: '#c9a160', light: [0.7, 0.5], coverage: 0.55, scale: 2.4, drift: 0.008 },
-  { pos: [-10, 26, -90], size: [300, 60], seed: 7.1, opacity: 0.35, lit: '#4a5280', shadow: '#0c1028', rim: '#a88a58', light: [0.7, 0.4], coverage: 0.5, scale: 2.6, drift: 0.006 },
 ];
 
 const jetAt = (t: number) => {
@@ -41,7 +40,7 @@ export const HeroLoop: React.FC = () => {
   const blink = (t * 1.25) % 1 < 0.07 ? 1 : 0;
   return (
     <AbsoluteFill style={{ background: '#0B1020' }}>
-      <Stage post={{ bloomStrength: 0.8, bloomRadius: 1, bloomThreshold: 0.62, exposure: 1.05, grain: 0.02, vignette: 0.55, warmth: 0.55, saturation: 0.92 }}>
+      <Stage post={{ bloomStrength: 0.85, bloomRadius: 1, bloomThreshold: 0.6, exposure: 1.45, grain: 0.018, vignette: 0.45, warmth: 0.55, saturation: 0.9 }}>
         <Cam pos={[sway(0) * 0.6, 30 + sway(1) * 0.3, 40]} target={[60, 8, -700]} fov={32} roll={sway(2) * 0.002} />
         <NightWorld
           t={t}
@@ -53,11 +52,11 @@ export const HeroLoop: React.FC = () => {
         {trail.length > 1 && (
           <Ribbon points={trail} time={t} width={(u) => 0.6 + (1 - u) * 4.5} alpha={(u) => smooth(ramp(u, 0, 0.55)) * 0.75 * fadeTrail * (t > 11.1 ? 1 : 1)} color="#d8a85e" core="#ffeccb" intensity={1.1} />
         )}
-        <Glow position={[head.x, head.y, head.z]} color="#fff3e0" intensity={1.4 * on} size={7} />
-        <Glow position={[head.x, head.y, head.z]} color="#ffffff" intensity={3 * on * blink} size={5} />
+        <Glow position={[head.x, head.y, head.z]} color="#fff3e0" intensity={2.2 * on} size={9} />
+        <Glow position={[head.x, head.y, head.z]} color="#ffffff" intensity={4 * on * blink} size={7} />
       </Stage>
       {/* left third: dark and calm, for the site's headline */}
-      <AbsoluteFill style={{ background: 'linear-gradient(90deg, rgba(6,9,20,0.78) 0%, rgba(6,9,20,0.55) 22%, rgba(6,9,20,0.18) 40%, rgba(6,9,20,0) 55%)' }} />
+      <AbsoluteFill style={{ background: 'linear-gradient(90deg, rgba(6,9,20,0.72) 0%, rgba(6,9,20,0.5) 22%, rgba(6,9,20,0.15) 40%, rgba(6,9,20,0) 52%)' }} />
     </AbsoluteFill>
   );
 };
