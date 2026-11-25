@@ -1,14 +1,14 @@
 import React from 'react';
-import { AbsoluteFill, useCurrentFrame, useVideoConfig } from 'remotion';
-import { useBg, useOverlay, usePlate } from '../lib/layer';
-import { Cam, Stage } from '../lib/Stage';
-import { easeInOutCubic, easeOutCubic, FPS, lerp, ramp, smooth, TL } from '../lib/timing';
-import { Backdrop } from '../models/Backdrop';
-import { GoldDust } from '../models/GoldDust';
-import { ElState, LogoMark3D, MarkName, useMark } from '../models/LogoMark3D';
-import { Sparkle } from '../models/Sparkle';
-import { EndCard, endCardLayout } from '../overlay/EndCard';
-import type { Variant } from '../Film';
+import { AbsoluteFill, useVideoConfig } from 'remotion';
+import { useBg, useOverlay, usePlate } from '../../lib/layer';
+import { Cam, Stage, useTime } from '../../lib/Stage';
+import { easeInOutCubic, easeOutCubic, lerp, ramp, smooth, TL } from '../../lib/timing';
+import { Backdrop } from '../../models/Backdrop';
+import { GoldDust } from '../../models/GoldDust';
+import { ElState, LogoMark3D, MarkName, useMark } from '../../models/LogoMark3D';
+import { Sparkle } from '../../models/Sparkle';
+import { EndCard, endCardLayout } from '../../overlay/EndCard';
+import type { Variant } from '../../Film';
 
 const T0 = TL.scenes.logo[0];
 const E = TL.events;
@@ -17,11 +17,11 @@ const CAM_D = 40, FOV = 30;
 
 const easeOutBack = (x: number) => { const c1 = 1.3, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
 
+/** Logo bloom (kept from v1), larger, with a slow light sweep and parallax; end card holds two seconds. */
 export const S6Logo: React.FC<{ variant: Variant }> = () => {
-  const frame = useCurrentFrame();
   const bg = useBg(); const plate = usePlate(); const overlay = useOverlay();
   const { width, height } = useVideoConfig();
-  const tau = frame / FPS;
+  const tau = useTime();
   const built = plate ? useMark() : null;
   const portrait = height > width;
 
@@ -53,8 +53,8 @@ export const S6Logo: React.FC<{ variant: Variant }> = () => {
   const endUnitPx = 1.53061 * L.s;
   const move = easeInOutCubic(ramp(tau, at(E.markMove), at(E.markMove) + 0.9));
   const cx = lerp(width / 2, endCx, move);
-  const cy = lerp(height * (portrait ? 0.45 : 0.47), endCy, move);
-  const unitPx = lerp(endUnitPx * (portrait ? 1.45 : 1.7), endUnitPx, move);
+  const cy = lerp(height * (portrait ? 0.44 : 0.5), endCy, move);
+  const unitPx = lerp(endUnitPx * (portrait ? 1.75 : 1.68), endUnitPx, move);
   const wpp = (2 * CAM_D * Math.tan((FOV * Math.PI) / 360)) / height;
   const settle = 1 - easeInOutCubic(ramp(tau, 0, at(E.markMove) + 0.8));
   const light = 1 - smooth(ramp(tau, at(E.markMove) + 0.3, at(E.markMove) + 1.0));
@@ -64,11 +64,13 @@ export const S6Logo: React.FC<{ variant: Variant }> = () => {
   const spK = ramp(tau, at(E.crescent) + 0.35, at(E.crescent) + 1.15);
   const spark = spK > 0 && spK < 1 ? Math.sin(spK * Math.PI) ** 2 * 6 : 0;
   const crescentWorld: [number, number, number] = [(cx - width / 2) * wpp, -(cy + (17 - 100) * unitPx - height / 2) * wpp, 2];
-  const fadeIn = 0;
+  // subtle parallax: the dust and backdrop drift against the logo; a slow light sweep crosses the gold
+  const drift = lerp(-1, 1, smooth(ramp(tau, 0, 10)));
+  const endSweep = ramp(tau, at(E.privateAviation) + 0.6, at(E.privateAviation) + 3.4);
   return (
     <AbsoluteFill style={{ background: bg }}>
-      {plate && <Stage post={{ bloomStrength: 0.7, bloomThreshold: 1.0, exposure: 1, grain: 0.016, vignette: 0.35, toneMap: 0, ca: 0, flash: fadeIn * 0.35 }}>
-        <Cam pos={[0, 0, CAM_D]} target={[0, 0, 0]} fov={FOV} rawFov />
+      {plate && <Stage post={{ bloomStrength: 0.75, bloomThreshold: 1.0, exposure: 1, vignette: 0.4, toneMap: 0, time: tau }}>
+        <Cam pos={[drift * -0.9, drift * 0.25, CAM_D]} target={[drift * -0.3, 0, 0]} fov={FOV} rawFov />
         <Backdrop z={-30} size={[120, 70]} time={tau} center="#1a2048" edge="#090c18" rays={0.05 * smooth(ramp(tau, 0.2, 1.5)) * (1 - 0.7 * move)} raysCenter={[cx / width, 1 - cy / height]} />
         <GoldDust spec={{ count: 900, min: [-28, -16, -20], size: [56, 32, 40], particleSize: 0.05, focus: 40, aperture: 1.4, intensity: 0.9, rise: 0.35, wind: [0.1, 0, 0], seed: 21 }} time={tau + 40} />
         {built && (
@@ -82,7 +84,7 @@ export const S6Logo: React.FC<{ variant: Variant }> = () => {
         </group>
       </Stage>}
       {overlay && <AbsoluteFill>
-        <EndCard markOpacity={crossfade} wordAt={at(E.wordmark)} tagAt={at(E.privateAviation)} flyAt={at(E.flyVaanika)} urlAt={at(E.url)} />
+        <EndCard markOpacity={crossfade} wordAt={at(E.wordmark)} tagAt={at(E.privateAviation)} flyAt={at(E.flyVaanika)} urlAt={at(E.url)} sweep={endSweep} drift={drift} />
       </AbsoluteFill>}
     </AbsoluteFill>
   );

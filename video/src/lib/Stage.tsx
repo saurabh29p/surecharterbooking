@@ -236,8 +236,11 @@ export const useIsPortrait = () => {
 };
 
 /** Seconds since the start of the current sequence, at any render frame rate. */
+/** Seconds a scene's sequence starts before its nominal start (scenes start early under a light wipe). */
+export const TimeShift = React.createContext(0);
 export const useTime = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  return frame / fps;
+  const shift = React.useContext(TimeShift);
+  return frame / fps - shift;
 };

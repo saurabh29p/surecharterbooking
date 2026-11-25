@@ -42,7 +42,9 @@ export const Ribbon: React.FC<{
           vec3 t = normalize((modelMatrix * vec4(aTan, 0.)).xyz);
           vec3 side = normalize(cross(t, view));
           wp += side * aSide.x * aSide.y;
-          vV = aSide.x; vS = aS; vA = aSide.z; vW = aSide.y;
+          vV = aSide.x; vS = aS; vW = aSide.y;
+          // seen end-on a camera-facing ribbon fans out into a wedge: fade those parts
+          vA = aSide.z * smoothstep(.985, .9, abs(dot(t, view)));
           gl_Position = projectionMatrix * viewMatrix * vec4(wp, 1.);
         }`,
       fragmentShader: /* glsl */ `

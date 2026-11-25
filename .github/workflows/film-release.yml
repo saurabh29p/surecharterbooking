@@ -15,13 +15,19 @@ permissions:
 
 jobs:
   plate:
-    name: Render ${{ matrix.comp }}
+    name: Render ${{ matrix.job }}
     runs-on: ubuntu-latest
-    timeout-minutes: 240
+    timeout-minutes: 300
     strategy:
       fail-fast: true
+      # The 90 fps plates (blended to 30 fps with motion blur in build.sh) are split into frame
+      # ranges that render in parallel; build.sh joins them. 3150 frames per plate.
       matrix:
-        comp: [FilmPlate, ReelsPlate, HeroLoop]
+        job: [FilmPlate:0-349, FilmPlate:350-699, FilmPlate:700-1049, FilmPlate:1050-1399, FilmPlate:1400-1749,
+              FilmPlate:1750-2099, FilmPlate:2100-2449, FilmPlate:2450-2799, FilmPlate:2800-3149,
+              ReelsPlate:0-349, ReelsPlate:350-699, ReelsPlate:700-1049, ReelsPlate:1050-1399, ReelsPlate:1400-1749,
+              ReelsPlate:1750-2099, ReelsPlate:2100-2449, ReelsPlate:2450-2799, ReelsPlate:2800-3149,
+              HeroLoop:0-479]
     defaults:
       run:
         working-directory: video
@@ -34,11 +40,17 @@ jobs:
           cache-dependency-path: video/package-lock.json
       - run: npm ci
       - run: npx remotion browser ensure
-      - run: node scripts/render.mjs ${{ matrix.comp }} out/renders/${{ matrix.comp }}.mov --concurrency=1
+      - name: Render
+        run: |
+          COMP="${MATRIX_JOB%%:*}"; RANGE="${MATRIX_JOB##*:}"
+          echo "NAME=$COMP-$(printf %04d ${RANGE%%-*})" >> "$GITHUB_ENV"
+          node scripts/render.mjs "$COMP" "out/renders/chunks/$COMP-$(printf %04d ${RANGE%%-*}).mov" --frames="$RANGE" --concurrency=2 --profile=standard --img=jpeg
+        env:
+          MATRIX_JOB: ${{ matrix.job }}
       - uses: actions/upload-artifact@v4
         with:
-          name: plate-${{ matrix.comp }}
-          path: video/out/renders/${{ matrix.comp }}.mov
+          name: plate-${{ env.NAME }}
+          path: video/out/renders/chunks/${{ env.NAME }}.mov
           retention-days: 3
           compression-level: 0
 
@@ -67,7 +79,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           pattern: plate-*
-          path: video/out/renders
+          path: video/out/renders/chunks
           merge-multiple: true
       - run: ./scripts/build.sh
       - name: Publish the release

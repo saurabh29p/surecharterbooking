@@ -18,7 +18,7 @@ rules = {
 ok = True
 for p, (w, h, audio, cap) in rules.items():
     dur, size, vw, vh, a, cs = probe(p)
-    good = (vw, vh) == (w, h) and a == audio and (cap is None or size <= cap)
+    good = (vw, vh) == (w, h) and a == audio and (cap is None or size <= cap) and (not audio or 32 <= dur <= 35.1)
     ok &= good
     print(f"{'OK ' if good else 'BAD'} {p}: {vw}x{vh} {dur:.2f}s {size/1e6:.2f} MB audio={a} matrix={cs}")
 def loudness(p):
@@ -26,9 +26,11 @@ def loudness(p):
     tail = out[out.rfind('Summary:'):]
     I = float(tail.split('I:')[1].split('LUFS')[0]); P = float(tail.split('Peak:')[1].split('dBFS')[0])
     return I, P
-for p in [f'{D}/vaanika-film-master-1080p.mp4', f'{W}/vaanika-film-720p.mp4']:
+for p in [f'{D}/vaanika-film-master-1080p.mp4', f'{D}/vaanika-film-subtitled-1080p.mp4', f'{D}/vaanika-film-reels-1080x1920.mp4', f'{W}/vaanika-film-720p.mp4']:
     I, P = loudness(p)
-    print(f'   {p}: {I:.1f} LUFS, true peak {P:.1f} dBTP {"(clipping!)" if P > -0.5 else ""}')
+    good = abs(I + 14) <= 1.0 and P <= -1.0
+    ok &= good
+    print(f"{'OK ' if good else 'BAD'} {p}: {I:.1f} LUFS (target -14), true peak {P:.1f} dBTP (max -1)")
 # hero seam: difference last->first frame vs typical consecutive-frame difference
 def frames(p):
     raw = subprocess.check_output(['ffmpeg', '-v', 'error', '-i', p, '-vf', 'scale=320:180', '-f', 'rawvideo', '-pix_fmt', 'gray', '-'])

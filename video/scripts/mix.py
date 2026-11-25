@@ -1,7 +1,7 @@
 """
 Final mix: music bed + the five voiceover lines, ducking the music ~8 dB under each line.
 Swap any audio/voN.wav (or audio/music.flac) and re-run; the visuals never need re-rendering.
-Writes audio/mix.wav (48 kHz, 24-bit), mastered to -16 LUFS integrated, true peak <= -1 dBTP.
+Writes audio/mix.wav (48 kHz, 24-bit), mastered to -14 LUFS integrated, true peak <= -1 dBTP (limited at -1.6 dBTP for the AAC encodes).
 """
 import json, os
 import numpy as np, soundfile as sf, pyloudnorm as pyln
@@ -15,8 +15,8 @@ SR = 48000
 N = int(TL['duration'] * SR)
 DUCK_DB = -8.0
 VO_GAIN_DB = 3.0
-TARGET_LUFS = -16.0
-CEILING_DBTP = -1.0
+TARGET_LUFS = -14.0
+CEILING_DBTP = -1.6  # leaves headroom so AAC encodes stay at or below -1 dBTP
 
 
 def load(path, mono=False):

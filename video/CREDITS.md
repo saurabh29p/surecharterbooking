@@ -1,17 +1,19 @@
 # Vaanika brand film: credits and licences
 
-Everything in the film was made in code for Vaanika. There is no stock footage, no stock music,
-no third-party 3D model and no real aircraft, venue, hotel, person, registration or operator mark.
+The film was made in code for Vaanika. There is no stock footage, no stock music, no third-party
+3D model and no real aircraft, venue, hotel, person, registration or operator mark. The only
+third-party picture assets are CC0 skies and textures from Poly Haven, listed below.
 
 ## Picture
 
 | What | How | Licence |
 | --- | --- | --- |
-| Night sky, Rajasthan-style hills, hill fort, clouds, gold dust | Procedural GLSL shaders written for this film (`src/models/`) | Vaanika's own |
-| Private jet | Procedural geometry and paint shader (`src/models/Jet.tsx`). Generic type, no registration, no logos | Vaanika's own |
-| Helicopter | Procedural geometry (`src/models/Helicopter.tsx`). Generic type, no registration, no operator marks | Vaanika's own |
-| Palace and lawn | Signed-distance-field façade (`src/models/Palace.tsx`). Generic Rajput-style, not any real building or venue | Vaanika's own |
-| Marigold petals, diyas, fairy lights, contrails, glass cards, jaali | Shaders and particles written for this film | Vaanika's own |
+| Lake palace, lawn, helipad, lanterns, diyas, hills, water | Procedural geometry and shaders written for this film (`src/models/palace3d.ts`, `PalaceMesh.tsx`, `Lake.tsx`, `Diyas.tsx`, `Hills3D.tsx`, `scenes/v2/S3Heli.tsx`). Generic Rajput-style palace, not any real building, hotel or venue | Vaanika's own |
+| Private jet | Procedural geometry with PBR paint, metal and glass (`src/models/JetV2.tsx`). Generic type, no registration, no airline or operator logo | Vaanika's own |
+| Helicopter | Procedural geometry with PBR livery (`src/models/HeliV2.tsx`). Generic type, no registration, no operator marks | Vaanika's own |
+| Runway, marigold petals, contrails, glass cards, jaali, gold dust, moon | Geometry, shaders and particles written for this film | Vaanika's own |
+| Skies and image lighting: `belfast_sunset_puresky`, `kloppenheim_02_puresky` | [Poly Haven](https://polyhaven.com) HDRIs, downloaded by `scripts/fetch_assets.py` (`public/assets/sky`, `public/assets/env`) | CC0 1.0 (public domain) |
+| Textures: `asphalt_02`, `painted_plaster_wall`, `old_sandstone_02`, `leafy_grass` | [Poly Haven](https://polyhaven.com) PBR textures (diffuse, normal, roughness), `public/assets/tex` | CC0 1.0 (public domain) |
 | Vaanika logo | The exact files in `design/logo/svg/`, copied and parsed by `scripts/sync-logo.mjs` (SHA-256 checksums in `src/data/logo.json`). The 3D bloom extrudes those paths and textures them with the browser's own render of each SVG element; the end card shows the stacked SVG file itself | Vaanika's own |
 | Bodoni Moda (headlines, gold italic accents) | Google Fonts, `public/fonts/` | SIL Open Font License 1.1 (`public/fonts/OFL-BodoniModa.txt`) |
 | Manrope (labels, subtitles, URL) | Google Fonts, `public/fonts/` | SIL Open Font License 1.1 (`public/fonts/OFL-Manrope.txt`) |
@@ -20,10 +22,11 @@ no third-party 3D model and no real aircraft, venue, hotel, person, registration
 
 | What | How | Licence |
 | --- | --- | --- |
-| Score: tanpura drone, santoor-style plucks in Raag Bhupali, strings, low pulse, whooshes, petal bells, final chord | Synthesised from scratch by `scripts/compose.py` (additive synthesis, filtered noise, synthetic reverb). No samples | Vaanika's own |
+| Score: tanpura drone, santoor-style plucks in Raag Bhupali, strings, low pulse, final chord | Synthesised from scratch by `scripts/compose.py` (additive synthesis, filtered noise, synthetic reverb). No samples | Vaanika's own |
+| Sound design: jet spool-up, roar and doppler pass, rotor thump and downwash, petals, glass chimes, wipe and contrail whooshes, logo bells | Synthesised by `scripts/compose.py`. No samples or recordings | Vaanika's own |
 | Female voiceover (`audio/vo1.wav` to `audio/vo5.wav`) | Generated with **Kokoro-82M** (hexgrad), voice `hf_beta`, British-English G2P (misaki), by `scripts/tts.py` | Kokoro code and weights: Apache License 2.0 (commercial use allowed). misaki: Apache 2.0 |
 | G2P fallback used by misaki | espeak-ng via `espeakng-loader`, run as a build tool only | GPL-3.0 (tool only; the generated audio is not covered) |
-| Subtitle timings | faster-whisper with the Whisper `small` model, run on the voice files by `scripts/vo_timings.py` | MIT (code and weights) |
+| Subtitle timings | Measured from the pauses in the voice files by `scripts/vo_timings.py` (NumPy) | Vaanika's own |
 
 ## Software used to make it
 

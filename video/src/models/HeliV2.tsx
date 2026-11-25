@@ -8,8 +8,8 @@ import * as THREE from 'three';
 const LEN = 12.2;
 const prof = (x: number) => {
   // half-height, half-width, centre-y of the pod/boom at x (0 = nose tip)
-  if (x < 3.0) { const t = x / 3.0; const k = Math.pow(Math.sin((t * Math.PI) / 2), 0.72); return [0.95 * k, 0.9 * k, -0.18 * (1 - t) ** 2]; }
-  if (x < 5.9) return [0.95, 0.9, 0];
+  if (x < 2.5) { const t = x / 2.5; const k = Math.pow(Math.sin((t * Math.PI) / 2), 0.5); return [1.0 * k, 0.88 * k, -0.3 * (1 - t) ** 1.6]; }
+  if (x < 5.9) return [1.0, 0.88, 0];
   if (x < 8.0) { const t = (x - 5.9) / 2.1; const k = 1 - t * t * (3 - 2 * t); return [0.28 + 0.67 * k, 0.24 + 0.66 * k, 0.42 * t * t]; }
   return [0.28 - (x - 8) * 0.018, 0.24 - (x - 8) * 0.014, 0.42 + (x - 8) * 0.06];
 };
@@ -50,8 +50,11 @@ const livery = /* glsl */ `
     float glz = smoothstep(.45, .6, x) * smoothstep(2.55 - abs(ang) * .4, 2.4 - abs(ang) * .4, x) * step(-.08, y) * smoothstep(.05, .09, abs(ang));
     vec2 w1 = vec2(x - 3.4, y - .25), w2 = vec2(x - 4.85, y - .25);
     float cab = (smoothstep(.03, -.03, length(max(abs(w1) - vec2(.42, .24), 0.)) - .16) + smoothstep(.03, -.03, length(max(abs(w2) - vec2(.42, .24), 0.)) - .16)) * step(.55, side);
+    float post = smoothstep(.06, .03, abs(ang)) * glz;
+    glz *= 1. - post;
     float glass = clamp(glz + cab, 0., 1.);
-    diffuseColor.rgb = mix(diffuseColor.rgb, vec3(.01, .013, .02), glass);
+    gCab = clamp(cab, 0., 1.) * (.55 + .45 * smoothstep(.55, .05, y)) + glz * .08;
+    diffuseColor.rgb = mix(diffuseColor.rgb, vec3(.006, .008, .014), glass);
     roughnessFactor = mix(roughnessFactor, .03, glass);
     metalnessFactor = mix(metalnessFactor, 0., glass);
     // door seam and panel lines
@@ -60,18 +63,41 @@ const livery = /* glsl */ `
     diffuseColor.rgb *= 1. - seam * .5;
   }`;
 
+/** A gold rim light that only the helicopter receives (so the lawn and palace stay dark). */
+export const RIM = { dir: new THREE.Vector3(-0.3, 0.45, -0.85).normalize(), color: new THREE.Color(1.0, 0.68, 0.3), strength: 2.2 };
+const RIM_GLSL = /* glsl */ `
+  {
+    vec3 Vv = normalize(vViewPosition);
+    vec3 Ld = normalize((viewMatrix * vec4(uRimDir, 0.)).xyz);
+    float fres = pow(1. - clamp(dot(normal, Vv), 0., 1.), 2.5);
+    float facing = smoothstep(-.2, .6, dot(normal, Ld));
+    totalEmissiveRadiance += uRimCol * fres * facing;
+  }`;
+const withRim = <M extends THREE.MeshStandardMaterial>(m: M, key: string, extra?: (sh: THREE.WebGLProgramParametersWithUniforms) => void) => {
+  m.onBeforeCompile = (sh) => {
+    sh.uniforms.uRimDir = { value: RIM.dir };
+    sh.uniforms.uRimCol = { value: RIM.color.clone().multiplyScalar(RIM.strength) };
+    sh.fragmentShader = sh.fragmentShader
+      .replace('#include <common>', '#include <common>\nuniform vec3 uRimDir, uRimCol;')
+      .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n' + RIM_GLSL);
+    extra?.(sh);
+  };
+  m.customProgramCacheKey = () => 'rim' + key;
+  return m;
+};
+
 export const HeliV2: React.FC<{ rotorAngle: number; beacon?: number; strobe?: number; blur?: number }> = ({ rotorAngle, beacon = 0, strobe = 0, blur = 1 }) => {
   const m = useMemo(() => {
     const paint = new THREE.MeshPhysicalMaterial({ color: '#ffffff', roughness: 0.2, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.03, envMapIntensity: 1.1 });
-    paint.onBeforeCompile = (sh) => {
+    withRim(paint, 'livery', (sh) => {
       sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec2 vHUv;').replace('#include <begin_vertex>', '#include <begin_vertex>\nvHUv = uv;');
-      sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec2 vHUv;').replace('#include <metalnessmap_fragment>', '#include <metalnessmap_fragment>\n' + livery);
-    };
-    paint.customProgramCacheKey = () => 'heliLivery';
-    const ivory = new THREE.MeshPhysicalMaterial({ color: '#ede6d8', roughness: 0.22, clearcoat: 1, clearcoatRoughness: 0.04, envMapIntensity: 1.1 });
-    const navy = new THREE.MeshPhysicalMaterial({ color: '#0b1124', roughness: 0.25, metalness: 0.5, clearcoat: 1, clearcoatRoughness: 0.04, envMapIntensity: 1.2 });
+      sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec2 vHUv; uniform float uCabin; float gCab = 0.;').replace('#include <metalnessmap_fragment>', '#include <metalnessmap_fragment>\n' + livery).replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\ntotalEmissiveRadiance += vec3(1., .62, .3) * gCab * uCabin;');
+      sh.uniforms.uCabin = { value: 0.09 };
+    });
+    const ivory = withRim(new THREE.MeshPhysicalMaterial({ color: '#ede6d8', roughness: 0.22, clearcoat: 1, clearcoatRoughness: 0.04, envMapIntensity: 1.1 }), 'ivory');
+    const navy = withRim(new THREE.MeshPhysicalMaterial({ color: '#0b1124', roughness: 0.25, metalness: 0.5, clearcoat: 1, clearcoatRoughness: 0.04, envMapIntensity: 1.2 }), 'navy');
     const gold = new THREE.MeshStandardMaterial({ color: '#d9bc78', metalness: 1, roughness: 0.22, envMapIntensity: 1.4 });
-    const metal = new THREE.MeshStandardMaterial({ color: '#c3c7ce', metalness: 1, roughness: 0.18, envMapIntensity: 1.3 });
+    const metal = withRim(new THREE.MeshStandardMaterial({ color: '#c3c7ce', metalness: 1, roughness: 0.18, envMapIntensity: 1.3 }), 'metal');
     const dark = new THREE.MeshStandardMaterial({ color: '#16181d', metalness: 0.6, roughness: 0.4 });
     const blade = new THREE.MeshStandardMaterial({ color: '#1d2026', metalness: 0.4, roughness: 0.35, transparent: true, opacity: 0.35 + 0.65 * (1 - blur) });
     const disc = new THREE.ShaderMaterial({
@@ -100,14 +126,14 @@ export const HeliV2: React.FC<{ rotorAngle: number; beacon?: number; strobe?: nu
     const hub = new THREE.CylinderGeometry(0.32, 0.36, 0.32, 24);
     const bladeG = new THREE.BoxGeometry(5.2, 0.05, 0.34).translate(2.9, 0, 0);
     const discG = new THREE.CircleGeometry(5.6, 96).rotateX(-Math.PI / 2);
-    const fen = new THREE.TorusGeometry(0.62, 0.16, 18, 48);
+    const fen = new THREE.TorusGeometry(0.6, 0.11, 18, 48).scale(1, 1, 2.2);
     const fenDisc = new THREE.CircleGeometry(0.6, 32);
     const fin = new THREE.BoxGeometry(1.25, 1.55, 0.09);
     const stab = new THREE.BoxGeometry(0.75, 0.06, 2.7);
     const plate = new THREE.BoxGeometry(0.62, 0.55, 0.05);
     const skid = new THREE.CylinderGeometry(0.055, 0.055, 4.8, 12).rotateZ(Math.PI / 2);
     const skidTip = new THREE.TorusGeometry(0.3, 0.055, 8, 16, Math.PI / 2);
-    const cross = new THREE.TubeGeometry(new THREE.QuadraticBezierCurve3(new THREE.Vector3(0, 0.06, -1.2), new THREE.Vector3(0, 1.0, 0), new THREE.Vector3(0, 0.06, 1.2)), 24, 0.055, 10);
+    const cross = new THREE.TubeGeometry(new THREE.CatmullRomCurve3([[0, 0.06, -1.2], [0, 0.42, -1.12], [0, 0.74, -0.62], [0, 0.8, 0], [0, 0.74, 0.62], [0, 0.42, 1.12], [0, 0.06, 1.2]].map((p) => new THREE.Vector3(...(p as [number, number, number])))), 40, 0.055, 10);
     const light = new THREE.SphereGeometry(0.07, 12, 8);
     return { pod, cowl, exhaust, mast, hub, bladeG, discG, fen, fenDisc, fin, stab, plate, skid, skidTip, cross, light };
   }, []);
@@ -124,7 +150,7 @@ export const HeliV2: React.FC<{ rotorAngle: number; beacon?: number; strobe?: nu
           <mesh geometry={g.discG} material={m.disc} position={[0, 0.03, 0]} />
         </group>
         <group position={[-5.75, 0.95, 0]}>
-          <mesh geometry={g.fen} material={m.ivory} />
+          <mesh geometry={g.fen} material={m.navy} />
           <mesh geometry={g.fenDisc} material={m.dark} />
           <mesh geometry={g.fin} material={m.navy} position={[-0.25, 0.85, 0]} rotation={[0, 0, -0.38]} />
           <mesh geometry={g.light} material={m.white} position={[-0.75, 0.25, 0]} scale={0.6 + strobe * 1.6} />

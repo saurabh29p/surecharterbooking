@@ -3,7 +3,6 @@ import { Composition } from 'remotion';
 import { Film } from './Film';
 import { HeroLoop, LOOP, XF } from './HeroLoop';
 import { Thumbnail } from './Thumbnail';
-import { DebugView } from './DebugView';
 import { FPS, TL } from './lib/timing';
 
 /** Plates (the WebGL picture) render at 90 fps; scripts/build.sh blends each 3 frames into one
@@ -24,8 +23,6 @@ export const RemotionRoot: React.FC = () => (
     <Composition id="FilmSubOverlay" component={Film} durationInFrames={D} fps={FPS} width={1920} height={1080} defaultProps={v(false, true, false, 'overlay')} />
     <Composition id="ReelsOverlay" component={Film} durationInFrames={D} fps={FPS} width={1080} height={1920} defaultProps={v(false, true, true, 'overlay')} />
     <Composition id="HeroLoop" component={HeroLoop} durationInFrames={(LOOP + XF) * FPS} fps={FPS} width={1920} height={1080} />
-    <Composition id="DebugTop" component={DebugView} durationInFrames={1} fps={FPS} width={1280} height={720} defaultProps={{ pos: [0, 1400, 900], target: [0, 0, 100], fov: 50 }} />
-    <Composition id="DebugSide" component={DebugView} durationInFrames={1} fps={FPS} width={1280} height={720} defaultProps={{ pos: [0, 260, 900], target: [0, 0, -300], fov: 50 }} />
     <Composition id="Thumbnail" component={Thumbnail} durationInFrames={1} fps={FPS} width={1280} height={720} />
   </>
 );

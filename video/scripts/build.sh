@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Assemble every deliverable from the rendered plates (scripts/render_plates.sh), cheap overlay
+# Assemble every deliverable from the rendered plates (scripts/render_plates.sh or CI chunks), cheap overlay
 # renders and the audio mix. Usage: scripts/build.sh   (needs node, ffmpeg, python3 + numpy scipy soundfile pyloudnorm)
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -9,9 +9,20 @@ PY=${PYTHON:-python3}
 TAG709=(-colorspace bt709 -color_primaries bt709 -color_trc bt709)
 DUR=$(node -e "console.log(require('./src/data/timeline.json').duration)")
 # STEPS selects parts to run (default: all), e.g. STEPS="web hero check" scripts/build.sh
-STEPS=${STEPS:-"mix overlays comp web hero thumb check"}
+STEPS=${STEPS:-"join mix overlays comp web hero thumb check"}
 run() { [[ " $STEPS " == *" $1 "* ]]; }
 COMPS=${COMPS:-"master subtitled reels"}
+
+if run join; then
+echo "== join plate chunks (CI renders each 90 fps plate in parallel frame ranges)"
+for c in FilmPlate ReelsPlate HeroLoop; do
+  ls $R/chunks/$c-*.mov >/dev/null 2>&1 || continue
+  [ -f "$R/$c.mov" ] && continue
+  for f in $(ls $R/chunks/$c-*.mov | sort); do echo "file '$(realpath "$f")'"; done > out/$c-chunks.txt
+  ffmpeg -y -v error -f concat -safe 0 -i out/$c-chunks.txt -c copy "$R/$c.mov" && rm -f $R/chunks/$c-*.mov
+  echo "   $R/$c.mov  $(du -h "$R/$c.mov" | cut -f1)"
+done
+fi
 
 if run mix; then
 echo "== audio mix"
@@ -26,11 +37,17 @@ done
 fi
 
 # composite plate + overlay in RGB (BT.709 in and out), add the mix
+# 90 fps plates become 30 fps with motion blur: each output frame is the weighted mean of the three
+# sub-frames centred on it (weights 1-2-1, about a 240-degree shutter)
+blur() { # plate -> filter prefix
+  local r; r=$(ffprobe -v error -select_streams v:0 -show_entries stream=r_frame_rate -of csv=p=0 "$1")
+  if [ "$r" = "90/1" ]; then echo "tmix=frames=3:weights='1 2 1',select='eq(mod(n\,3)\,1)',setpts=N/(30*TB),"; fi
+}
 comp() { # plate overlay out [encoder args...]
   local plate=$1 ov=$2 out=$3; shift 3
   ffmpeg -y -v error -i "$plate" -i "$ov" -i audio/mix.wav -filter_complex \
-    "[0:v]scale=in_color_matrix=bt709:in_range=tv,format=gbrp[p];[1:v]scale=in_color_matrix=bt709:in_range=tv,format=gbrap[o];[p][o]overlay=0:0:format=gbrp,scale=out_color_matrix=bt709:out_range=tv,format=yuv420p[v]" \
-    -map "[v]" -map 2:a -t "$DUR" "$@" "${TAG709[@]}" -movflags +faststart "$out"
+    "[0:v]$(blur "$plate")scale=in_color_matrix=bt709:in_range=tv,format=gbrp[p];[1:v]scale=in_color_matrix=bt709:in_range=tv,format=gbrap[o];[p][o]overlay=0:0:format=gbrp,scale=out_color_matrix=bt709:out_range=tv,format=yuv420p[v]" \
+    -map "[v]" -map 2:a -r 30 -t "$DUR" "$@" "${TAG709[@]}" -movflags +faststart "$out"
   echo "   $out  $(du -h "$out" | cut -f1)"
 }
 if run comp; then
@@ -47,7 +64,7 @@ web() { # kbps
     -b:v ${1}k -maxrate $(( $1 * 2 ))k -bufsize $(( $1 * 4 ))k -x264-params aq-mode=3 -pass 1 -passlogfile out/web2pass -an -f null /dev/null
   ffmpeg -y -v error -i $D/vaanika-film-master-1080p.mp4 -vf "hqdn3d=1.2:1.2:5:5,scale=1280:720:flags=lanczos" -c:v libx264 -preset veryslow -tune film \
     -b:v ${1}k -maxrate $(( $1 * 2 ))k -bufsize $(( $1 * 4 ))k -x264-params aq-mode=3 -pass 2 -passlogfile out/web2pass \
-    -af volume=-1.2dB -c:a aac -b:a 96k -ac 2 -ar 48000 "${TAG709[@]}" -movflags +faststart $W/vaanika-film-720p.mp4
+    -c:a aac -b:a 96k -ac 2 -ar 48000 "${TAG709[@]}" -movflags +faststart $W/vaanika-film-720p.mp4
 }
 for kb in 520 490 460 430 400; do
   web $kb
