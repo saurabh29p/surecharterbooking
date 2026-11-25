@@ -43,7 +43,7 @@ export const Headline: React.FC<{
     <>
     {align === 'left' && (
       <div style={{ position: 'absolute', inset: 0, opacity: (1 - out) * easeOutCubic(ramp(t, inAt - 0.2, inAt + 0.8)) * 0.85,
-        background: 'radial-gradient(ellipse 55% 45% at 22% 80%, rgba(6,9,20,0.72) 0%, rgba(6,9,20,0.35) 45%, rgba(6,9,20,0) 75%)' }} />
+        background: 'radial-gradient(ellipse 62% 50% at 22% 80%, rgba(6,9,20,0.86) 0%, rgba(6,9,20,0.5) 45%, rgba(6,9,20,0) 78%)' }} />
     )}
     <div
       style={{

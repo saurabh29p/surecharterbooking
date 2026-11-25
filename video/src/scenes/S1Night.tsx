@@ -50,7 +50,6 @@ export const S1Night: React.FC<{ variant: Variant }> = ({ variant }) => {
   const roll = Math.sin(t * 0.6) * 0.008 + lerp(0.01, -0.012, p);
   const flash = smooth(ramp(t, 5.68, 6.0)) * 0.85;
   const fadeIn = 1 - smooth(ramp(t, 0, 1.4));
-  const bank: CloudSpec = { pos: [3, 27, 17], size: [90, 50], seed: 13.7, opacity: smooth(ramp(t, 4.5, 5.7)), lit: '#c9b48e', shadow: '#2b2d4a', rim: '#ffd890', light: [0.6, 0.5], coverage: 0.72, scale: 1.7 };
   return (
     <AbsoluteFill style={{ background: bg }}>
       {plate && <Stage
@@ -60,7 +59,7 @@ export const S1Night: React.FC<{ variant: Variant }> = ({ variant }) => {
         <NightWorld
           t={t}
           camZ={camZ}
-          clouds={[...CLOUDS, bank]}
+          clouds={CLOUDS}
           cloudFade={[1.5, 9]}
           dust={{ count: 2600, min: [-90, -10, -80], size: [180, 80, 180], particleSize: 0.16, focus: 34, aperture: 0.9, intensity: 1.25, rise: 1.2, wind: [1.2, 0, -0.6], seed: 3 }}
         />

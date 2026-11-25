@@ -49,19 +49,22 @@ export const S4Cards: React.FC<{ variant: Variant }> = () => {
   );
   const path = portrait
     ? [new THREE.Vector3(-6, -9, 3), new THREE.Vector3(-3, -1, 5), new THREE.Vector3(3, 1, 5), new THREE.Vector3(6, 10, 2)]
-    : [new THREE.Vector3(-12, -3.8, 3), new THREE.Vector3(-4, 4.2, 5), new THREE.Vector3(3, -2.6, 5), new THREE.Vector3(12.5, 3.6, 2)];
-  const head = easeInOutSine(ramp(tau, SWEEP, SWEEP + 1.15)) * 1.3;
+    : [new THREE.Vector3(-13, -3.4, 1.6), new THREE.Vector3(-4.5, 3.2, 2.4), new THREE.Vector3(3.5, -2.2, 2.4), new THREE.Vector3(13.5, 3.2, 1.2)];
+  const head = lerp(-0.05, 1.2, smooth(ramp(tau, SWEEP - 0.05, SWEEP + 1.4)) * 0.75 + ramp(tau, SWEEP - 0.05, SWEEP + 1.4) * 0.25);
   const trailPts: THREE.Vector3[] = [];
   if (tau > SWEEP - 0.05) for (let i = 0; i <= 140; i++) trailPts.push(bez(head - 0.6 + (0.6 * i) / 140, path));
   const headP = bez(head, path);
-  const progress = portrait ? (headP.y + 9) / 19 : (headP.x + 12) / 24.5;
   const p = smooth(ramp(tau, 0, END));
   const camZ = portrait ? lerp(14.2, 13.2, p) : lerp(14.6, 13.3, p);
+  const camX = lerp(-0.4, 0.4, p);
+  // the wipe follows where the comet head *appears* on screen (it flies close to the lens)
+  const screen = (x: number, y: number, z: number) => (portrait ? -(y - 0.1) : x - camX) / Math.max(camZ - z, 0.5);
+  const progress = screen(headP.x, headP.y, headP.z);
   const fadeOut = smooth(ramp(tau, END - 0.55, END));
   return (
     <AbsoluteFill style={{ background: bg }}>
       {plate && <Stage post={{ bloomStrength: 0.55, bloomThreshold: 1.0, exposure: 1, grain: 0.022, vignette: 0.5, toneMap: 0, ca: 0.0015, fade: fadeOut * 0.0, flash: smooth(ramp(tau, END - 0.35, END)) * 0.25 }}>
-        <Cam pos={[lerp(-0.4, 0.4, p), 0.3, camZ]} target={[0, 0.1, 0]} fov={34} roll={Math.sin(tau * 0.4) * 0.004} />
+        <Cam pos={[camX, 0.3, camZ]} target={[0, 0.1, 0]} fov={34} roll={Math.sin(tau * 0.4) * 0.004} />
         <Backdrop z={-14} size={[70, 40]} time={tau} center="#121834" edge="#070a15" jaali={1 - smooth(ramp(tau, SWEEP, END))} sweep={-0.4 + tau * 0.22} />
         <GoldDust spec={{ count: 1400, min: [-16, -10, -10], size: [32, 20, 26], particleSize: 0.035, focus: 15, aperture: 1.2, intensity: 1.2 + 2 * smooth(ramp(tau, SWEEP, SWEEP + 0.8)), rise: 0.4, wind: [0.15, 0, 0], seed: 9 }} time={tau + 20} />
         {tex && layout.map((l, i) => {
@@ -72,8 +75,9 @@ export const S4Cards: React.FC<{ variant: Variant }> = () => {
           const sweep1 = lerp(-0.5, 1.8, ramp(tau, a + 0.05, a + 1.25));
           const sweep2 = lerp(-0.5, 1.8, ramp(tau, 6.6 + i * 0.12, 7.6 + i * 0.12));
           const sweep = tau < 6.6 ? sweep1 : sweep2;
-          const pos = portrait ? (l.y + 9) / 19 : (l.x + 12) / 24.5;
-          const dis = smooth(ramp(progress, pos - 0.05, pos + 0.12));
+          const pos = screen(l.x, l.y, l.z);
+          const half = (portrait ? CH : CW) / 2 / (camZ - l.z);
+          const dis = smooth(ramp(progress, pos - half * 0.9, pos + half * 1.1));
           return (
             <group key={i} position={[l.x, l.y + (1 - e) * -1.3 + idle, l.z + (1 - e) * -1.5]} rotation={[(1 - e) * 0.55 + idle * 0.3, l.ry + (1 - e) * (i % 2 ? -0.5 : 0.5), 0]}>
               <GlassCard map={tex[i]} size={[CW, CH]} opacity={op} sweep={sweep} dissolve={dis} seed={i * 3.7} time={tau} />
