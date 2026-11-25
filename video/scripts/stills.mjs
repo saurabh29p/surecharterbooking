@@ -14,7 +14,7 @@ for (const frame of frames) {
     serveUrl, composition, frame, output,
     chromiumOptions: { gl: 'swangle' },
     timeoutInMilliseconds: 240000,
-    onBrowserLog: (l) => { if (!/fallback to software WebGL/.test(l.text)) console.log(`[browser ${l.type}]`, l.text.slice(0, 400)); },
+    onBrowserLog: (l) => { if (!/fallback to software WebGL|GPU stall/.test(l.text)) console.log(`[browser ${l.type}]`, l.text.slice(0, 600)); },
   });
   console.log(`${output}  ${((Date.now() - t0) / 1000).toFixed(1)}s`);
 }

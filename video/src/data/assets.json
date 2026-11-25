@@ -1,0 +1,49 @@
+{
+ "source": "Poly Haven (polyhaven.com), CC0",
+ "skies": {
+  "belfast_sunset_puresky": {
+   "file": "sky/belfast_sunset_puresky.jpg",
+   "env": "env/belfast_sunset_puresky.hdr",
+   "elevMin": -8.0,
+   "elevMax": 62.0,
+   "exposure": 0.3428571295112637,
+   "brightU": 0.60492,
+   "brightElev": 2.151,
+   "width": 8192,
+   "height": 1593
+  },
+  "kloppenheim_02_puresky": {
+   "file": "sky/kloppenheim_02_puresky.jpg",
+   "env": "env/kloppenheim_02_puresky.hdr",
+   "elevMin": -8.0,
+   "elevMax": 62.0,
+   "exposure": 1.8162162630291567,
+   "brightU": 0.59894,
+   "brightElev": 17.047,
+   "width": 8192,
+   "height": 1593
+  }
+ },
+ "textures": {
+  "asphalt_02": {
+   "diff": "tex/asphalt_02_diff.jpg",
+   "nor": "tex/asphalt_02_nor.jpg",
+   "rough": "tex/asphalt_02_rough.jpg"
+  },
+  "painted_plaster_wall": {
+   "diff": "tex/painted_plaster_wall_diff.jpg",
+   "nor": "tex/painted_plaster_wall_nor.jpg",
+   "rough": "tex/painted_plaster_wall_rough.jpg"
+  },
+  "old_sandstone_02": {
+   "diff": "tex/old_sandstone_02_diff.jpg",
+   "nor": "tex/old_sandstone_02_nor.jpg",
+   "rough": "tex/old_sandstone_02_rough.jpg"
+  },
+  "leafy_grass": {
+   "diff": "tex/leafy_grass_diff.jpg",
+   "nor": "tex/leafy_grass_nor.jpg",
+   "rough": "tex/leafy_grass_rough.jpg"
+  }
+ }
+}

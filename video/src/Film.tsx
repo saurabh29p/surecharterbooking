@@ -1,14 +1,11 @@
 import React from 'react';
-import { AbsoluteFill, Sequence } from 'remotion';
+import { AbsoluteFill, Sequence, useVideoConfig } from 'remotion';
 import './lib/fonts';
 import { Layer, LayerProvider } from './lib/layer';
-import { sec, TL } from './lib/timing';
-import { S1Night } from './scenes/S1Night';
-import { S2Jet } from './scenes/S2Jet';
-import { S3Heli } from './scenes/S3Heli';
-import { S4Cards } from './scenes/S4Cards';
-import { S6Logo } from './scenes/S6Logo';
+import { TL } from './lib/timing';
 import { Subtitles } from './overlay/Subtitles';
+import { S1Lake } from './scenes/v2/S1Lake';
+import { S2Jet } from './scenes/v2/S2Jet';
 
 export type Variant = {
   /** Scene headlines (off in subtitled cuts, where captions carry the words). */
@@ -20,25 +17,23 @@ export type Variant = {
 
 const S = TL.scenes;
 
+/** A scene placed on the timeline at any render frame rate (plates render at 90 fps for motion blur). */
+const Scene: React.FC<{ range: number[]; name: string; children: React.ReactNode }> = ({ range, name, children }) => {
+  const { fps } = useVideoConfig();
+  const from = Math.round(range[0] * fps);
+  return (
+    <Sequence from={from} durationInFrames={Math.round(range[1] * fps) - from} name={name}>
+      {children}
+    </Sequence>
+  );
+};
+
 export const Film: React.FC<{ variant: Variant; only?: string }> = ({ variant }) => (
   <LayerProvider layer={variant.layer ?? 'all'}>
-  <AbsoluteFill style={{ background: variant.layer === 'overlay' ? 'transparent' : '#0B1020' }}>
-    <Sequence from={sec(S.night[0])} durationInFrames={sec(S.night[1] - S.night[0])} name="1 Night">
-      <S1Night variant={variant} />
-    </Sequence>
-    <Sequence from={sec(S.jet[0])} durationInFrames={sec(S.jet[1] - S.jet[0])} name="2 Jet">
-      <S2Jet variant={variant} />
-    </Sequence>
-    <Sequence from={sec(S.heli[0])} durationInFrames={sec(S.heli[1] - S.heli[0])} name="3 Helicopter">
-      <S3Heli variant={variant} />
-    </Sequence>
-    <Sequence from={sec(S.cards[0])} durationInFrames={sec(S.contrail[1] - S.cards[0])} name="4-5 Cards + contrail">
-      <S4Cards variant={variant} />
-    </Sequence>
-    <Sequence from={sec(S.logo[0])} durationInFrames={sec(S.logo[1] - S.logo[0])} name="6 Logo">
-      <S6Logo variant={variant} />
-    </Sequence>
-    {variant.subtitles && variant.layer !== 'plate' && <Subtitles />}
-  </AbsoluteFill>
+    <AbsoluteFill style={{ background: variant.layer === 'overlay' ? 'transparent' : '#0B1020' }}>
+      <Scene range={S.night} name="1 Lake palace"><S1Lake variant={variant} /></Scene>
+      <Scene range={S.jet} name="2 Jet"><S2Jet variant={variant} /></Scene>
+      {variant.subtitles && variant.layer !== 'plate' && <Subtitles />}
+    </AbsoluteFill>
   </LayerProvider>
 );

@@ -18,8 +18,8 @@ AUDIO = os.path.join(HERE, '..', 'audio')
 
 VOICE = 'hf_beta'      # Kokoro's Hindi female voice: warm, Indian accent
 LANG = 'b'             # British-English G2P: non-rhotic, closest to Indian English
-SPEED = 0.86           # unhurried
-SPEED_BY_LINE = {'vo4': 0.93}   # the longest line, kept clear of the logo reveal
+SPEED = 0.82           # unhurried (v2: a little slower than v1's 0.86)
+SPEED_BY_LINE = {'vo4': 0.89}   # the longest line, kept clear of the logo reveal
 # "Vaanika" said VAA-ni-kaa (stress on the first syllable, long final a)
 VAANIKA = '[Vaanika](/vˈɑnikˌɑ/)'
 
@@ -48,14 +48,13 @@ def trim(a, thr_db=-48):
 
 
 def eq(a, sr):
-    """Gentle warmth: high-pass 70 Hz, small low-mid lift, soft top end, light de-ess."""
-    sos = signal.butter(2, 70, 'hp', fs=sr, output='sos'); a = signal.sosfilt(sos, a)
-    # +2 dB around 220 Hz (warmth)
-    b, ac = peaking(220, 2.0, 0.8, sr); a = signal.lfilter(b, ac, a)
-    # -2.5 dB around 6.5 kHz (sibilance)
-    b, ac = peaking(6500, -2.5, 2.0, sr); a = signal.lfilter(b, ac, a)
-    # +1.5 dB air shelf at 11 kHz
-    b, ac = shelf(11000, 1.5, sr); a = signal.lfilter(b, ac, a)
+    """Warm voice EQ (v2): high-pass 75 Hz, body at 200 Hz, softer presence, de-ess, gentle air."""
+    sos = signal.butter(2, 75, 'hp', fs=sr, output='sos'); a = signal.sosfilt(sos, a)
+    b, ac = peaking(200, 3.2, 0.8, sr); a = signal.lfilter(b, ac, a)     # warmth
+    b, ac = peaking(450, 1.0, 1.0, sr); a = signal.lfilter(b, ac, a)     # chest
+    b, ac = peaking(3200, -1.8, 1.2, sr); a = signal.lfilter(b, ac, a)   # softer presence
+    b, ac = peaking(6500, -3.0, 2.0, sr); a = signal.lfilter(b, ac, a)   # sibilance
+    b, ac = shelf(11000, 0.8, sr); a = signal.lfilter(b, ac, a)          # a touch of air
     return a
 
 
