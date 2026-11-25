@@ -16,9 +16,9 @@ Licences are in [CREDITS.md](CREDITS.md).
 | `web/hero-poster.jpg` | Poster for the hero (the loop's first frame) | committed |
 | `web/vaanika-film-thumbnail.jpg` | Thumbnail, 1280x720 | committed |
 
-Large renders (`out/`) are git-ignored. Pushing a tag `film-v*` runs
-`.github/workflows/film-release.yml`, which rebuilds everything from these sources and attaches
-the files to a GitHub release.
+Large renders (`out/`) are git-ignored. `.github/workflows/film-release.yml` rebuilds everything
+from these sources and attaches the files to a GitHub release. It runs when `RELEASE_VERSION`
+changes on the `video-film` branch (it then creates that tag), or when a `film-v*` tag is pushed.
 
 ## How it fits together
 

@@ -2,10 +2,13 @@ name: Film release
 
 # Rebuilds the Vaanika brand film from video/ (deterministic renders + the committed voice, music
 # and fonts) and attaches the files to a GitHub release. The large videos never enter git.
-# Trigger: push a tag named film-v* (for example: git tag film-v1.0 && git push origin film-v1.0).
+# Triggers: push a tag named film-v* (git tag film-v1.1 && git push origin film-v1.1), or change
+# video/RELEASE_VERSION on the video-film branch (the release tag is then created by this workflow).
 on:
   push:
     tags: ['film-v*']
+    branches: [video-film]
+    paths: ['video/RELEASE_VERSION']
 
 permissions:
   contents: write
@@ -70,5 +73,6 @@ jobs:
       - name: Publish the release
         env:
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ github.ref_name }}
-        run: gh release create "$TAG" out/release/* --title "Vaanika brand film ($TAG)" --notes-file RELEASE_NOTES.md
+        run: |
+          if [ "$GITHUB_REF_TYPE" = tag ]; then TAG="$GITHUB_REF_NAME"; else TAG="$(tr -d '[:space:]' < RELEASE_VERSION)"; fi
+          gh release create "$TAG" out/release/* --target "$GITHUB_SHA" --title "Vaanika brand film ($TAG)" --notes-file RELEASE_NOTES.md
