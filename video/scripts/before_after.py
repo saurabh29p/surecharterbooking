@@ -15,14 +15,15 @@ for arg in sys.argv[2:]:
     h = 540
     A = A.resize((round(A.width * h / A.height), h), Image.LANCZOS)
     B = B.resize((round(B.width * h / B.height), h), Image.LANCZOS)
-    pad, top = 16, 64
+    pad, top = 16, 104
     W = A.width + B.width + pad * 3
     sheet = Image.new('RGB', (W, h + top + pad), (11, 16, 32))
     sheet.paste(A, (pad, top)); sheet.paste(B, (pad * 2 + A.width, top))
     d = ImageDraw.Draw(sheet)
     f = ImageFont.truetype(FONT, 26) if os.path.exists(FONT) else ImageFont.load_default()
-    d.text((pad, 18), f'v1 (film-v1.0)  ·  {label}', font=f, fill=(200, 196, 188))
-    d.text((pad * 2 + A.width, 18), 'v2 (film-v2.0)', font=f, fill=(244, 227, 181))
+    d.text((pad, 16), label, font=f, fill=(243, 237, 226))
+    d.text((pad, 62), 'Before: v1 (film-v1.0)', font=f, fill=(170, 166, 160))
+    d.text((pad * 2 + A.width, 62), 'After: v2 (film-v2.0)', font=f, fill=(244, 227, 181))
     name = label.split(' ')[0].lower()
     p = os.path.join(out_dir, f'before-after-{name}.jpg')
     sheet.save(p, quality=90)
