@@ -7,6 +7,7 @@
 import { Picture } from 'astro:assets';
 import poster from '../../assets/photos/hero-poster.jpg';
 import Icon from '../Icon.astro';
+import { POSTER_QUALITY } from './poster';
 
 interface Props {
   planHref: string;
@@ -21,6 +22,7 @@ const { planHref } = Astro.props;
       src={poster}
       formats={['avif', 'webp']}
       widths={[480, 768, 1024, 1280]}
+      quality={POSTER_QUALITY}
       sizes="100vw"
       alt=""
       loading="eager"

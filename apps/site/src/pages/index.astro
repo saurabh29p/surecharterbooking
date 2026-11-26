@@ -10,6 +10,7 @@ import Destinations from '../components/home/Destinations.astro';
 import EnquirySection from '../components/home/EnquirySection.astro';
 import Fleet from '../components/home/Fleet.astro';
 import Hero from '../components/home/Hero.astro';
+import { POSTER_QUALITY } from '../components/home/poster';
 import HowItWorks from '../components/home/HowItWorks.astro';
 import Moments from '../components/home/Moments.astro';
 import NameStory from '../components/home/NameStory.astro';
@@ -25,7 +26,7 @@ const faqs = (await getCollection('faq', (f) => f.data.home !== undefined)).sort
 );
 
 // Preload the hero poster (the LCP image) in the format the browser will pick first.
-const lcp = await getImage({ src: poster, format: 'avif', widths: [480, 768, 1024, 1280] });
+const lcp = await getImage({ src: poster, format: 'avif', widths: [480, 768, 1024, 1280], quality: POSTER_QUALITY });
 ---
 
 <Base
