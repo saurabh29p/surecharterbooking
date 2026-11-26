@@ -16,8 +16,8 @@ export const heroPosters = async () => {
   const [wideAvif, wideWebp, tallAvif, tallWebp, fallback] = await Promise.all([
     getImage({ src: wide, format: 'avif', widths: [768, 1024, 1280, 1600], ...opts }),
     getImage({ src: wide, format: 'webp', widths: [768, 1024, 1280, 1600], ...opts }),
-    getImage({ src: tall, format: 'avif', widths: [480, 720, 1080], ...opts }),
-    getImage({ src: tall, format: 'webp', widths: [480, 720, 1080], ...opts }),
+    getImage({ src: tall, format: 'avif', widths: [480, 750, 1080], ...opts }),
+    getImage({ src: tall, format: 'webp', widths: [480, 750, 1080], ...opts }),
     getImage({ src: wide, format: 'jpg', width: 1280, ...opts }),
   ]);
   return { wideAvif, wideWebp, tallAvif, tallWebp, fallback };

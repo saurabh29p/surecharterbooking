@@ -289,8 +289,8 @@ const p = await heroPosters();
 <script>
   import { PHONE } from './poster-media';
 
-  // Background film: after the poster has painted, when motion and data are welcome; the phone
-  // cut on narrow screens. The pause control appears once it plays.
+  // Background film: after the page has settled, when motion and data are welcome; the phone cut on
+  // narrow screens. The pause control appears once it plays.
   const video = document.querySelector<HTMLVideoElement>('[data-hero-video]');
   const pause = document.querySelector<HTMLButtonElement>('[data-hero-pause]');
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -309,8 +309,15 @@ const p = await heroPosters();
       );
       void video.play().catch(() => {});
     };
-    if (document.readyState === 'complete') setTimeout(start, 300);
-    else addEventListener('load', () => setTimeout(start, 300), { once: true });
+    // start once the page has settled (a second after load, then an idle moment), so starting the
+    // decoder never competes with the visitor's first taps; the poster is its first frame anyway
+    const whenIdle = () =>
+      'requestIdleCallback' in window
+        ? requestIdleCallback(start, { timeout: 1500 })
+        : setTimeout(start, 200);
+    const later = () => setTimeout(whenIdle, 1000);
+    if (document.readyState === 'complete') later();
+    else addEventListener('load', later, { once: true });
   }
   pause?.addEventListener('click', () => {
     if (!video) return;
