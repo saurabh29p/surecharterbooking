@@ -117,10 +117,11 @@ const create: StageFactory = async (el) => {
     if (mode === 'checks') {
       // four checks: 0..1 over the list; part i is lit around the middle of its quarter
       const order: Part[] = ['saraswati', 'lakshmi', 'kali', 'chandra'];
-      const together = ease.inOut(ramp(p, 0.9, 1));
+      // the parts come together over the end of the last check, while the mark is still in view
+      const together = ease.inOut(ramp(p, 0.84, 0.95));
       for (const k of Object.keys(APART) as Part[]) {
         const i = order.indexOf(k);
-        const c = (i + 0.5) / 4;
+        const c = ((i + 0.5) / 4) * 0.92;
         const lit = i < 0 ? 0 : Math.max(0, 1 - Math.abs(p - c) / 0.17);
         const l = ease.smooth(Math.min(1, lit * 1.4));
         const a = APART[k];

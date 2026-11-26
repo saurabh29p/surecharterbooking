@@ -11,7 +11,7 @@ const items = (await getCollection('destinations')).sort((a, b) => a.data.order 
 // the routes on the cards, in card order (the map draws them in this order: motion/routes.ts)
 const routes = items.flatMap((d) => d.data.cardTimes.map((t) => ({ from: t.from, to: d.data.name, time: t.time })));
 const stills = Object.values(
-  import.meta.glob<{ default: ImageMetadata }>('../../assets/3d/stills/map.png', { eager: true }),
+  import.meta.glob<{ default: ImageMetadata }>('../../assets/3d/stills/map.jpg', { eager: true }),
 ).map((m) => m.default);
 ---
 
@@ -232,9 +232,30 @@ const stills = Object.values(
   }
   /* ---------- With motion: the map (motion/chapters/dest.ts) ---------- */
 
-  .dest__map,
+  /* without motion: the rendered still of the map with every route, and the route list beside it */
+  .dest__map {
+    position: relative;
+    height: 460px;
+    margin-top: 36px;
+  }
+
+  .dest__map :global(.dest__stage) {
+    position: absolute;
+    inset: 0;
+  }
+
   .dest__routes {
-    display: none;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: 24px;
+    margin: 12px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  :global(html:not(.motion-ready)) .dest__routes li {
+    opacity: 1;
+    color: var(--ivory);
   }
 
   :global(.motion-ready) .dest {
@@ -269,7 +290,7 @@ const stills = Object.values(
     margin-left: calc(var(--gutter) * -1);
   }
 
-  :global(.motion-ready) :global(.dest__stage) {
+  :global(.motion-ready) .dest__map :global(.dest__stage) {
     position: absolute;
     inset: 0;
   }

@@ -5,7 +5,7 @@ import { CHECKS } from '../../data/facts';
 import Stage from '../Stage.astro';
 
 const stills = Object.values(
-  import.meta.glob<{ default: ImageMetadata }>('../../assets/3d/stills/standard.png', { eager: true }),
+  import.meta.glob<{ default: ImageMetadata }>('../../assets/3d/stills/standard.jpg', { eager: true }),
 ).map((m) => m.default);
 ---
 
@@ -134,8 +134,10 @@ const stills = Object.values(
   }
   /* ---------- With motion: the mark beside the checks (motion/chapters/standard.ts) ---------- */
 
-  :global(.standard__stage) {
-    display: none;
+  /* without motion: the rendered still of the mark, under the intro */
+  .standard__side :global(.standard__stage) {
+    height: 300px;
+    margin-top: 28px;
   }
 
   /* desktop: the intro scrolls away; the mark sticks beside the checks */
@@ -143,7 +145,7 @@ const stills = Object.values(
     align-self: stretch;
   }
 
-  :global(.motion-ready) :global(.standard__stage) {
+  :global(.motion-ready) .standard__side :global(.standard__stage) {
     display: block;
     position: sticky;
     top: calc(var(--header-h) + 6vh);
@@ -185,7 +187,7 @@ const stills = Object.values(
       display: contents;
     }
 
-    :global(.motion-ready) :global(.standard__stage) {
+    :global(.motion-ready) .standard__side :global(.standard__stage) {
       position: sticky;
       top: var(--header-h);
       z-index: 0;

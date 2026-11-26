@@ -219,7 +219,7 @@ const create: StageFactory = async (el, engine) => {
     update(p, _dt, ctx) {
       let pose: ReturnType<typeof heliPose>;
       if (mode === 'hover') {
-        pose = { pos: new Vector3(0, 6.5 - 1.5 * p, 0), yaw: lerp(0.2, 1.6, p), pitch: 0.03, roll: 0, height: 6.5 - 1.5 * p };
+        pose = { pos: new Vector3(0, 4.6 - 1.4 * p, 0), yaw: lerp(0.2, 1.6, p), pitch: 0.03, roll: 0, height: 4.6 - 1.4 * p };
       } else pose = heliPose(p);
       holder.position.copy(pose.pos);
       holder.rotation.set(0, pose.yaw, 0);
@@ -232,6 +232,15 @@ const create: StageFactory = async (el, engine) => {
       fl.mesh.visible = mode !== 'hover';
 
       // camera: low over the lawn, the landing spot right of centre on wide screens (text on the left)
+      if (mode === 'hover') {
+        // close on the helicopter, the palace far behind
+        const fitH = ctx.aspect < 1 ? Math.pow(1 / ctx.aspect, 0.7) : 1;
+        camera.fov = ctx.aspect < 1 ? 40 : 30;
+        camera.position.set(-10 * fitH + ctx.pointer.x * 1.2, 6.5 - ctx.pointer.y * 0.5 + 1.5 * p, 24 * fitH);
+        camera.lookAt(3, 4, -6);
+        camera.updateProjectionMatrix();
+        return;
+      }
       const wide = ctx.aspect >= 1;
       const fit = wide ? 1 : Math.pow(1 / ctx.aspect, 0.6);
       const look = wide ? new Vector3(-2, 6.5, -14) : new Vector3(2, 7.5, -8);

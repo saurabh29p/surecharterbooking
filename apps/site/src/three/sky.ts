@@ -126,6 +126,7 @@ export function createSky(tier: Tier): Sky {
     scene.add(p);
   }
 
+  const noMoon = /[?&]still\b/.test(location.search);
   let calmY = Infinity;
   let docH = 1;
   const measure = () => {
@@ -152,7 +153,8 @@ export function createSky(tier: Tier): Sky {
       lastS = s;
       uniforms.uPointer.value = [pointer.x, pointer.y];
       const f = s / docH;
-      uniforms.uMoon.value = [0.86, 0.2 - 0.08 * f];
+      // (?still: no moon, for rendering the fallback stills)
+      uniforms.uMoon.value = noMoon ? [-1, -1] : [0.86, 0.2 - 0.08 * f];
       return false;
     },
   };

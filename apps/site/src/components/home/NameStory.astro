@@ -5,7 +5,7 @@ import mark from '../../assets/logo/vaanika-mark-colour-for-dark-bg.svg?url';
 import Stage from '../Stage.astro';
 
 const stills = Object.values(
-  import.meta.glob<{ default: ImageMetadata }>('../../assets/3d/stills/bloom.png', { eager: true }),
+  import.meta.glob<{ default: ImageMetadata }>('../../assets/3d/stills/bloom.jpg', { eager: true }),
 ).map((m) => m.default);
 /** Each part's name beside the opening lotus (placed in the styles below). */
 const LABELS = [
@@ -127,7 +127,7 @@ const LABELS = [
     aspect-ratio: 1;
   }
 
-  :global(.motion-ready) :global(.name__stage) {
+  :global(.motion-ready) .name__bloom :global(.name__stage) {
     position: absolute;
     inset: -12%;
   }

@@ -136,4 +136,21 @@ All pages share the sky, cross-document View Transitions (header and gold hairli
 
 ## Key-moment stills
 
-Rendered from the 3D scenes; these are also the fallback images. See the section at the end of this file once the scenes are built.
+Rendered from the live 3D scenes (`apps/site/scripts/render-stills.cjs`); the same images are the
+fallbacks under reduced motion, without WebGL and on low-end devices.
+
+| Chapter | Key moment |
+|---|---|
+| The Vaanika Standard: the parts come together | ![The mark's parts together](../apps/site/src/assets/3d/stills/standard.jpg) |
+| Destinations: all six routes drawn | ![India's coast in gold with six contrails](../apps/site/src/assets/3d/stills/map.jpg) |
+| Showroom: helicopter | ![Helicopter on the studio floor](../apps/site/src/assets/3d/stills/fleet-0.jpg) |
+| Showroom: light jet | ![Light jet](../apps/site/src/assets/3d/stills/fleet-1.jpg) |
+| Showroom: super-midsize | ![Super-midsize jet](../apps/site/src/assets/3d/stills/fleet-2.jpg) |
+| Showroom: heavy jet | ![Heavy jet](../apps/site/src/assets/3d/stills/fleet-3.jpg) |
+| Showroom: group charter | ![Regional airliner](../apps/site/src/assets/3d/stills/fleet-4.jpg) |
+| The Shreeji Arrival: touchdown | ![The helicopter landed before the palace, petals lifting](../apps/site/src/assets/3d/stills/shreeji.jpg) |
+| The name story: the lotus open | ![The lotus fully open](../apps/site/src/assets/3d/stills/bloom.jpg) |
+| Helicopter arrivals | ![The helicopter over the lawn](../apps/site/src/assets/3d/stills/hover.jpg) |
+| Udaipur page: its four routes | ![Four contrails to Udaipur](../apps/site/src/assets/3d/stills/map-udaipur.jpg) |
+| Jaipur page | ![Four contrails to Jaipur](../apps/site/src/assets/3d/stills/map-jaipur.jpg) |
+| Goa page | ![Four contrails to Goa](../apps/site/src/assets/3d/stills/map-goa.jpg) |

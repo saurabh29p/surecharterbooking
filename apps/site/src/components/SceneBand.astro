@@ -1,0 +1,50 @@
+---
+/**
+ * A full-width band with one 3D moment that plays as the band scrolls through the window (inner
+ * pages' signature moments). Decorative: the stage is aria-hidden and every fact it shows is also in
+ * the page's text. Without motion it shows its still, or nothing if it has none.
+ */
+import type { ImageMetadata } from 'astro';
+import Stage from './Stage.astro';
+
+interface Props {
+  stage: string;
+  mode?: string;
+  stills?: ImageMetadata[];
+  caption?: string;
+  /** share of the band's pass through the window over which the scene plays, e.g. "0.1,0.6" */
+  range?: string;
+  class?: string;
+}
+
+const { stage, mode, stills = [], caption = 'Illustrative 3D', range = '0,1', class: cls } = Astro.props;
+---
+
+<section class:list={['band', cls, { 'band--still': stills.length > 0 }]} data-chapter="band" data-range={range} aria-hidden="true">
+  <Stage name={stage} mode={mode} stills={stills} caption={caption} class="band__stage" sizes="100vw" />
+</section>
+
+<style>
+  .band {
+    display: none;
+    position: relative;
+  }
+
+  .band--still,
+  :global(.motion-ready) .band {
+    display: block;
+    height: min(64vh, 620px);
+  }
+
+  .band :global(.band__stage) {
+    position: absolute;
+    inset: 0;
+  }
+
+  @media (max-width: 767px) {
+    .band--still,
+    :global(.motion-ready) .band {
+      height: 52svh;
+    }
+  }
+</style>

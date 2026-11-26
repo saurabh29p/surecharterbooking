@@ -15,6 +15,12 @@ import superMid from '../../assets/photos/fleet/super-midsize.jpg';
 import heavyJet from '../../assets/photos/fleet/heavy-jet.jpg';
 import group from '../../assets/photos/fleet/group-charter.jpg';
 
+interface Props {
+  /** where each card leads (the aircraft page points at its own table) */
+  href?: string;
+}
+const { href = '/aircraft/' } = Astro.props;
+
 const CLASSES: { name: string; seats: string; use: string; img: ImageMetadata; alt: string; featured?: boolean }[] = [
   {
     name: 'Helicopter',
@@ -54,9 +60,9 @@ const CLASSES: { name: string; seats: string; use: string; img: ImageMetadata; a
   },
 ];
 
-// Rendered stills of the 3D showroom, one per class (src/assets/3d/stills/fleet-<n>.png)
+// Rendered stills of the 3D showroom, one per class (src/assets/3d/stills/fleet-<n>.jpg)
 const stills = Object.entries(
-  import.meta.glob<{ default: ImageMetadata }>('../../assets/3d/stills/fleet-*.png', { eager: true }),
+  import.meta.glob<{ default: ImageMetadata }>('../../assets/3d/stills/fleet-*.jpg', { eager: true }),
 )
   .sort(([a], [b]) => a.localeCompare(b))
   .map(([, m]) => m.default);
@@ -77,7 +83,7 @@ const stills = Object.entries(
     <div class="fleet__grid">
       {CLASSES.map((c, i) => (
         <a
-          href="/aircraft/"
+          href={href}
           class:list={['fleet__card card-lift reveal', { 'is-featured': c.featured, 'is-active': i === 0 }]}
         >
           <span class="fleet__photo photo-zoom">

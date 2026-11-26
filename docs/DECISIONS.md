@@ -348,3 +348,31 @@ design (`noindex`); on a launched build (local) SEO is **100** on home, weddings
   the site yet, so production is deployed from `claude/new-session-ox4tcm` on request until the
   merge to `main`. `PUBLIC_LAUNCHED=true` is set for Production only, so preview links keep the
   banner, the verify tags and `noindex`; the `vercel.app` addresses stay `noindex` by header.
+
+## The 3D site (branch `site-3d`, 26 Nov 2026)
+- **Scroll stays native.** Pinned chapters use CSS `position: sticky` and one small scroll loop
+  (`src/motion/loop.ts`) that turns positions into eased progress values. **No GSAP**: sticky does
+  the pinning without scroll-jacking (keyboard, find-in-page, anchors and iOS momentum keep working)
+  and saves about 45 KB; GSAP's licence would have allowed it. **No Lenis**, for the same reasons.
+- **Simple reveals are CSS scroll-driven animations** (the gold path down "How it works" and the
+  helicopter permissions, the sample quote's lines, the photo depth in "Beyond weddings"), with no
+  JavaScript; browsers without support simply show everything. The once-only section fade-ups stay as
+  they were (a CSS scroll animation would undo itself when scrolling back up).
+- **Models are quantised glTF, not Meshopt or Draco.** Both decoders need WebAssembly, which the
+  content security policy would have to allow (`'wasm-unsafe-eval'`). Quantisation plus
+  error-bounded simplification keeps every model under 300 KB with no decoder.
+- **One renderer, one fixed canvas** behind the page (sky + each stage by scissor). It renders only
+  while the scroll or pointer changes, so nothing in 3D moves on its own; the only self-moving
+  things are the hero film and the trust strip, and both now have a pause button.
+- **The India map draws the coastline only** (Natural Earth, public domain), from the Gulf of Kutch
+  to the Bengal delta, plus Lakshadweep and the Andaman & Nicobar Islands. No land border is drawn
+  anywhere: the land fades into the night to the north and at both ends of the coast. This avoids
+  showing any international boundary (Survey of India rules).
+- **Group charter** is shown as a generic rear-engined regional airliner made by stretching the
+  film's jet (the class photo is an airliner); relative size is shown by scale only, no lengths.
+- **The home Shreeji Arrival** now shows the 3D arrival (or its rendered still) instead of the
+  composite photo; the photo stays on the Helicopter arrivals page.
+- **Fallbacks:** reduced motion, Save-Data, no JavaScript, no WebGL, software rendering and slow
+  devices get the rendered stills and the normal page; the fleet keeps its photo cards.
+- **Testing switches** (not linked anywhere): `?tier=high|mid|low` forces a device tier,
+  `?motion=off` turns the scroll choreography off, `?still` hides the moon for rendering stills.

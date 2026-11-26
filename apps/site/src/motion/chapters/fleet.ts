@@ -10,6 +10,8 @@ import { scrollForStep, stepAt } from '../steps';
 export default function fleet(track: HTMLElement) {
   const cards = [...track.querySelectorAll<HTMLElement>('.fleet__card')];
   const marks = [...track.querySelectorAll<HTMLElement>('[data-step]')];
+  // without WebGL the stage shows a rendered still per class
+  const stills = [...track.querySelectorAll<HTMLElement>('.stage__still')];
   const n = cards.length;
   let active = -1;
   addChapter({
@@ -24,6 +26,7 @@ export default function fleet(track: HTMLElement) {
       track.dataset.active = String(a);
       cards.forEach((c, i) => c.classList.toggle('is-active', i === a));
       for (const m of marks) m.classList.toggle('is-active', Number(m.dataset.step) === a);
+      stills.forEach((st, i) => st.classList.toggle('is-active', i === a));
       if (!first) countUp(cards[a]?.querySelector('.fleet__seats'));
     },
   });

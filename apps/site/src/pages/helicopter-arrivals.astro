@@ -10,6 +10,12 @@ import { HELI_PERMISSIONS_LINE } from '../config/company';
 import { faqLd, faqsFor } from '../lib/faq';
 import { serviceJsonLd } from '../lib/jsonld';
 import Page from '../layouts/Page.astro';
+import SceneBand from '../components/SceneBand.astro';
+import type { ImageMetadata } from 'astro';
+
+const heliStills = Object.values(
+  import.meta.glob<{ default: ImageMetadata }>('../assets/3d/stills/hover.jpg', { eager: true }),
+).map((m) => m.default);
 
 const description =
   'A helicopter entrance at an Indian wedding needs a suitable landing spot, the operator’s landing request, the venue owner’s NOC and the district’s nod. Vaanika coordinates all of it.';
@@ -66,6 +72,9 @@ const guide = await guideHref('helicopter-entry-at-a-wedding');
   ]}
   noCta
 >
+  <!-- the helicopter over the lawn, turning and settling as the page scrolls -->
+  <SceneBand stage="shreeji" mode="hover" stills={heliStills} range="0.05,0.95" />
+
   <section class="section" aria-labelledby="svc-h">
     <div class="container">
       <div class="section__head reveal">
@@ -94,7 +103,7 @@ const guide = await guideHref('helicopter-entry-at-a-wedding');
         </h2>
         <p class="lead heli__lead">{HELI_PERMISSIONS_LINE}</p>
       </div>
-      <div class="heli__table reveal">
+      <div class="heli__table heli__path reveal">
         <HeliPermissions />
       </div>
     </div>
@@ -236,6 +245,65 @@ const guide = await guideHref('helicopter-entry-at-a-wedding');
     .heli-shreeji__inner {
       grid-template-columns: 1fr;
       gap: 28px;
+    }
+  }
+  /* with motion: a gold path draws down the permissions, operator to venue to district, as you read
+     (CSS scroll-driven; without support it simply isn't drawn) */
+  @supports (animation-timeline: view()) {
+    :global(.motion) .heli__path {
+      position: relative;
+      padding-left: 26px;
+      view-timeline-name: --heli-path;
+    }
+
+    :global(.motion) .heli__path::before,
+    :global(.motion) .heli__path::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      pointer-events: none;
+      animation-timeline: --heli-path;
+      animation-range: cover 18% cover 58%;
+      animation-fill-mode: both;
+      animation-timing-function: linear;
+    }
+
+    :global(.motion) .heli__path::before {
+      top: 18px;
+      bottom: 18px;
+      width: 2px;
+      border-radius: 2px;
+      background: linear-gradient(180deg, #f4e3b5, #d9bc78 60%, #8c6a2f);
+      transform-origin: top;
+      animation-name: heli-path;
+    }
+
+    :global(.motion) .heli__path::after {
+      width: 10px;
+      height: 10px;
+      margin: -5px 0 0 -4px;
+      border-radius: 50%;
+      background: #f4e3b5;
+      box-shadow: 0 0 16px rgba(244, 227, 181, 0.8);
+      animation-name: heli-head;
+    }
+  }
+
+  @keyframes heli-path {
+    from {
+      transform: scaleY(0);
+    }
+    to {
+      transform: scaleY(1);
+    }
+  }
+
+  @keyframes heli-head {
+    from {
+      top: 18px;
+    }
+    to {
+      top: calc(100% - 18px);
     }
   }
 </style>

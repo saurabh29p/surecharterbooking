@@ -220,8 +220,10 @@ const create: StageFactory = async (el) => {
   });
 
   // framing: the whole route set, seen from the south-west, looking north
-  const focus = destId ? CITIES[destId].clone().lerp(new Vector3(1, 0, -1), 0.4) : new Vector3(1, 0, 1.2);
-  const span = destId ? 17 : 24.5;
+  // a destination page: the four cities and the destination (Delhi in the north to Bengaluru in the
+  // south), seen more from above, in a wide band
+  const focus = destId ? new Vector3(1.4, 0, 0.2) : new Vector3(1, 0, 1.2);
+  const span = destId ? 33 : 24.5;
   const v = new Vector3();
   return {
     scene,
@@ -242,7 +244,7 @@ const create: StageFactory = async (el) => {
       const fit = ctx.aspect < 1.2 ? Math.pow(1.2 / ctx.aspect, 0.85) : 1;
       const dist = span * fit;
       const az = lerp(-0.2, -0.05, p) + ctx.pointer.x * 0.05;
-      const el2 = lerp(0.95, 0.85, p) - ctx.pointer.y * 0.03;
+      const el2 = (destId ? lerp(1.12, 1.02, p) : lerp(0.95, 0.85, p)) - ctx.pointer.y * 0.03;
       camera.position.set(focus.x + Math.sin(az) * Math.cos(el2) * dist, Math.sin(el2) * dist, focus.z + Math.cos(az) * Math.cos(el2) * dist);
       camera.lookAt(focus.x, 0, focus.z - 0.6);
       camera.updateMatrixWorld();

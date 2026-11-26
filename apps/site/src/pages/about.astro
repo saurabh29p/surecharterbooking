@@ -4,6 +4,12 @@ import meaning from '../assets/brand/logo-meaning.jpg';
 import { AGENT_LINE, company, show } from '../config/company';
 import { PREVIEW } from '../config/site';
 import Page from '../layouts/Page.astro';
+import SceneBand from '../components/SceneBand.astro';
+import type { ImageMetadata } from 'astro';
+
+const bloomStills = Object.values(
+  import.meta.glob<{ default: ImageMetadata }>('../assets/3d/stills/bloom.jpg', { eager: true }),
+).map((m) => m.default);
 
 const a = company.address;
 /** Only what can be checked today: each card appears once its detail is on the site. */
@@ -73,6 +79,9 @@ const VERIFY_US = [
       </div>
     </div>
   </section>
+
+  <!-- the lotus opening, petal by petal -->
+  <SceneBand stage="mark" mode="bloom" stills={bloomStills} caption="" range="0.12,0.55" />
 
   <section class="section section--alt" aria-labelledby="co-h">
     <div class="container ab__split ab__split--even">
