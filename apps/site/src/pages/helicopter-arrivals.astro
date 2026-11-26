@@ -1,5 +1,5 @@
 ---
-import { Image } from 'astro:assets';
+import { Picture } from 'astro:assets';
 import hero from '../assets/photos/helicopter-sunset.jpg';
 import shreeji from '../assets/photos/shreeji-arrival-composite.jpg';
 import FaqList from '../components/FaqList.astro';
@@ -101,7 +101,7 @@ const SHREEJI = [
   <section id="shreeji" class="heli-shreeji" aria-labelledby="shreeji-h">
     <div class="container heli-shreeji__inner">
       <figure class="heli-shreeji__photo reveal">
-        <Image
+        <Picture formats={['avif', 'webp']}
           src={shreeji}
           alt="A bride and groom walking from a black helicopter parked on a lawn"
           widths={[480, 768, 1100]}

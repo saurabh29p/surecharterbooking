@@ -1,6 +1,6 @@
 ---
 /** Beyond weddings: private & business charters (mockup). No named or pictured clients. */
-import { Image } from 'astro:assets';
+import { Picture } from 'astro:assets';
 import photo from '../../assets/photos/private-jet-vip.jpg';
 import Icon from '../Icon.astro';
 
@@ -35,7 +35,7 @@ const POINTS = [
     </div>
   </div>
   <figure class="beyond__photo">
-    <Image
+    <Picture formats={['avif', 'webp']}
       src={photo}
       alt="Tail and engine of a private jet on a runway at dusk"
       widths={[480, 720, 960, 1400]}

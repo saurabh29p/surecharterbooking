@@ -337,8 +337,9 @@ figure {
   overflow: hidden;
 }
 
-/* <Picture> wraps the img: let the img size against the card itself */
-.photo-zoom picture {
+/* Photos are <Picture> (AVIF with a WebP fallback). The <picture> box is dropped so every img
+   lays out exactly as if it were the direct child, as the component styles expect. */
+picture {
   display: contents;
 }
 

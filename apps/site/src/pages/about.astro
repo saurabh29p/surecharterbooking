@@ -1,5 +1,5 @@
 ---
-import { Image } from 'astro:assets';
+import { Picture } from 'astro:assets';
 import meaning from '../assets/brand/logo-meaning.jpg';
 import { AGENT_LINE, company, show } from '../config/company';
 import { PREVIEW } from '../config/site';
@@ -45,12 +45,13 @@ const VERIFY_US = [
   <section class="section" aria-labelledby="name-h">
     <div class="container ab__split">
       <figure class="ab__img reveal">
-        <Image
+        <Picture formats={['avif', 'webp']}
           src={meaning}
           alt="The Vaanika lotus: an ivory petal for Saraswati, a gold petal for Lakshmi, a blue petal for Kali and a crescent moon"
-          widths={[400, 640, 900]}
-          sizes="(max-width: 899px) 100vw, 480px"
-          loading="lazy"
+          widths={[400, 480, 640, 700, 900]}
+          sizes="(max-width: 899px) calc(100vw - 40px), 480px"
+          loading="eager"
+          fetchpriority="high"
         />
       </figure>
       <div class="reveal">
