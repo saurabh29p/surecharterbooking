@@ -1,6 +1,6 @@
 ---
 /** Destination cards with approximate flying times (from the destinations collection). */
-import { Image } from 'astro:assets';
+import { Picture } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import Icon from '../Icon.astro';
 import Verify from '../Verify.astro';
@@ -25,10 +25,11 @@ const items = (await getCollection('destinations')).sort((a, b) => a.data.order 
     <div class="dest__grid">
       {items.map((d) => (
         <a class="dest__card photo-zoom reveal" href={`/destinations/${d.id}/`}>
-          <Image
+          <Picture
             src={d.data.image}
             alt={d.data.imageAlt}
-            widths={[400, 600, 900]}
+            formats={['avif', 'webp']}
+            widths={[400, 600, 700, 900]}
             sizes="(max-width: 899px) calc(100vw - 40px), 400px"
             loading="lazy"
           />

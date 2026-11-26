@@ -337,6 +337,11 @@ figure {
   overflow: hidden;
 }
 
+/* <Picture> wraps the img: let the img size against the card itself */
+.photo-zoom picture {
+  display: contents;
+}
+
 .photo-zoom img {
   display: block;
   width: 100%;
