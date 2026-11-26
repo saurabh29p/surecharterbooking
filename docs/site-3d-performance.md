@@ -5,7 +5,7 @@ Lighthouse 13.6 (mobile: simulated mid-range phone on slow 4G, 4× CPU slowdown;
 Targets: LCP ≤ 2.5 s, CLS ≤ 0.1, mobile Performance ≥ 90 (aim 95), Accessibility ≥ 95, SEO 100.
 
 **SEO reads 69 on every page because preview builds are deliberately `noindex`** (robots and the
-`X-Robots-Tag`); the launched build is indexable (see the check at the end).
+`X-Robots-Tag`); on a launched build SEO is 100 (see the check at the end).
 
 **Lighthouse's own browser has no GPU**, so the site's device check gives it the stills, as it
 would give a phone without WebGL. The second table forces the full 3D on to show what it costs.
@@ -82,3 +82,5 @@ stills if they stay slow.
   H1, no sideways scrolling, no page errors, every 3D stage showing its still or its scene: **75 of
   75 passed**.
 - Unit tests for the device tier: 8 tests, passing (`pnpm test`).
+- Launched-mode build (`VERCEL_ENV=production PUBLIC_LAUNCHED=true`), mobile: home 98 / 100 / 100 /
+  **100**, Aircraft 99 / 100 / 100 / **100**, Udaipur 100 / 100 / 100 / **100**.
