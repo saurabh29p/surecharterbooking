@@ -1,4 +1,5 @@
 ---
+import { guideHref } from '../lib/content';
 import hero from '../assets/photos/jet-cabin.jpg';
 import AircraftTable from '../components/blocks/AircraftTable.astro';
 import Page from '../layouts/Page.astro';
@@ -21,6 +22,7 @@ const NOTES = [
     text: 'We never show an operator’s logo or an aircraft registration on this site; you see both on your quote.',
   },
 ];
+const guide = await guideHref('how-many-guests-fit-in-a-private-jet');
 ---
 
 <Page
@@ -65,10 +67,12 @@ const NOTES = [
         ))}
       </div>
       <p class="ac__more">
-        <a href="/guides/how-many-guests-fit-in-a-private-jet/">
-          Read the guide: how many guests fit in a private jet?
-        </a>{' '}
-        · <a href="/helicopter-arrivals/">Helicopter arrivals</a>
+        {guide && (
+          <>
+            <a href={guide}>Read the guide: how many guests fit in a private jet?</a>{' '}·{' '}
+          </>
+        )}
+        <a href="/helicopter-arrivals/">Helicopter arrivals</a>
       </p>
     </div>
   </section>

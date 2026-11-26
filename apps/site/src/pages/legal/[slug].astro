@@ -63,7 +63,7 @@ const updated = l.updated.toLocaleDateString('en-IN', {
 <style>
   .lg {
     display: grid;
-    grid-template-columns: 1fr 240px;
+    grid-template-columns: minmax(0, 1fr) 240px;
     gap: 56px;
     align-items: start;
   }
@@ -104,7 +104,7 @@ const updated = l.updated.toLocaleDateString('en-IN', {
 
   @media (max-width: 899px) {
     .lg {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
       gap: 32px;
     }
 

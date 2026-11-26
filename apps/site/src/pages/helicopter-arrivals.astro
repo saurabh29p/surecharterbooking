@@ -1,4 +1,5 @@
 ---
+import { guideHref } from '../lib/content';
 import { Picture } from 'astro:assets';
 import hero from '../assets/photos/helicopter-sunset.jpg';
 import shreeji from '../assets/photos/shreeji-arrival-composite.jpg';
@@ -40,6 +41,7 @@ const SHREEJI = [
   'A flower shower, where permission allows',
   'A weather plan agreed in advance, with a road fallback',
 ];
+const guide = await guideHref('helicopter-entry-at-a-wedding');
 ---
 
 <Page
@@ -140,11 +142,11 @@ const SHREEJI = [
       <div class="heli__faq">
         <FaqList items={faqs} />
       </div>
-      <p class="heli__more">
-        <a href="/guides/helicopter-entry-at-a-wedding/">
-          Read the guide: helicopter entry at a wedding
-        </a>
-      </p>
+      {guide && (
+        <p class="heli__more">
+          <a href={guide}>Read the guide: helicopter entry at a wedding</a>
+        </p>
+      )}
     </div>
   </section>
 

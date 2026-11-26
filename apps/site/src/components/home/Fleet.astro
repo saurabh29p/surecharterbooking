@@ -1,48 +1,54 @@
 ---
-/** Choose your arrival: five aircraft classes (mockup). Seat counts are typical; marked to verify. */
+/**
+ * Choose your arrival: five aircraft classes (mockup), each with an illustrative photo of a typical
+ * aircraft in that class. Seat counts are typical; marked to verify. Photos: Wikimedia Commons
+ * (credits below the grid, as their licences ask) and the site's own placeholder; registrations and
+ * airline marks were removed (WEBSITE.md §7), see design/photos/README.md.
+ */
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
 import Verify from '../Verify.astro';
+import helicopter from '../../assets/photos/fleet/helicopter.jpg';
+import lightJet from '../../assets/photos/fleet/light-jet.jpg';
+import superMid from '../../assets/photos/fleet/super-midsize.jpg';
+import heavyJet from '../../assets/photos/fleet/heavy-jet.jpg';
+import group from '../../assets/photos/fleet/group-charter.jpg';
 
-const CLASSES = [
+const CLASSES: { name: string; seats: string; use: string; img: ImageMetadata; alt: string; featured?: boolean }[] = [
   {
     name: 'Helicopter',
     seats: 'Up to 5–6 guests',
     use: 'Airport to venue. The grand entrance.',
-    w: 110,
-    vb: '0 0 200 80',
-    d: 'M40 40 C40 26 70 18 110 18 C150 18 172 30 176 44 C178 54 166 60 140 60 L70 60 C52 60 40 52 40 40 Z M44 38 L4 32 L4 38 L44 46 Z M4 22 L12 22 L14 40 L4 40 Z M106 8 h4 v12 h-4 Z',
-    lines: 'M18 8 H198 M70 60 L66 72 M140 60 L144 72 M56 72 H158',
+    img: helicopter,
+    alt: 'A white twin-engine helicopter parked on a grass helipad',
   },
   {
     name: 'Light jet',
     seats: 'About 6–7 guests',
     use: 'The couple and closest family.',
-    w: 110,
-    vb: '0 0 200 60',
-    d: 'M10 34 C30 30 120 26 170 24 C185 23 196 26 198 30 C196 34 186 36 170 36 L40 38 C25 38 14 37 10 34 Z M18 34 L6 8 L20 8 L42 32 Z M90 35 L122 35 L74 54 L62 54 Z',
+    img: lightJet,
+    alt: 'A white light business jet parked on an airport apron under a stormy sky',
   },
   {
     name: 'Super-midsize',
     seats: 'About 8–9 guests',
     use: 'One family side, coast to coast.',
-    w: 125,
-    vb: '0 0 230 60',
-    d: 'M10 34 C30 30 140 26 200 24 C215 23 226 26 228 30 C226 34 216 36 200 36 L40 38 C25 38 14 37 10 34 Z M18 34 L6 6 L22 6 L44 32 Z M100 35 L136 35 L80 56 L66 56 Z',
+    img: superMid,
+    alt: 'A white super-midsize business jet parked on an apron',
   },
   {
     name: 'Heavy jet',
     seats: 'About 12–14 guests',
     use: 'The full VIP circle, room to celebrate.',
-    w: 135,
-    vb: '0 0 260 60',
-    d: 'M10 34 C30 30 160 26 230 24 C245 23 256 26 258 30 C256 34 246 36 230 36 L40 38 C25 38 14 37 10 34 Z M18 34 L4 4 L22 4 L46 32 Z M110 35 L150 35 L86 58 L70 58 Z',
+    img: heavyJet,
+    alt: 'A large private jet on the tarmac at sunset',
   },
   {
     name: 'Group charter',
     seats: '50 guests and more',
     use: 'The whole baraat, one departure.',
-    w: 140,
-    vb: '0 0 300 60',
-    d: 'M10 34 C30 28 200 26 270 25 C286 25 296 27 298 30 C296 34 286 36 270 36 L40 39 C25 39 14 37 10 34 Z M18 34 L4 2 L24 2 L50 32 Z M130 36 L176 36 L100 58 L82 58 Z',
+    img: group,
+    alt: 'A passenger airliner taking off, silhouetted against a dusk sky',
     featured: true,
   },
 ];
@@ -62,20 +68,41 @@ const CLASSES = [
           href="/aircraft/"
           class:list={['fleet__card card-lift reveal', { 'is-featured': c.featured }]}
         >
-          <svg width={c.w} height="48" viewBox={c.vb} aria-hidden="true" class="fleet__art">
-            <path d={c.d} fill="currentColor" />
-            {c.lines && <path d={c.lines} stroke="currentColor" stroke-width="3" fill="none" />}
-          </svg>
-          <h3 class="fleet__name display">{c.name}</h3>
-          <p class="fleet__seats num">
-            <Verify>{c.seats}</Verify>
-          </p>
-          <p class="fleet__use">{c.use}</p>
+          <span class="fleet__photo photo-zoom">
+            <Picture
+              src={c.img}
+              alt={c.alt}
+              formats={['avif', 'webp']}
+              widths={[320, 480, 640, 800]}
+              sizes="(max-width: 767px) 74vw, (max-width: 1099px) 33vw, 240px"
+              loading="lazy"
+            />
+            <span class="illustrative fleet__ill">Illustrative</span>
+          </span>
+          <div class="fleet__body">
+            <h3 class="fleet__name display">{c.name}</h3>
+            <p class="fleet__seats num">
+              <Verify>{c.seats}</Verify>
+            </p>
+            <p class="fleet__use">{c.use}</p>
+          </div>
         </a>
       ))}
     </div>
     <p class="fleet__note">
       Guest numbers are typical for each class; the exact aircraft decides the final count.
+    </p>
+    <p class="fleet__credits">
+      Illustrative photos of typical aircraft, not Vaanika's or an operator's: helicopter by jan hendrik
+      de wit (<a href="https://commons.wikimedia.org/wiki/File:Airbus_Helicopter_H145_2018.jpg">CC0</a>);
+      light and super-midsize jets by Acroterion
+      (<a href="https://commons.wikimedia.org/wiki/File:Embraer_Phenom_300_N235EE_FDK_MD2.jpg">1</a>,
+      <a href="https://commons.wikimedia.org/wiki/File:Cessna_Citation_Latitude_N980JF_FDK_MD2.jpg">2</a>,
+      <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>); airliner by Maarten
+      Visser (<a href="https://commons.wikimedia.org/wiki/File:Hello_A320_sunset_(7385671502).jpg">photo</a>,
+      <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC BY-SA 2.0</a>), via Wikimedia Commons.
+      Cropped, with registrations and airline marks removed; the edited photos are shared under the
+      same licences.
     </p>
   </div>
 </section>
@@ -97,8 +124,9 @@ const CLASSES = [
   }
 
   .fleet__card {
-    display: block;
-    padding: 28px 22px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
     border: 1px solid var(--line);
     border-radius: var(--radius-card);
     background: linear-gradient(180deg, #121833, #0e1328);
@@ -115,13 +143,29 @@ const CLASSES = [
     background: linear-gradient(180deg, #1a1e38, #0e1328);
   }
 
-  .fleet__art {
+  .fleet__photo {
+    position: relative;
     display: block;
-    color: var(--gold-soft);
+    aspect-ratio: 16 / 10;
+    background: #0b1020;
+  }
+
+  .fleet__ill {
+    position: absolute;
+    right: 10px;
+    bottom: 8px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(5, 7, 15, 0.55);
+    font-size: 10.5px;
+  }
+
+  .fleet__body {
+    display: block;
+    padding: 20px 22px 26px;
   }
 
   .fleet__name {
-    margin-top: 20px;
     font-weight: 500;
     font-size: 23px;
     line-height: 1.2;
@@ -145,6 +189,20 @@ const CLASSES = [
     margin-top: 20px;
     font-size: 13.5px;
     color: var(--faint);
+  }
+
+  .fleet__credits {
+    margin-top: 8px;
+    max-width: 900px;
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--faint);
+  }
+
+  .fleet__credits a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
   }
 
   @media (max-width: 1099px) {

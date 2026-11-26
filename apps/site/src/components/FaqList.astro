@@ -1,11 +1,13 @@
 ---
 /** FAQ accordion (native <details>, works without JavaScript). Answers come from Markdown. */
 import { render, type CollectionEntry } from 'astro:content';
+import { visibleGuides } from '../lib/content';
 
 interface Props {
   items: CollectionEntry<'faq'>[];
 }
 
+const published = new Set((await visibleGuides()).map((g) => g.id));
 const rendered = await Promise.all(
   Astro.props.items.map(async (item) => ({ item, Content: (await render(item)).Content })),
 );
@@ -22,6 +24,12 @@ const rendered = await Promise.all(
       </summary>
       <div class="faq__a">
         <Content />
+        {item.data.guide && published.has(item.data.guide.slug) && (
+          <p>
+            Read more in our guide{' '}
+            <a href={`/guides/${item.data.guide.slug}/`}>{item.data.guide.label}</a>.
+          </p>
+        )}
       </div>
     </details>
   ))}
