@@ -254,7 +254,6 @@ const stills = Object.values(
   }
 
   :global(html:not(.motion-ready)) .dest__routes li {
-    opacity: 1;
     color: var(--ivory);
   }
 
@@ -420,22 +419,25 @@ const stills = Object.values(
     padding: 11px 0;
     border-bottom: 1px solid var(--line-soft);
     font-size: 14px;
-    color: var(--muted);
-    opacity: 0.4;
-    transition:
-      opacity var(--dur-panel) ease,
-      color var(--dur-panel) ease;
+    /* routes not yet drawn are quieter, but every line keeps a 4.5:1 contrast */
+    color: var(--muted-2);
+    transition: color var(--dur-panel) ease;
   }
 
   .dest__routes li:global(.is-on) {
-    opacity: 1;
     color: var(--ivory);
   }
 
   .dest__route-time {
     font-weight: 700;
-    color: var(--gold-soft);
+    color: var(--muted-2);
     white-space: nowrap;
+    transition: color var(--dur-panel) ease;
+  }
+
+  .dest__routes li:global(.is-on) .dest__route-time,
+  :global(html:not(.motion-ready)) .dest__route-time {
+    color: var(--gold-soft);
   }
 
   @media (max-width: 899px) {

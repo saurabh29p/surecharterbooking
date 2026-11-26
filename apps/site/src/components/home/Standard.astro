@@ -166,8 +166,9 @@ const stills = Object.values(
       opacity var(--dur-panel) ease;
   }
 
+  /* the other checks rest a little quieter (still above 4.5:1 for every line of text) */
   :global(.motion-ready) .standard .standard__check.is-in:not(.is-active) {
-    opacity: 0.55;
+    opacity: 0.8;
   }
 
   :global(.motion-ready) .standard .standard__check.is-active {

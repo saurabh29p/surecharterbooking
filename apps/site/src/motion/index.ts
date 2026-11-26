@@ -34,18 +34,22 @@ export function startMotion() {
     started = true;
     void import('../three/engine').then((m) => m.startEngine(tier, STAGES));
   };
-  // after the page has settled (load, then an idle moment), or sooner if a stage is about to show
-  const idle = () => ('requestIdleCallback' in window ? requestIdleCallback(start, { timeout: 2500 }) : setTimeout(start, 600));
-  if (document.readyState === 'complete') setTimeout(idle, 800);
-  else addEventListener('load', () => setTimeout(idle, 800), { once: true });
+  // The 3D (three.js, the renderer, the models) costs about half a second of main-thread time on a
+  // mid-range phone, so it never starts while the page is loading: only once a 3D moment is about to
+  // come into view, or after the page has sat idle for a few seconds, whichever is first. Until then
+  // each moment shows its still, and the setup never competes with the first paint or the first taps.
+  const afterLoad = (fn: () => void) => {
+    if (document.readyState === 'complete') fn();
+    else addEventListener('load', fn, { once: true });
+  };
+  afterLoad(() => setTimeout(() => ('requestIdleCallback' in window ? requestIdleCallback(start, { timeout: 2000 }) : start()), 4000));
   const soon = new IntersectionObserver(
     (entries) => {
-      if (entries.some((e) => e.isIntersecting) && document.readyState === 'complete') {
-        soon.disconnect();
-        start();
-      }
+      if (!entries.some((e) => e.isIntersecting)) return;
+      soon.disconnect();
+      afterLoad(() => setTimeout(start, 300));
     },
-    { rootMargin: '100% 0px 100% 0px' },
+    { rootMargin: '15% 0px 15% 0px' },
   );
   document.querySelectorAll('[data-stage]').forEach((s) => soon.observe(s));
 }

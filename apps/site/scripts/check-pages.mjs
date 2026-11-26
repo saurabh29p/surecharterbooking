@@ -40,18 +40,19 @@ for (const [mode, opts] of MODES) {
     page.on('pageerror', (e) => errors.push(e.message));
     await page.goto(base + url.replace(/\/+/g, '/'), { waitUntil: 'load' });
     await page.waitForTimeout(mode === 'motion' ? 600 : 150);
-    const r = await page.evaluate(async () => {
+    const r = await page.evaluate(async (wait) => {
       const h1 = [...document.querySelectorAll('h1')].filter((h) => h.getBoundingClientRect().height > 0).length;
       // scroll through so lazy stills load and the chapters run
       for (let y = 0; y < document.documentElement.scrollHeight; y += innerHeight * 0.9) {
         window.scrollTo(0, y);
-        await new Promise((r) => setTimeout(r, 30));
+        // (with JavaScript off the page's timers never run, so don't wait on one)
+        if (wait) await new Promise((r) => setTimeout(r, 30));
       }
       const overflow = document.documentElement.scrollWidth - innerWidth;
       const stages = [...document.querySelectorAll('[data-stage]')].filter((s) => s.getBoundingClientRect().height > 0);
       const blank = stages.filter((s) => s.querySelector('.stage__still') && !s.querySelector('.stage__still.is-active')).length;
       return { h1, overflow, stages: stages.length, blank };
-    });
+    }, mode !== 'js-off');
     const problems = [];
     if (errors.length) problems.push(`errors: ${errors.join(' | ')}`);
     if (r.h1 !== 1 && !url.includes('404')) problems.push(`${r.h1} visible H1s`);
@@ -92,9 +93,9 @@ for (const q of ['', '?tier=mid']) {
       const step = (t) => {
         times.push(t - last);
         last = t;
-        y += 24;
+        y += 40;
         window.scrollTo(0, y);
-        if (y < H) requestAnimationFrame(step);
+        if (y < H && times.length < 500) requestAnimationFrame(step);
         else done();
       };
       requestAnimationFrame(step);
@@ -102,7 +103,7 @@ for (const q of ['', '?tier=mid']) {
     times.sort((a, b) => a - b);
     return { median: times[Math.floor(times.length / 2)], p95: times[Math.floor(times.length * 0.95)], frames: times.length };
   });
-  console.log(`throttled home${q} (tier ${load.tier}): LCP ${Math.round(load.lcp)} ms, CLS ${load.cls.toFixed(3)}, long-task time after 50 ms ${Math.round(load.long)} ms; scroll frames median ${frames.median.toFixed(1)} ms, p95 ${frames.p95.toFixed(1)} ms over ${frames.frames} frames`);
+  console.log(`throttled home${q} (tier ${load.tier}): LCP ${Math.round(load.lcp)} ms, CLS ${load.cls.toFixed(3)}, long-task time after 50 ms ${Math.round(load.long)} ms; scroll frames median ${frames.median.toFixed(1)} ms, p95 ${frames.p95.toFixed(1)} ms over ${frames.frames} frames (the first ${frames.frames * 40} px of the page)`);
   await ctx.close();
 }
 
