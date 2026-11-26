@@ -1,5 +1,5 @@
 ---
-import { Image } from 'astro:assets';
+import { Picture } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import hero from '../../assets/photos/udaipur-night.jpg';
 import Icon from '../../components/Icon.astro';
@@ -26,11 +26,11 @@ const items = (await getCollection('destinations')).sort((a, b) => a.data.order 
       {items.map((d) => (
         <a class="dh__card card-lift reveal" href={`/destinations/${d.id}/`}>
           <div class="dh__photo photo-zoom">
-            <Image
+            <Picture formats={['avif', 'webp']}
               src={d.data.image}
               alt={d.data.imageAlt}
-              widths={[400, 600, 900]}
-              sizes="(max-width: 899px) 100vw, 400px"
+              widths={[400, 600, 700, 900]}
+              sizes="(max-width: 899px) calc(100vw - 40px), 400px"
               loading="lazy"
             />
             <span class="illustrative dh__ill">Illustrative</span>

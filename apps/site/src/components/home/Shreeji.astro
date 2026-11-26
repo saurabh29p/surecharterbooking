@@ -1,12 +1,12 @@
 ---
 /** The Shreeji Arrival (mockup: SIGNATURE EXPERIENCE). The photo is a composite: captioned "Illustrative". */
-import { Image } from 'astro:assets';
+import { Picture } from 'astro:assets';
 import photo from '../../assets/photos/shreeji-arrival-composite.jpg';
 ---
 
 <section id="shreeji" class="shreeji" aria-labelledby="shreeji-h">
   <figure class="shreeji__photo">
-    <Image
+    <Picture formats={['avif', 'webp']}
       src={photo}
       alt="A bride and groom walking from a black helicopter parked on a lawn"
       widths={[640, 960, 1280, 1527]}
