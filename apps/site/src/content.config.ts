@@ -15,6 +15,8 @@ const faq = defineCollection({
     home: z.number().optional(),
     /** Other pages that show this question. */
     tags: z.array(z.enum(['weddings', 'helicopters', 'planners', 'private'])).default([]),
+    /** A guide that goes deeper (its slug); the answer links to it only once the guide is published. */
+    guide: z.object({ slug: z.string(), label: z.string() }).optional(),
   }),
 });
 

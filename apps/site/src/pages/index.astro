@@ -1,17 +1,13 @@
 ---
 /** Home: built in the approved mockup's order (WEBSITE.md §6). */
-import { getImage } from 'astro:assets';
 import { getCollection } from 'astro:content';
-import poster from '../assets/photos/hero-poster.jpg';
 import FaqList from '../components/FaqList.astro';
-import Icon from '../components/Icon.astro';
 import Beyond from '../components/home/Beyond.astro';
 import Destinations from '../components/home/Destinations.astro';
 import EnquirySection from '../components/home/EnquirySection.astro';
 import Fleet from '../components/home/Fleet.astro';
 import Hero from '../components/home/Hero.astro';
-import { POSTER_QUALITY } from '../components/home/poster';
-import { videoUrl } from '../lib/video';
+import { PHONE, WIDE, heroPosters } from '../components/home/poster';
 import HowItWorks from '../components/home/HowItWorks.astro';
 import Moments from '../components/home/Moments.astro';
 import NameStory from '../components/home/NameStory.astro';
@@ -26,8 +22,8 @@ const faqs = (await getCollection('faq', (f) => f.data.home !== undefined)).sort
   (a, b) => (a.data.home ?? 0) - (b.data.home ?? 0),
 );
 
-// Preload the hero poster (the LCP image) in the format the browser will pick first.
-const lcp = await getImage({ src: poster, format: 'avif', widths: [480, 768, 1024, 1280], quality: POSTER_QUALITY });
+// Preload the hero poster (the LCP image) in the format the browser picks first, portrait on phones.
+const posters = await heroPosters();
 ---
 
 <Base
@@ -42,7 +38,18 @@ const lcp = await getImage({ src: poster, format: 'avif', widths: [480, 768, 102
     rel="preload"
     as="image"
     type="image/avif"
-    imagesrcset={lcp.srcSet.attribute}
+    media={WIDE}
+    imagesrcset={posters.wideAvif.srcSet.attribute}
+    imagesizes="100vw"
+    fetchpriority="high"
+  />
+  <link
+    slot="head"
+    rel="preload"
+    as="image"
+    type="image/avif"
+    media={PHONE}
+    imagesrcset={posters.tallAvif.srcSet.attribute}
     imagesizes="100vw"
     fetchpriority="high"
   />
@@ -54,9 +61,6 @@ const lcp = await getImage({ src: poster, format: 'avif', widths: [480, 768, 102
   <div class="container mobile-cta">
     <a class="btn btn--gold btn--lg btn--block" href="#enquire">
       Plan my wedding flight
-    </a>
-    <a class="mobile-cta__film" href={videoUrl('vaanika-film-720p.mp4')} data-film-open>
-      <Icon name="arrow" size={16} /> Watch the film · 35s
     </a>
   </div>
 
@@ -99,17 +103,6 @@ const lcp = await getImage({ src: poster, format: 'avif', widths: [480, 768, 102
       align-items: center;
       gap: 6px;
       padding-top: 18px;
-    }
-
-    .mobile-cta__film {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      min-height: 44px;
-      font-size: 14.5px;
-      font-weight: 600;
-      color: var(--gold-light);
-      text-decoration: none;
     }
   }
 

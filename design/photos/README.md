@@ -23,3 +23,18 @@ These are **placeholders** from the approved mockup. They are fine for building 
 | shreeji-arrival-composite.jpg | The Shreeji Arrival section |
 | private-jet-vip.jpg | Beyond weddings (private & business) |
 | fairy-lights.jpg | Enquiry section background |
+
+## Fleet card photos (home page, "Choose your arrival")
+
+Real photos of typical aircraft in each class, in `apps/site/src/assets/photos/fleet/`. Cropped to
+16:9; registrations and airline marks removed (filled from the surrounding paint). The edited
+CC BY-SA photos are shared under the same licence, and the home page credits them under the cards.
+
+| File | Source | Author | Licence |
+|---|---|---|---|
+| helicopter.jpg | [Airbus Helicopter H145 2018](https://commons.wikimedia.org/wiki/File:Airbus_Helicopter_H145_2018.jpg) | jan hendrik de wit | CC0 |
+| light-jet.jpg | [Embraer Phenom 300 N235EE FDK MD2](https://commons.wikimedia.org/wiki/File:Embraer_Phenom_300_N235EE_FDK_MD2.jpg) | Acroterion | CC BY-SA 4.0 |
+| super-midsize.jpg | [Cessna Citation Latitude N980JF FDK MD2](https://commons.wikimedia.org/wiki/File:Cessna_Citation_Latitude_N980JF_FDK_MD2.jpg) | Acroterion | CC BY-SA 4.0 |
+| heavy-jet.jpg | `private-jet-sunset.jpg` above (Unsplash placeholder, registration already removed) | not recorded | Unsplash Licence (find the original before launch) |
+| group-charter.jpg | [Hello A320 sunset](https://commons.wikimedia.org/wiki/File:Hello_A320_sunset_(7385671502).jpg) | Maarten Visser | CC BY-SA 2.0 |
+

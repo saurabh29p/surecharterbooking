@@ -1,13 +1,13 @@
 ---
 /**
  * Hero (mockup: HERO VIDEO). The poster is the LCP image: eager, high priority, preloaded by the page.
- * The loop video starts loading only after the poster has painted, never under reduced motion or
- * Save-Data, and not below 768 px (WEBSITE.md §4).
+ * Behind the headline the brand film plays as a muted, seamless background loop (lake palace, jet,
+ * helicopter; no text): 16:9 on screens 768 px and wider, 9:16 on phones, each with its own poster
+ * (the film's first frame). It starts loading only after the poster has painted, never under reduced
+ * motion or Save-Data (WEBSITE.md §4), and a small control pauses it (WCAG 2.2.2).
  */
-import { Picture } from 'astro:assets';
-import poster from '../../assets/photos/hero-poster.jpg';
+import { PHONE, heroPosters } from './poster';
 import Icon from '../Icon.astro';
-import { POSTER_QUALITY } from './poster';
 import { videoUrl } from '../../lib/video';
 
 interface Props {
@@ -15,21 +15,26 @@ interface Props {
 }
 
 const { planHref } = Astro.props;
+const p = await heroPosters();
 ---
 
 <section class="hero" aria-label="Introduction">
   <div class="hero__media" aria-hidden="true">
-    <Picture
-      src={poster}
-      formats={['avif', 'webp']}
-      widths={[480, 768, 1024, 1280]}
-      quality={POSTER_QUALITY}
-      sizes="100vw"
-      alt=""
-      loading="eager"
-      fetchpriority="high"
-      class="hero__poster"
-    />
+    <picture>
+      <source media={PHONE} type="image/avif" srcset={p.tallAvif.srcSet.attribute} sizes="100vw" />
+      <source media={PHONE} type="image/webp" srcset={p.tallWebp.srcSet.attribute} sizes="100vw" />
+      <source type="image/avif" srcset={p.wideAvif.srcSet.attribute} sizes="100vw" />
+      <source type="image/webp" srcset={p.wideWebp.srcSet.attribute} sizes="100vw" />
+      <img
+        src={p.fallback.src}
+        width="1280"
+        height="720"
+        alt=""
+        loading="eager"
+        fetchpriority="high"
+        class="hero__poster"
+      />
+    </picture>
     <video
       class="hero__video"
       muted
@@ -39,7 +44,8 @@ const { planHref } = Astro.props;
       aria-hidden="true"
       tabindex="-1"
       data-hero-video
-      data-src={videoUrl('hero-loop-720p.mp4')}
+      data-src-wide={videoUrl('hero-film-1280x720.mp4')}
+      data-src-phone={videoUrl('hero-film-720x1280.mp4')}
     ></video>
   </div>
   <div class="hero__shade" aria-hidden="true"></div>
@@ -60,26 +66,16 @@ const { planHref } = Astro.props;
       <a class="btn btn--gold btn--lg" href={planHref}>
         Plan my wedding flight <Icon name="arrow" size={18} stroke={2} class="btn__arrow" />
       </a>
-      <a class="btn btn--ghost btn--lg film-btn" href={videoUrl('vaanika-film-720p.mp4')} data-film-open>
-        <span class="film-btn__play">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="#0B1020" aria-hidden="true">
-            <path d="M7 4l14 8-14 8z"></path>
-          </svg>
-        </span>
-        Watch the film · 35s
-      </a>
     </div>
   </div>
-  <p class="illustrative hero__caption">Illustrative footage</p>
-</section>
-
-<dialog class="film" aria-label="Vaanika brand film" data-film>
-  <button type="button" class="film__close" aria-label="Close the film" data-film-close>
-    <Icon name="close" size={20} stroke={2} />
+  <p class="illustrative hero__caption">Illustrative film</p>
+  <button type="button" class="hero__pause" aria-label="Pause the background film" aria-pressed="false" hidden data-hero-pause>
+    <svg class="hero__pause-icon" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+      <path class="i-pause" d="M7 4h3.5v16H7zM13.5 4H17v16h-3.5z" fill="currentColor"></path>
+      <path class="i-play" d="M8 4.5l12 7.5-12 7.5z" fill="currentColor"></path>
+    </svg>
   </button>
-  <video class="film__video" controls playsinline preload="none" data-film-video></video>
-  <p class="illustrative film__caption">Illustrative film, made with computer graphics.</p>
-</dialog>
+</section>
 
 <style>
   .hero {
@@ -114,15 +110,23 @@ const { planHref } = Astro.props;
     opacity: 1;
   }
 
+  /* the film is bright in places (the jet's white fuselage): keep the text side dark enough to read */
   .hero__shade {
     background:
       linear-gradient(
         90deg,
-        rgba(5, 7, 15, 0.88) 0%,
-        rgba(5, 7, 15, 0.55) 42%,
-        rgba(5, 7, 15, 0.05) 75%
+        rgba(5, 7, 15, 0.9) 0%,
+        rgba(5, 7, 15, 0.74) 38%,
+        rgba(5, 7, 15, 0.3) 66%,
+        rgba(5, 7, 15, 0.08) 100%
       ),
       linear-gradient(0deg, rgba(11, 16, 32, 1) 0%, rgba(11, 16, 32, 0) 32%);
+  }
+
+  .hero__title,
+  .hero__sub,
+  .hero__eyebrow {
+    text-shadow: 0 2px 22px rgba(5, 7, 15, 0.55);
   }
 
   .hero__content {
@@ -167,27 +171,6 @@ const { planHref } = Astro.props;
     align-items: center;
   }
 
-  .film-btn {
-    padding: 10px 24px 10px 10px;
-    gap: 12px;
-    font-size: 15.5px;
-  }
-
-  .film-btn__play {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    background: var(--ivory);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.18s var(--ease-out);
-  }
-
-  .film-btn:hover .film-btn__play {
-    transform: scale(1.08);
-  }
-
   .hero__caption {
     position: absolute;
     right: calc(var(--gutter) + 84px);
@@ -201,16 +184,13 @@ const { planHref } = Astro.props;
       min-height: 0;
     }
 
-    .hero__media :global(img) {
-      object-position: 62% center;
-    }
-
     .hero__shade {
       background: linear-gradient(
         0deg,
         #0b1020 0%,
-        rgba(11, 16, 32, 0.75) 38%,
-        rgba(11, 16, 32, 0.1) 70%
+        rgba(11, 16, 32, 0.86) 40%,
+        rgba(11, 16, 32, 0.5) 62%,
+        rgba(11, 16, 32, 0.12) 82%
       );
     }
 
@@ -253,59 +233,21 @@ const { planHref } = Astro.props;
     }
   }
 
-  /* ---------- Film ---------- */
+  /* ---------- Pause control (WCAG 2.2.2: moving content can be paused) ---------- */
 
-  .film {
-    width: min(1100px, calc(100vw - 32px));
-    padding: 0;
-    border: 1px solid var(--line);
-    border-radius: 18px;
-    background: #000;
-    color: var(--ivory);
-    overflow: visible;
-  }
-
-  .film::backdrop {
-    background: rgba(5, 7, 15, 0.86);
-  }
-
-  .film[open] {
-    animation: film-in 0.25s var(--ease-out);
-  }
-
-  @keyframes film-in {
-    from {
-      opacity: 0;
-      transform: scale(0.97);
-    }
-  }
-
-  .film__video {
-    display: block;
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    border-radius: 18px;
-    background: #000;
-  }
-
-  .film__caption {
+  .hero__pause {
     position: absolute;
-    left: 0;
-    bottom: -28px;
-  }
-
-  .film__close {
-    position: absolute;
-    top: -54px;
-    right: 0;
-    width: 44px;
-    height: 44px;
+    right: var(--gutter);
+    bottom: 18px;
+    z-index: 3;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid rgba(243, 237, 226, 0.4);
+    border: 1px solid rgba(243, 237, 226, 0.35);
     border-radius: 50%;
-    background: rgba(11, 16, 32, 0.6);
+    background: rgba(11, 16, 32, 0.45);
     color: var(--ivory);
     cursor: pointer;
     transition:
@@ -313,47 +255,69 @@ const { planHref } = Astro.props;
       transform 0.05s ease;
   }
 
-  .film__close:hover {
+  .hero__pause[hidden] {
+    display: none;
+  }
+
+  .hero__pause:hover {
     border-color: var(--gold);
   }
 
-  .film__close:active {
+  .hero__pause:active {
     transform: scale(0.96);
+  }
+
+  .hero__pause .i-play,
+  .hero__pause[aria-pressed='true'] .i-pause {
+    display: none;
+  }
+
+  .hero__pause[aria-pressed='true'] .i-play {
+    display: inline;
+  }
+
+  @media (max-width: 767px) {
+    .hero__pause {
+      top: 40px;
+      bottom: auto;
+      width: 36px;
+      height: 36px;
+    }
   }
 </style>
 
 <script>
-  // Loop video: after the poster has painted, on wide screens, when motion and data are welcome.
+  import { PHONE } from './poster-media';
+
+  // Background film: after the poster has painted, when motion and data are welcome; the phone
+  // cut on narrow screens. The pause control appears once it plays.
   const video = document.querySelector<HTMLVideoElement>('[data-hero-video]');
+  const pause = document.querySelector<HTMLButtonElement>('[data-hero-pause]');
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection
     ?.saveData;
-  const wide = matchMedia('(min-width: 768px)').matches;
-  if (video && !reduce && !saveData && wide) {
+  if (video && !reduce && !saveData) {
     const start = () => {
-      video.src = video.dataset.src ?? '';
-      video.addEventListener('playing', () => video.classList.add('is-playing'), { once: true });
+      video.src = (matchMedia(PHONE).matches ? video.dataset.srcPhone : video.dataset.srcWide) ?? '';
+      video.addEventListener(
+        'playing',
+        () => {
+          video.classList.add('is-playing');
+          if (pause) pause.hidden = false;
+        },
+        { once: true },
+      );
       void video.play().catch(() => {});
     };
     if (document.readyState === 'complete') setTimeout(start, 300);
     else addEventListener('load', () => setTimeout(start, 300), { once: true });
   }
-
-  // The film opens in a pop-up and loads only then.
-  const film = document.querySelector<HTMLDialogElement>('[data-film]');
-  const filmVideo = document.querySelector<HTMLVideoElement>('[data-film-video]');
-  document.querySelectorAll<HTMLAnchorElement>('[data-film-open]').forEach((a) =>
-    a.addEventListener('click', (e) => {
-      if (!film || !filmVideo) return;
-      e.preventDefault();
-      if (!filmVideo.src) filmVideo.src = a.href;
-      film.showModal();
-      void filmVideo.play().catch(() => {});
-    }),
-  );
-  film?.querySelector('[data-film-close]')?.addEventListener('click', () => film.close());
-  film?.addEventListener('click', (e) => {
-    if (e.target === film) film.close();
+  pause?.addEventListener('click', () => {
+    if (!video) return;
+    const paused = pause.getAttribute('aria-pressed') === 'true';
+    if (paused) void video.play().catch(() => {});
+    else video.pause();
+    pause.setAttribute('aria-pressed', String(!paused));
+    pause.setAttribute('aria-label', paused ? 'Pause the background film' : 'Play the background film');
   });
-  film?.addEventListener('close', () => filmVideo?.pause());
 </script>
