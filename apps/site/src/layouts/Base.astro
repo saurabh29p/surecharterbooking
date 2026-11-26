@@ -83,7 +83,21 @@ const ogUrl = new URL(ogImage, SITE_URL).href;
     <Font cssVariable="--font-display" preload={[{ style: 'normal' }]} />
     <Font cssVariable="--font-body" preload />
     <script is:inline>
-      document.documentElement.classList.add('js');
+      // Before first paint: "js", and "motion" (scroll choreography, 3D) unless the visitor asked
+      // for reduced motion or Save-Data (src/motion). ?motion=off turns it off for testing.
+      (function () {
+        var d = document.documentElement;
+        d.classList.add('js');
+        try {
+          var c = navigator.connection;
+          if (
+            !matchMedia('(prefers-reduced-motion: reduce)').matches &&
+            !(c && c.saveData) &&
+            !/[?&]motion=off/.test(location.search)
+          )
+            d.classList.add('motion');
+        } catch (e) {}
+      })();
     </script>
     <slot name="head" />
     {
@@ -133,6 +147,9 @@ const ogUrl = new URL(ogImage, SITE_URL).href;
     <script>
       import { startSite } from '../scripts/site';
       startSite();
+      // scroll choreography and 3D: a separate chunk, only when motion is welcome
+      if (document.documentElement.classList.contains('motion'))
+        void import('../motion/index').then((m) => m.startMotion());
     </script>
   </body>
 </html>

@@ -4,12 +4,22 @@ import { Picture } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import Icon from '../Icon.astro';
 import Verify from '../Verify.astro';
+import Stage from '../Stage.astro';
+import type { ImageMetadata } from 'astro';
 
 const items = (await getCollection('destinations')).sort((a, b) => a.data.order - b.data.order);
+// the routes on the cards, in card order (the map draws them in this order: motion/routes.ts)
+const routes = items.flatMap((d) => d.data.cardTimes.map((t) => ({ from: t.from, to: d.data.name, time: t.time })));
+const stills = Object.values(
+  import.meta.glob<{ default: ImageMetadata }>('../../assets/3d/stills/map.png', { eager: true }),
+).map((m) => m.default);
 ---
 
 <section id="destinations" class="dest" aria-labelledby="dest-h">
-  <div class="container">
+  <!-- With motion: a pinned map; contrails draw from the cities to each destination (motion/chapters/dest.ts,
+       three/scenes/map.ts). The photo cards follow. -->
+  <div class="dest__track" data-chapter="dest">
+  <div class="container dest__pin">
     <div class="dest__head reveal">
       <div class="dest__head-main">
         <p class="eyebrow">Destinations</p>
@@ -22,6 +32,44 @@ const items = (await getCollection('destinations')).sort((a, b) => a.data.order 
         and the airports used.
       </p>
     </div>
+    <div class="dest__map">
+      <Stage name="map" mode="home" class="dest__stage" stills={stills} caption="Illustrative map" sizes="(max-width: 767px) 100vw, 70vw" />
+      <div class="dest__pins" data-pins>
+        {items.map((d) => (
+          <div class="dest__pin-item" data-pin={d.id}>
+            <button type="button" class="dest__pin-btn" aria-expanded="false" aria-controls={`pin-${d.id}`}>
+              <span class="dest__pin-dot" aria-hidden="true"></span>
+              {d.data.name}
+            </button>
+            <div class="dest__pop" id={`pin-${d.id}`}>
+              <span class="dest__pop-times num">
+                {d.data.cardTimes.map((t) => (
+                  <span>
+                    {t.from} · <Verify>{t.time}</Verify>
+                  </span>
+                ))}
+              </span>
+              <a class="dest__pop-link" href={`/destinations/${d.id}/`}>
+                {d.data.name} by private jet
+              </a>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+    <ol class="dest__routes num" aria-label="Approximate flying times by private jet">
+      {routes.map((r, i) => (
+        <li data-route={i}>
+          <span class="dest__route-line">
+            {r.from} <span aria-hidden="true">→</span><span class="visually-hidden">to</span> {r.to}
+          </span>
+          <span class="dest__route-time"><Verify>{r.time}</Verify></span>
+        </li>
+      ))}
+    </ol>
+  </div>
+  </div>
+  <div class="container">
     <div class="dest__grid">
       {items.map((d) => (
         <a class="dest__card photo-zoom reveal" href={`/destinations/${d.id}/`}>
@@ -180,6 +228,224 @@ const items = (await getCollection('destinations')).sort((a, b) => a.data.order 
 
     .dest__card {
       height: 300px;
+    }
+  }
+  /* ---------- With motion: the map (motion/chapters/dest.ts) ---------- */
+
+  .dest__map,
+  .dest__routes {
+    display: none;
+  }
+
+  :global(.motion-ready) .dest {
+    background: transparent;
+    padding-top: 40px;
+  }
+
+  :global(.motion-ready) .dest__track {
+    height: calc(100svh - var(--header-h) + 160svh);
+  }
+
+  :global(.motion-ready) .dest__pin {
+    position: sticky;
+    top: var(--header-h);
+    height: calc(100svh - var(--header-h));
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    grid-template-rows: auto minmax(0, 1fr);
+    column-gap: 32px;
+    padding-top: 28px;
+    padding-bottom: 24px;
+  }
+
+  :global(.motion-ready) .dest__head {
+    grid-column: 1 / -1;
+  }
+
+  :global(.motion-ready) .dest__map {
+    display: block;
+    position: relative;
+    grid-column: 1;
+    margin-left: calc(var(--gutter) * -1);
+  }
+
+  :global(.motion-ready) .dest__stage {
+    position: absolute;
+    inset: 0;
+  }
+
+  .dest__pins {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  /* pins show only over the live map (the scene places them at their cities) */
+  .dest__map:not(:has(:global(.stage.is-live))) .dest__pins {
+    display: none;
+  }
+
+  .dest__pin-item {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transition: opacity var(--dur-panel) ease;
+  }
+
+  .dest__pin-item:global(.is-up) {
+    opacity: 1;
+  }
+
+  .dest__pin-btn {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    transform: translate(-50%, -4px);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 12px 6px 9px;
+    border: 1px solid rgba(217, 188, 120, 0.55);
+    border-radius: 999px;
+    background: rgba(11, 16, 32, 0.78);
+    color: var(--ivory);
+    font: 600 13px/1 var(--font-body), sans-serif;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    cursor: pointer;
+    pointer-events: auto;
+    transition:
+      border-color var(--dur-micro) ease,
+      transform var(--dur-micro) var(--ease-out);
+  }
+
+  .dest__pin-btn:hover,
+  .dest__pin-item:global(.is-open) .dest__pin-btn {
+    border-color: var(--gold-light);
+    transform: translate(-50%, -6px);
+  }
+
+  .dest__pin-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--gold-light);
+    box-shadow: 0 0 10px rgba(244, 227, 181, 0.8);
+  }
+
+  .dest__pop {
+    position: absolute;
+    left: 0;
+    bottom: 44px;
+    transform: translate(-50%, 8px);
+    min-width: 210px;
+    padding: 14px 16px;
+    border: 1px solid var(--gold-dark);
+    border-radius: 14px;
+    background: rgba(14, 19, 40, 0.96);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      opacity var(--dur-panel) ease,
+      transform var(--dur-panel) var(--ease-out),
+      visibility 0s linear var(--dur-panel);
+  }
+
+  .dest__pin-item:hover .dest__pop,
+  .dest__pin-item:focus-within .dest__pop,
+  .dest__pin-item:global(.is-open) .dest__pop {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translate(-50%, 0);
+    transition-delay: 0s;
+  }
+
+  .dest__pop-times {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--gold-soft);
+  }
+
+  .dest__pop-link {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 13.5px;
+    font-weight: 700;
+  }
+
+  :global(.motion-ready) .dest__routes {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    grid-column: 2;
+    grid-row: 2;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .dest__routes li {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--line-soft);
+    font-size: 14px;
+    color: var(--muted);
+    opacity: 0.4;
+    transition:
+      opacity var(--dur-panel) ease,
+      color var(--dur-panel) ease;
+  }
+
+  .dest__routes li:global(.is-on) {
+    opacity: 1;
+    color: var(--ivory);
+  }
+
+  .dest__route-time {
+    font-weight: 700;
+    color: var(--gold-soft);
+    white-space: nowrap;
+  }
+
+  @media (max-width: 899px) {
+    :global(.motion-ready) .dest__pin {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      padding-top: 16px;
+      padding-bottom: 12px;
+    }
+
+    :global(.motion-ready) .dest__map {
+      margin: 0 calc(var(--gutter) * -1);
+    }
+
+    :global(.motion-ready) .dest__head .dest__note {
+      display: none;
+    }
+
+    :global(.motion-ready) .dest__routes {
+      grid-column: 1;
+      grid-row: 3;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 16px;
+    }
+
+    .dest__routes li {
+      flex-direction: column;
+      gap: 0;
+      padding: 6px 0;
+      font-size: 12.5px;
     }
   }
 </style>

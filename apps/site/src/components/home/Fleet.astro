@@ -8,6 +8,7 @@
 import { Picture } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import Verify from '../Verify.astro';
+import Stage from '../Stage.astro';
 import helicopter from '../../assets/photos/fleet/helicopter.jpg';
 import lightJet from '../../assets/photos/fleet/light-jet.jpg';
 import superMid from '../../assets/photos/fleet/super-midsize.jpg';
@@ -52,21 +53,32 @@ const CLASSES: { name: string; seats: string; use: string; img: ImageMetadata; a
     featured: true,
   },
 ];
+
+// Rendered stills of the 3D showroom, one per class (src/assets/3d/stills/fleet-<n>.png)
+const stills = Object.entries(
+  import.meta.glob<{ default: ImageMetadata }>('../../assets/3d/stills/fleet-*.png', { eager: true }),
+)
+  .sort(([a], [b]) => a.localeCompare(b))
+  .map(([, m]) => m.default);
 ---
 
 <section id="fleet" class="fleet" aria-labelledby="fleet-h">
-  <div class="container">
-    <div class="reveal">
+  <!-- With motion: a pinned showroom stepping through the classes (motion/chapters/fleet.ts, three/scenes/showroom.ts).
+       Without: the grid of cards. -->
+  <div class="fleet__track" data-chapter="fleet">
+  <div class="container fleet__pin">
+    <div class="fleet__head reveal">
       <p class="eyebrow">Choose your arrival</p>
       <h2 id="fleet-h" class="h2 fleet__title">
         Five ways to fly in. One team for all of it.
       </h2>
     </div>
+    <Stage name="showroom" class="fleet__stage" stills={stills} sizes="(max-width: 767px) 100vw, 60vw" />
     <div class="fleet__grid">
-      {CLASSES.map((c) => (
+      {CLASSES.map((c, i) => (
         <a
           href="/aircraft/"
-          class:list={['fleet__card card-lift reveal', { 'is-featured': c.featured }]}
+          class:list={['fleet__card card-lift reveal', { 'is-featured': c.featured, 'is-active': i === 0 }]}
         >
           <span class="fleet__photo photo-zoom">
             <Picture
@@ -89,6 +101,16 @@ const CLASSES: { name: string; seats: string; use: string; img: ImageMetadata; a
         </a>
       ))}
     </div>
+    <ol class="fleet__steps" aria-hidden="true">
+      {CLASSES.map((c, i) => (
+        <li data-step={i} class:list={{ 'is-active': i === 0 }}>
+          <span>{c.name}</span>
+        </li>
+      ))}
+    </ol>
+  </div>
+  </div>
+  <div class="container">
     <p class="fleet__note">
       Guest numbers are typical for each class; the exact aircraft decides the final count.
     </p>
@@ -235,6 +257,177 @@ const CLASSES: { name: string; seats: string; use: string; img: ImageMetadata; a
 
     .fleet__card {
       scroll-snap-align: start;
+    }
+  }
+  /* ---------- The showroom (motion on; motion/chapters/fleet.ts) ---------- */
+
+  .fleet__stage,
+  .fleet__steps {
+    display: none;
+  }
+
+  :global(.motion-ready) .fleet {
+    padding-top: 40px;
+  }
+
+  :global(.motion-ready) .fleet__track {
+    /* one window for the first class, then 70% of a window per class */
+    height: calc(100svh - var(--header-h) + 4 * 70svh);
+  }
+
+  :global(.motion-ready) .fleet__pin {
+    position: sticky;
+    top: var(--header-h);
+    height: calc(100svh - var(--header-h));
+    display: grid;
+    grid-template-columns: minmax(0, 1.55fr) minmax(280px, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    column-gap: 40px;
+    padding-top: 28px;
+    padding-bottom: 28px;
+  }
+
+  :global(.motion-ready) .fleet__head {
+    grid-column: 1 / -1;
+  }
+
+  :global(.motion-ready) .fleet__stage {
+    display: block;
+    grid-column: 1;
+    grid-row: 2 / 4;
+    margin: 12px 0 0 calc(var(--gutter) * -1);
+  }
+
+  :global(.motion-ready) .fleet .fleet__grid {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: center;
+    display: grid;
+    grid-template-columns: none;
+    grid-auto-columns: auto;
+    grid-auto-flow: row;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+  }
+
+  /* the five cards share one place; the active one shows */
+  :global(.motion-ready) .fleet .fleet__grid .fleet__card {
+    grid-area: 1 / 1;
+    opacity: 0;
+    transform: translateY(18px) scale(0.985);
+    transition:
+      opacity var(--dur-panel) var(--ease-in-out),
+      transform var(--dur-reveal) var(--ease-out);
+  }
+
+  :global(.motion-ready) .fleet .fleet__grid .fleet__card.is-active {
+    opacity: 1;
+    transform: none;
+    z-index: 1;
+  }
+
+  :global(.motion-ready) .fleet .fleet__grid .fleet__card:focus-visible {
+    opacity: 1;
+  }
+
+  :global(.motion-ready) .fleet__steps {
+    grid-column: 2;
+    grid-row: 3;
+    display: flex;
+    gap: 6px;
+    margin: 18px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .fleet__steps li {
+    flex: 1;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--line-strong);
+    position: relative;
+    transition: background-color var(--dur-panel) ease;
+  }
+
+  .fleet__steps li.is-active {
+    background: var(--gold);
+  }
+
+  .fleet__steps span {
+    position: absolute;
+    top: 8px;
+    left: 0;
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+    color: var(--faint);
+    opacity: 0;
+    transition: opacity var(--dur-panel) ease;
+  }
+
+  .fleet__steps li.is-active span {
+    opacity: 1;
+    color: var(--gold-soft);
+  }
+
+  @media (max-width: 899px) {
+    :global(.motion-ready) .fleet__pin {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: auto minmax(0, 1fr) auto auto;
+      padding-top: 18px;
+      padding-bottom: 14px;
+    }
+
+    :global(.motion-ready) .fleet__stage {
+      grid-column: 1;
+      grid-row: 2;
+      margin: 0 calc(var(--gutter) * -1);
+    }
+
+    :global(.motion-ready) .fleet .fleet__grid {
+      grid-column: 1;
+      grid-row: 3;
+    }
+
+    :global(.motion-ready) .fleet__steps {
+      grid-column: 1;
+      grid-row: 4;
+      margin-top: 12px;
+    }
+
+    .fleet__steps span {
+      display: none;
+    }
+
+    /* phones: a compact card (photo beside the text) under the stage */
+    :global(.motion-ready) .fleet .fleet__card {
+      flex-direction: row;
+    }
+
+    :global(.motion-ready) .fleet .fleet__photo {
+      flex: 0 0 36%;
+      aspect-ratio: auto;
+    }
+
+    :global(.motion-ready) .fleet .fleet__body {
+      padding: 14px 16px 16px;
+    }
+
+    :global(.motion-ready) .fleet .fleet__name {
+      font-size: 20px;
+    }
+
+    :global(.motion-ready) .fleet .fleet__use {
+      margin-top: 6px;
+      font-size: 13.5px;
+      line-height: 1.5;
+    }
+  }
+
+  @media (max-width: 899px) and (max-height: 700px) {
+    :global(.motion-ready) .fleet .fleet__use {
+      display: none;
     }
   }
 </style>

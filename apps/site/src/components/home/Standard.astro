@@ -1,10 +1,17 @@
 ---
 /** The Vaanika Standard: the four checks (mockup). Card 04 uses the exact §7 wording. */
+import type { ImageMetadata } from 'astro';
 import { CHECKS } from '../../data/facts';
+import Stage from '../Stage.astro';
+
+const stills = Object.values(
+  import.meta.glob<{ default: ImageMetadata }>('../../assets/3d/stills/standard.png', { eager: true }),
+).map((m) => m.default);
 ---
 
-<section id="standard" class="standard" aria-labelledby="standard-h">
+<section id="standard" class="standard" aria-labelledby="standard-h" data-chapter="standard">
   <div class="container standard__inner">
+    <div class="standard__side">
     <div class="standard__intro reveal">
       <p class="eyebrow">The Vaanika Standard</p>
       <h2 id="standard-h" class="h2 standard__title">
@@ -18,9 +25,12 @@ import { CHECKS } from '../../data/facts';
         See a sample quote
       </a>
     </div>
+    <!-- With motion: the mark's petals and crescent, one lit per check (three/scenes/mark.ts) -->
+    <Stage name="mark" mode="checks" class="standard__stage" stills={stills} caption="" sizes="(max-width: 767px) 100vw, 40vw" />
+    </div>
     <ol class="standard__checks">
       {CHECKS.map((c, i) => (
-        <li class="standard__check reveal">
+        <li class="standard__check reveal" data-check={i}>
           <p class="standard__num num display">{String(i + 1).padStart(2, '0')}</p>
           <h3 class="standard__check-title">{c.title}</h3>
           <p class="standard__check-text">{c.text}</p>
@@ -42,7 +52,7 @@ import { CHECKS } from '../../data/facts';
     align-items: flex-start;
   }
 
-  .standard__intro {
+  .standard__side {
     flex: 1 1 440px;
     min-width: 0;
   }
@@ -106,7 +116,7 @@ import { CHECKS } from '../../data/facts';
       gap: 40px;
     }
 
-    .standard__intro,
+    .standard__side,
     .standard__checks {
       flex-basis: 100%;
     }
@@ -120,6 +130,73 @@ import { CHECKS } from '../../data/facts';
 
     .standard__check {
       padding: 22px;
+    }
+  }
+  /* ---------- With motion: the mark beside the checks (motion/chapters/standard.ts) ---------- */
+
+  .standard__stage {
+    display: none;
+  }
+
+  :global(.motion-ready) .standard__side {
+    position: sticky;
+    top: calc(var(--header-h) + 32px);
+    align-self: flex-start;
+  }
+
+  :global(.motion-ready) .standard__stage {
+    display: block;
+    height: min(44vh, 400px);
+    margin-top: 18px;
+  }
+
+  :global(.motion-ready) .standard__checks {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 22vh;
+    padding: 10vh 0 22vh;
+  }
+
+  :global(.motion-ready) .standard .standard__check {
+    transition:
+      border-color var(--dur-panel) ease,
+      background-color var(--dur-panel) ease,
+      opacity var(--dur-panel) ease;
+  }
+
+  :global(.motion-ready) .standard .standard__check.is-in:not(.is-active) {
+    opacity: 0.55;
+  }
+
+  :global(.motion-ready) .standard .standard__check.is-active {
+    border-color: var(--gold-dark);
+    background: linear-gradient(180deg, #151b38, var(--panel));
+  }
+
+  @media (max-width: 767px) {
+    :global(.motion-ready) .standard__inner {
+      flex-direction: column;
+      flex-wrap: nowrap;
+      gap: 0;
+    }
+
+    /* phones: the mark sticks under the header and the checks scroll over it */
+    :global(.motion-ready) .standard__side {
+      display: contents;
+    }
+
+    :global(.motion-ready) .standard__stage {
+      position: sticky;
+      top: var(--header-h);
+      z-index: 0;
+      height: 34svh;
+      margin: 24px calc(var(--gutter) * -1) 0;
+    }
+
+    :global(.motion-ready) .standard__checks {
+      position: relative;
+      z-index: 1;
+      gap: 30svh;
+      padding: 6svh 0 18svh;
     }
   }
 </style>

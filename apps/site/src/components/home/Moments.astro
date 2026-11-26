@@ -30,7 +30,9 @@ const MOMENTS = [
 ];
 ---
 
-<section class="moments" aria-labelledby="moments-h">
+<section class="moments" aria-labelledby="moments-h" data-chapter="moments">
+  <!-- With motion: pinned, and the three moments slide past as a horizontal journey (motion/chapters/moments.ts) -->
+  <div class="moments__pin">
   <div class="container">
     <div class="reveal">
       <p class="eyebrow">The arrival</p>
@@ -39,8 +41,8 @@ const MOMENTS = [
       </h2>
     </div>
     <div class="moments__grid">
-      {MOMENTS.map((m) => (
-        <article class="moment card-lift reveal">
+      {MOMENTS.map((m, i) => (
+        <article class="moment card-lift reveal" style={`--c: ${i / (MOMENTS.length - 1)}`}>
           <figure class="moment__photo photo-zoom">
             <Picture
               src={m.img}
@@ -60,6 +62,7 @@ const MOMENTS = [
         </article>
       ))}
     </div>
+  </div>
   </div>
 </section>
 
@@ -136,6 +139,91 @@ const MOMENTS = [
 
     .moment__photo {
       height: 220px;
+    }
+  }
+  /* ---------- With motion: a pinned horizontal journey ---------- */
+
+  :global(.motion-ready) .moments {
+    height: calc(100svh - var(--header-h) + 2 * 90svh);
+    padding: 0;
+  }
+
+  :global(.motion-ready) .moments__pin {
+    position: sticky;
+    top: var(--header-h);
+    height: calc(100svh - var(--header-h));
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  /* gold dust drifting in front, faster than the panels */
+  :global(.motion-ready) .moments__pin::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 200%;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at 20% 30%, rgba(217, 188, 120, 0.55) 0 1.4px, transparent 2.6px) 0 0 / 190px 150px,
+      radial-gradient(circle at 70% 64%, rgba(244, 227, 181, 0.4) 0 1px, transparent 2px) 0 0 / 240px 170px;
+    opacity: 0.5;
+    transform: translate3d(calc(var(--p, 0) * -38%), 0, 0);
+  }
+
+  :global(.motion-ready) .moments__grid {
+    display: flex;
+    gap: 4vw;
+    width: max-content;
+    margin-top: 4.5vh;
+    transform: translate3d(calc(var(--p, 0) * var(--shift, 0px) * -1), 0, 0);
+    will-change: transform;
+  }
+
+  :global(.motion-ready) .moments .moment {
+    width: min(72vw, 1000px);
+    height: min(56vh, 520px);
+    display: grid;
+    grid-template-columns: 1.35fr 1fr;
+  }
+
+  :global(.motion-ready) .moments .moment__photo {
+    height: 100%;
+  }
+
+  /* depth: the photos move slower than their frames, the words a little faster */
+  :global(.motion-ready) .moments .moment__photo img {
+    transform: translate3d(calc((var(--p, 0) - var(--c)) * -16%), 0, 0) scale(1.24);
+    transition: none;
+  }
+
+  :global(.motion-ready) .moments .moment__body {
+    align-self: center;
+    padding: 34px 40px;
+    transform: translate3d(calc((var(--p, 0) - var(--c)) * 110px), 0, 0);
+  }
+
+  @media (max-width: 899px) {
+    :global(.motion-ready) .moments .moment {
+      width: 84vw;
+      height: min(62svh, 560px);
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: minmax(0, 1fr) auto;
+    }
+
+    :global(.motion-ready) .moments .moment__body {
+      padding: 18px 22px 22px;
+    }
+
+    :global(.motion-ready) .moments .moment__title {
+      font-size: 24px;
+    }
+
+    :global(.motion-ready) .moments .moment__text {
+      font-size: 15px;
     }
   }
 </style>
