@@ -1,6 +1,6 @@
 ---
 /** Three moments (mockup: THE ARRIVAL). Stock photos, so each is captioned "Illustrative". */
-import { Image } from 'astro:assets';
+import { Picture } from 'astro:assets';
 import jet from '../../assets/photos/private-jet-sunset.jpg';
 import cabin from '../../assets/photos/jet-cabin.jpg';
 import marigold from '../../assets/photos/marigold.jpg';
@@ -42,10 +42,11 @@ const MOMENTS = [
       {MOMENTS.map((m) => (
         <article class="moment card-lift reveal">
           <figure class="moment__photo photo-zoom">
-            <Image
+            <Picture
               src={m.img}
               alt={m.alt}
-              widths={[400, 600, 900]}
+              formats={['avif', 'webp']}
+              widths={[400, 600, 700, 900]}
               sizes="(max-width: 899px) calc(100vw - 40px), 400px"
               loading="lazy"
             />
