@@ -8,6 +8,7 @@ import { Picture } from 'astro:assets';
 import poster from '../../assets/photos/hero-poster.jpg';
 import Icon from '../Icon.astro';
 import { POSTER_QUALITY } from './poster';
+import { videoUrl } from '../../lib/video';
 
 interface Props {
   planHref: string;
@@ -38,7 +39,7 @@ const { planHref } = Astro.props;
       aria-hidden="true"
       tabindex="-1"
       data-hero-video
-      data-src="/video/hero-loop-720p.mp4"
+      data-src={videoUrl('hero-loop-720p.mp4')}
     ></video>
   </div>
   <div class="hero__shade" aria-hidden="true"></div>
@@ -59,7 +60,7 @@ const { planHref } = Astro.props;
       <a class="btn btn--gold btn--lg" href={planHref}>
         Plan my wedding flight <Icon name="arrow" size={18} stroke={2} class="btn__arrow" />
       </a>
-      <a class="btn btn--ghost btn--lg film-btn" href="/video/vaanika-film-720p.mp4" data-film-open>
+      <a class="btn btn--ghost btn--lg film-btn" href={videoUrl('vaanika-film-720p.mp4')} data-film-open>
         <span class="film-btn__play">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="#0B1020" aria-hidden="true">
             <path d="M7 4l14 8-14 8z"></path>

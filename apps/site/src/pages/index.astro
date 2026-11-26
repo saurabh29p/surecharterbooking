@@ -11,6 +11,7 @@ import EnquirySection from '../components/home/EnquirySection.astro';
 import Fleet from '../components/home/Fleet.astro';
 import Hero from '../components/home/Hero.astro';
 import { POSTER_QUALITY } from '../components/home/poster';
+import { videoUrl } from '../lib/video';
 import HowItWorks from '../components/home/HowItWorks.astro';
 import Moments from '../components/home/Moments.astro';
 import NameStory from '../components/home/NameStory.astro';
@@ -54,7 +55,7 @@ const lcp = await getImage({ src: poster, format: 'avif', widths: [480, 768, 102
     <a class="btn btn--gold btn--lg btn--block" href="#enquire">
       Plan my wedding flight
     </a>
-    <a class="mobile-cta__film" href="/video/vaanika-film-720p.mp4" data-film-open>
+    <a class="mobile-cta__film" href={videoUrl('vaanika-film-720p.mp4')} data-film-open>
       <Icon name="arrow" size={16} /> Watch the film · 35s
     </a>
   </div>
