@@ -59,7 +59,7 @@ after the page has been idle for four seconds. Its setup (three.js, the renderer
 | Motion module (scroll choreography, all chapters) | (part of the enhancement) | 6 KB gzip |
 | 3D enhancement JavaScript, total | ≤ 200 KB gzip | 171 KB gzip on home (three.js 136 KB, glTF loader and materials 14 KB, engine 4 KB, four scenes 11 KB) |
 | Each 3D model | ≤ 300 KB | jet 267 KB, airliner 283 KB, helicopter 104 KB, palace 151 KB, mark 60 KB |
-| 3D assets per page | ≤ 1.5 MB | home 865 KB of models (448 KB gzipped) plus lazy stills; other pages 0–671 KB |
+| 3D assets per page | ≤ 1.5 MB | home 865 KB of models (Vercel serves them Brotli-compressed, about 450 KB, cached for a year) plus lazy stills; other pages 0–671 KB |
 | Rendered stills (fallbacks, AVIF/WebP at several widths) | | 8–60 KB each as served |
 
 ## Throttled mid-range Android (`apps/site/scripts/check-pages.mjs`)
