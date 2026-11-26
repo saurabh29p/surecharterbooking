@@ -6,7 +6,8 @@
 # in $PLATES, and the text-free overlays (only the gold light-wipe edges):
 #   node scripts/render.mjs FilmCleanOverlay  out/bg/FilmCleanOverlay.mov  --profile=4444 --alpha=1 --frames=0-440
 #   node scripts/render.mjs ReelsCleanOverlay out/bg/ReelsCleanOverlay.mov --profile=4444 --alpha=1 --frames=0-440
-# Output: web/hero-film-1280x720.mp4, web/hero-film-720x1280.mp4 (each <= 2.5 MB) and posters.
+# Output: web/hero-film-1280x720.mp4, web/hero-film-720x1280.mp4 (each <= 2.5 MB; H.264 High@4.0 so
+# every phone's hardware decoder takes them) and posters.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 PLATES=${PLATES:-out/renders/chunks}
@@ -32,8 +33,8 @@ build() { # comp overlay out_name width height kbps
   local F="[0:v]trim=start=$S1:end=$END,setpts=PTS-STARTPTS[m];[0:v]trim=start=$S0:end=$S1,setpts=PTS-STARTPTS[h];[m][h]xfade=transition=fade:duration=$XF:offset=$OFF,scale=in_color_matrix=bt709:out_color_matrix=bt709,hqdn3d=1.4:1.4:3:3,scale=$w:$h:flags=lanczos,format=yuv420p[v]"
   local out=$W/$name.mp4
   for k in $kb $((kb * 9 / 10)) $((kb * 8 / 10)) $((kb * 7 / 10)); do
-    ffmpeg -y -v error -i "$clean" -filter_complex "$F" -map "[v]" -c:v libx264 -preset veryslow -tune film -b:v ${k}k -maxrate $((k * 2))k -bufsize $((k * 3))k -x264-params aq-mode=3 -pass 1 -passlogfile "$B/$name" -an -f null /dev/null
-    ffmpeg -y -v error -i "$clean" -filter_complex "$F" -map "[v]" -c:v libx264 -preset veryslow -tune film -b:v ${k}k -maxrate $((k * 2))k -bufsize $((k * 3))k -x264-params aq-mode=3 -pass 2 -passlogfile "$B/$name" -an "${TAG709[@]}" -movflags +faststart "$out"
+    ffmpeg -y -v error -i "$clean" -filter_complex "$F" -map "[v]" -c:v libx264 -profile:v high -level:v 4.0 -preset veryslow -tune film -b:v ${k}k -maxrate $((k * 2))k -bufsize $((k * 3))k -x264-params aq-mode=3 -pass 1 -passlogfile "$B/$name" -an -f null /dev/null
+    ffmpeg -y -v error -i "$clean" -filter_complex "$F" -map "[v]" -c:v libx264 -profile:v high -level:v 4.0 -preset veryslow -tune film -b:v ${k}k -maxrate $((k * 2))k -bufsize $((k * 3))k -x264-params aq-mode=3 -pass 2 -passlogfile "$B/$name" -an "${TAG709[@]}" -movflags +faststart "$out"
     local size; size=$(stat -c %s "$out")
     echo "   $out  ${k} kbps -> $size bytes"
     [ "$size" -le 2500000 ] && break
