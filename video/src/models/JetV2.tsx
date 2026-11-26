@@ -176,7 +176,11 @@ export const JetV2: React.FC<{ gear?: number; strobe?: number; beacon?: number; 
     const green = new THREE.MeshBasicMaterial({ color: new THREE.Color(0.2, 5, 1) });
     const white = new THREE.MeshBasicMaterial({ color: new THREE.Color(7, 6.8, 6.4) });
     const exhaustM = new THREE.MeshBasicMaterial({ color: new THREE.Color(1.6, 0.9, 0.45), side: THREE.DoubleSide });
-    return { paint, plain, wing, chrome, darkMetal, glass, frame, tyre, fan, red, green, white, exhaustM };
+    const mats = { paint, plain, wing, chrome, darkMetal, glass, frame, tyre, fan, red, green, white, exhaustM };
+    // names and the livery shader travel with the model when it is exported to glTF (scripts/export-gltf.mjs)
+    for (const [k, v] of Object.entries(mats)) v.name = k;
+    paint.userData = { glsl: paintChunk, uvLength: JET_L };
+    return mats;
   }, []);
 
   const g = useMemo(() => {

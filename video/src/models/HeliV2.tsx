@@ -114,7 +114,11 @@ export const HeliV2: React.FC<{ rotorAngle: number; beacon?: number; strobe?: nu
     const red = new THREE.MeshBasicMaterial({ color: new THREE.Color(7, 0.3, 0.2) });
     const green = new THREE.MeshBasicMaterial({ color: new THREE.Color(0.2, 6, 1.2) });
     const white = new THREE.MeshBasicMaterial({ color: new THREE.Color(8, 7.8, 7.4) });
-    return { paint, ivory, navy, gold, metal, dark, blade, disc, red, green, white };
+    const mats = { paint, ivory, navy, gold, metal, dark, blade, disc, red, green, white };
+    // names and the livery shader travel with the model when it is exported to glTF (scripts/export-gltf.mjs)
+    for (const [k, v] of Object.entries(mats)) v.name = k;
+    paint.userData = { glsl: livery, uvLength: LEN };
+    return mats;
   }, []);
   m.disc.uniforms.uA.value = rotorAngle * 0.6;
   m.disc.uniforms.uB.value = blur;
@@ -144,10 +148,10 @@ export const HeliV2: React.FC<{ rotorAngle: number; beacon?: number; strobe?: nu
         <mesh geometry={g.cowl} material={m.ivory} position={[0.45, 0.98, 0]} />
         {[1, -1].map((s) => <mesh key={s} geometry={g.exhaust} material={m.dark} position={[-0.95, 1.1, s * 0.45]} />)}
         <mesh geometry={g.mast} material={m.metal} position={[0.85, 1.55, 0]} />
-        <group position={[0.85, 1.85, 0]}>
+        <group name="rotor" position={[0.85, 1.85, 0]}>
           <mesh geometry={g.hub} material={m.metal} />
           {[0, 1, 2, 3, 4].map((i) => <mesh key={i} geometry={g.bladeG} material={m.blade} rotation={[0, rotorAngle + (i * 2 * Math.PI) / 5, -0.025]} />)}
-          <mesh geometry={g.discG} material={m.disc} position={[0, 0.03, 0]} />
+          <mesh name="rotorDisc" geometry={g.discG} material={m.disc} position={[0, 0.03, 0]} />
         </group>
         <group position={[-5.75, 0.95, 0]}>
           <mesh geometry={g.fen} material={m.navy} />
