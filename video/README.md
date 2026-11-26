@@ -16,6 +16,7 @@ Licences are in [CREDITS.md](CREDITS.md).
 | `web/hero-loop-720p.mp4` | Muted 14 s seamless hero loop, no text, left third kept dark, under 2.5 MB | committed |
 | `web/hero-poster.jpg` | Poster for the hero (the loop's first frame) | committed |
 | `web/vaanika-film-thumbnail.jpg` | Thumbnail, 1280x720 | committed |
+| `web/hero-film-1280x720.mp4`, `web/hero-film-720x1280.mp4` (+ posters) | The website hero's background film: lake palace, jet and helicopter with no text, a seamless muted 12.5 s loop, 16:9 for desktop and 9:16 for phones (each under 2.5 MB). Built by `scripts/hero_film.sh` from the plates and the text-free `FilmCleanOverlay` / `ReelsCleanOverlay` | committed |
 
 Large renders (`out/`) are git-ignored. `.github/workflows/film-release.yml` rebuilds everything
 from these sources and attaches the files to a GitHub release. It runs when `RELEASE_VERSION`

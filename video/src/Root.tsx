@@ -22,6 +22,9 @@ export const RemotionRoot: React.FC = () => (
     <Composition id="FilmOverlay" component={Film} durationInFrames={D} fps={FPS} width={1920} height={1080} defaultProps={v(true, false, false, 'overlay')} />
     <Composition id="FilmSubOverlay" component={Film} durationInFrames={D} fps={FPS} width={1920} height={1080} defaultProps={v(false, true, false, 'overlay')} />
     <Composition id="ReelsOverlay" component={Film} durationInFrames={D} fps={FPS} width={1080} height={1920} defaultProps={v(false, true, true, 'overlay')} />
+    {/* text-free overlays (only the light-wipe edges) for the website's background film */}
+    <Composition id="FilmCleanOverlay" component={Film} durationInFrames={D} fps={FPS} width={1920} height={1080} defaultProps={v(false, false, false, 'overlay')} />
+    <Composition id="ReelsCleanOverlay" component={Film} durationInFrames={D} fps={FPS} width={1080} height={1920} defaultProps={v(false, false, true, 'overlay')} />
     <Composition id="HeroLoop" component={HeroLoop} durationInFrames={(LOOP + XF) * FPS} fps={FPS} width={1920} height={1080} />
     <Composition id="Thumbnail" component={Thumbnail} durationInFrames={1} fps={FPS} width={1280} height={720} />
   </>
