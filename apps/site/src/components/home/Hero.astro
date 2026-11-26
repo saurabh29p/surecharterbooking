@@ -16,9 +16,10 @@ interface Props {
 
 const { planHref } = Astro.props;
 const p = await heroPosters();
+const TITLE = 'The arrival they’ll talk about for a lifetime.';
 ---
 
-<section class="hero" aria-label="Introduction">
+<section class="hero" aria-label="Introduction" data-chapter="hero">
   <div class="hero__media" aria-hidden="true">
     <picture>
       <source media={PHONE} type="image/avif" srcset={p.tallAvif.srcSet.attribute} sizes="100vw" />
@@ -49,12 +50,16 @@ const p = await heroPosters();
     ></video>
   </div>
   <div class="hero__shade" aria-hidden="true"></div>
+  <!-- with motion: the film dims into the night sky as the page scrolls (motion/chapters/hero.ts) -->
+  <div class="hero__dim" aria-hidden="true"></div>
   <div class="container hero__content">
     <p class="eyebrow hero__eyebrow">
       <span class="hero__eyebrow-long">Private jets &amp; helicopters for Indian weddings</span>
       <span class="hero__eyebrow-short">Private jets &amp; helicopters · Weddings</span>
     </p>
-    <h1 class="hero__title display">The arrival they’ll talk about for a lifetime.</h1>
+    <h1 class="hero__title display">
+      {TITLE.split(' ').map((w) => <span class="hero__w">{w} </span>)}
+    </h1>
     <p class="hero__sub hero__sub--long">
       Your family and closest guests, flown from any Indian city to Udaipur, Jaipur, Goa and beyond
       — only with DGCA-approved operators, at one written, all-in price.
@@ -283,6 +288,36 @@ const p = await heroPosters();
       width: 36px;
       height: 36px;
     }
+  }
+  /* ---------- With motion: the film recedes, the words lift away line by line ---------- */
+
+  .hero__dim {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: #0b1020;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  :global(.motion-ready) .hero__media {
+    transform: scale(calc(1 + var(--p, 0) * 0.08));
+    transform-origin: 50% 38%;
+  }
+
+  :global(.motion-ready) .hero__dim {
+    opacity: calc(var(--p, 0) * 1.25);
+  }
+
+  :global(.motion-ready) .hero [data-l] {
+    --lp: clamp(0, var(--p, 0) * 2.6 - var(--l) * 0.16, 1);
+    transform: translate3d(0, calc(var(--lp) * -46px), 0);
+    opacity: calc(1 - var(--lp));
+  }
+
+  .hero__w {
+    display: inline-block;
+    white-space: pre;
   }
 </style>
 

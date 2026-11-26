@@ -27,6 +27,13 @@ const SHORT = [
 ---
 
 <section class="marquee marquee--wide" aria-label="Our promises">
+  <div class="marquee__glint" aria-hidden="true"></div>
+  <button type="button" class="marquee__pause" aria-label="Pause the moving strip" aria-pressed="false" data-marquee-pause>
+    <svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true">
+      <path class="i-pause" d="M7 4h3.5v16H7zM13.5 4H17v16h-3.5z" fill="currentColor"></path>
+      <path class="i-play" d="M8 4.5l12 7.5-12 7.5z" fill="currentColor"></path>
+    </svg>
+  </button>
   <div class="marquee__fade marquee__fade--l" aria-hidden="true"></div>
   <div class="marquee__fade marquee__fade--r" aria-hidden="true"></div>
   <div class="marquee__track">
@@ -49,6 +56,13 @@ const SHORT = [
 </section>
 
 <section class="marquee marquee--short" aria-label="Our promises">
+  <div class="marquee__glint" aria-hidden="true"></div>
+  <button type="button" class="marquee__pause" aria-label="Pause the moving strip" aria-pressed="false" data-marquee-pause>
+    <svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true">
+      <path class="i-pause" d="M7 4h3.5v16H7zM13.5 4H17v16h-3.5z" fill="currentColor"></path>
+      <path class="i-play" d="M8 4.5l12 7.5-12 7.5z" fill="currentColor"></path>
+    </svg>
+  </button>
   <div class="marquee__track marquee__track--fast">
     {[false, true].map((dup) => (
       <ul aria-hidden={dup ? 'true' : undefined} class:list={['marquee__list', { 'is-dup': dup }]}>
@@ -216,4 +230,93 @@ const SHORT = [
       display: none;
     }
   }
+  /* a soft gold glint at the centre: each promise brightens as it passes through */
+  .marquee__glint {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 260px;
+    margin-left: -130px;
+    z-index: 1;
+    pointer-events: none;
+    background: radial-gradient(ellipse 50% 60% at 50% 50%, rgba(244, 227, 181, 0.2), rgba(244, 227, 181, 0) 70%);
+    mix-blend-mode: screen;
+  }
+
+  .marquee__glint::after {
+    content: '';
+    position: absolute;
+    top: 18%;
+    bottom: 18%;
+    left: 50%;
+    width: 1px;
+    background: linear-gradient(180deg, rgba(244, 227, 181, 0), rgba(244, 227, 181, 0.55), rgba(244, 227, 181, 0));
+  }
+
+  .marquee--short .marquee__glint {
+    width: 160px;
+    margin-left: -80px;
+  }
+
+  /* WCAG 2.2.2: the strip moves for more than five seconds, so it can be paused */
+  .marquee__pause {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    z-index: 3;
+    width: 30px;
+    height: 30px;
+    margin-top: -15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(243, 237, 226, 0.3);
+    border-radius: 50%;
+    background: rgba(11, 16, 32, 0.85);
+    color: var(--ivory);
+    cursor: pointer;
+    transition:
+      border-color var(--dur-micro) ease,
+      transform 0.05s ease;
+  }
+
+  .marquee__pause:hover {
+    border-color: var(--gold);
+  }
+
+  .marquee__pause:active {
+    transform: scale(0.96);
+  }
+
+  .marquee__pause .i-play,
+  .marquee__pause[aria-pressed='true'] .i-pause {
+    display: none;
+  }
+
+  .marquee__pause[aria-pressed='true'] .i-play {
+    display: inline;
+  }
+
+  .marquee.is-paused .marquee__track {
+    animation-play-state: paused;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .marquee__pause,
+    .marquee__glint {
+      display: none;
+    }
+  }
 </style>
+
+<script>
+  for (const btn of document.querySelectorAll<HTMLButtonElement>('[data-marquee-pause]')) {
+    btn.addEventListener('click', () => {
+      const paused = btn.getAttribute('aria-pressed') !== 'true';
+      btn.setAttribute('aria-pressed', String(paused));
+      btn.setAttribute('aria-label', paused ? 'Play the moving strip' : 'Pause the moving strip');
+      btn.closest('.marquee')?.classList.toggle('is-paused', paused);
+    });
+  }
+</script>

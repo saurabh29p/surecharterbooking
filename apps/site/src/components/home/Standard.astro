@@ -134,20 +134,21 @@ const stills = Object.values(
   }
   /* ---------- With motion: the mark beside the checks (motion/chapters/standard.ts) ---------- */
 
-  .standard__stage {
+  :global(.standard__stage) {
     display: none;
   }
 
+  /* desktop: the intro scrolls away; the mark sticks beside the checks */
   :global(.motion-ready) .standard__side {
-    position: sticky;
-    top: calc(var(--header-h) + 32px);
-    align-self: flex-start;
+    align-self: stretch;
   }
 
-  :global(.motion-ready) .standard__stage {
+  :global(.motion-ready) :global(.standard__stage) {
     display: block;
-    height: min(44vh, 400px);
-    margin-top: 18px;
+    position: sticky;
+    top: calc(var(--header-h) + 6vh);
+    height: min(60vh, 520px);
+    margin-top: 24px;
   }
 
   :global(.motion-ready) .standard__checks {
@@ -184,10 +185,11 @@ const stills = Object.values(
       display: contents;
     }
 
-    :global(.motion-ready) .standard__stage {
+    :global(.motion-ready) :global(.standard__stage) {
       position: sticky;
       top: var(--header-h);
       z-index: 0;
+      align-self: stretch;
       height: 34svh;
       margin: 24px calc(var(--gutter) * -1) 0;
     }

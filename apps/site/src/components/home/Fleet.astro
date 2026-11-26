@@ -261,7 +261,7 @@ const stills = Object.entries(
   }
   /* ---------- The showroom (motion on; motion/chapters/fleet.ts) ---------- */
 
-  .fleet__stage,
+  :global(.fleet__stage),
   .fleet__steps {
     display: none;
   }
@@ -291,7 +291,7 @@ const stills = Object.entries(
     grid-column: 1 / -1;
   }
 
-  :global(.motion-ready) .fleet__stage {
+  :global(.motion-ready) :global(.fleet__stage) {
     display: block;
     grid-column: 1;
     grid-row: 2 / 4;
@@ -379,7 +379,7 @@ const stills = Object.entries(
       padding-bottom: 14px;
     }
 
-    :global(.motion-ready) .fleet__stage {
+    :global(.motion-ready) :global(.fleet__stage) {
       grid-column: 1;
       grid-row: 2;
       margin: 0 calc(var(--gutter) * -1);

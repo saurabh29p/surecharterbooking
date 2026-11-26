@@ -9,6 +9,9 @@ import { detectTier } from './tier';
 const CHAPTERS = import.meta.glob<{ default: (el: HTMLElement) => void }>('./chapters/*.ts');
 const STAGES = {
   showroom: () => import('../three/scenes/showroom'),
+  mark: () => import('../three/scenes/mark'),
+  map: () => import('../three/scenes/map'),
+  shreeji: () => import('../three/scenes/shreeji'),
 };
 
 export function startMotion() {
@@ -19,6 +22,7 @@ export function startMotion() {
     void load?.().then((m) => m.default(el));
   }
   root.classList.add('motion-ready');
+  if (matchMedia('(hover: hover) and (pointer: fine)').matches) void import('./magnetic').then((m) => m.magnetic());
 
   if (!document.querySelector('[data-stage]')) return;
   const tier = detectTier();

@@ -7,7 +7,7 @@
  */
 import { ACESFilmicToneMapping, NoToneMapping, PerspectiveCamera, Scene, SRGBColorSpace, WebGLRenderer } from 'three';
 import { kick, onFrame, progressOf } from '../motion/loop';
-import type { Tier } from '../motion/tier';
+import { forcedTier, type Tier } from '../motion/tier';
 import { createSky, type Sky } from './sky';
 
 export interface FrameCtx {
@@ -232,7 +232,8 @@ export class Engine {
       this.resize();
       this.slow = 0.3;
       this.frames = 0;
-    } else if (this.slow > 0.85) {
+    } else if (this.slow > 0.85 && !forcedTier()) {
+      // (a tier forced with ?tier= for testing keeps going, so software renderers can be checked)
       this.stop();
     }
   }
@@ -259,6 +260,7 @@ let engine: Engine | null = null;
 export function startEngine(tier: Tier, factories: Record<string, () => Promise<{ default: StageFactory }>>) {
   if (engine) return engine;
   engine = new Engine(tier);
+  if (/[?&]debug\b/.test(location.search)) (window as unknown as { vaanikaEngine: Engine }).vaanikaEngine = engine;
   for (const el of document.querySelectorAll<HTMLElement>('[data-stage]')) {
     const load = factories[el.dataset.stage ?? ''];
     if (!load) continue;

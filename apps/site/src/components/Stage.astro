@@ -46,7 +46,7 @@ const { name, stills = [], class: cls, sizes = '(max-width: 767px) 100vw, 60vw',
     min-height: 0;
   }
 
-  .stage__still {
+  .stage :global(.stage__still) {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -56,12 +56,12 @@ const { name, stills = [], class: cls, sizes = '(max-width: 767px) 100vw, 60vw',
     transition: opacity var(--dur-panel) var(--ease-in-out);
   }
 
-  .stage__still.is-active {
+  .stage :global(.stage__still.is-active) {
     opacity: 1;
   }
 
   /* the live 3D takes over from the still once its first frame is on screen */
-  :global(.gl) .stage:global(.is-live) .stage__still {
+  :global(.gl) .stage:global(.is-live) :global(.stage__still) {
     opacity: 0;
     transition-duration: var(--dur-fade);
   }

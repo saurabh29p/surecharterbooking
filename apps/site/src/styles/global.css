@@ -339,8 +339,8 @@ body::before {
   z-index: -2;
   pointer-events: none;
   background:
-    radial-gradient(circle at 80% 22%, rgba(243, 236, 220, 0.92) 0 1.6vmin, rgba(243, 236, 220, 0) 1.75vmin),
-    radial-gradient(circle at 80% 22%, rgba(214, 190, 140, 0.16), rgba(214, 190, 140, 0) 16vmin),
+    radial-gradient(circle at 86% 20%, rgba(243, 236, 220, 0.2) 0 1.3vmin, rgba(243, 236, 220, 0) 1.45vmin),
+    radial-gradient(circle at 86% 20%, rgba(214, 190, 140, 0.08), rgba(214, 190, 140, 0) 14vmin),
     url('/sky/stars-near.webp') 0 0 / 640px repeat,
     url('/sky/stars-far.webp') 0 0 / 512px repeat,
     linear-gradient(180deg, #0b1020, #0d1225);

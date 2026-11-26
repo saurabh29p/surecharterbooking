@@ -233,4 +233,89 @@ import { STEPS } from '../../data/facts';
       border-radius: 20px;
     }
   }
+  /* ---------- With motion: a gold path draws down the steps; the quote assembles line by line.
+     CSS scroll-driven animations (no JavaScript); without support everything simply shows. ---------- */
+
+  @supports (animation-timeline: view()) {
+    :global(.motion) .how__steps {
+      position: relative;
+      padding-left: 30px;
+      view-timeline-name: --how-steps;
+    }
+
+    :global(.motion) .how__steps::before,
+    :global(.motion) .how__steps::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      pointer-events: none;
+      animation-timeline: --how-steps;
+      animation-range: cover 16% cover 62%;
+      animation-fill-mode: both;
+      animation-timing-function: linear;
+    }
+
+    :global(.motion) .how__steps::before {
+      top: 26px;
+      bottom: 26px;
+      width: 2px;
+      border-radius: 2px;
+      background: linear-gradient(180deg, #d9bc78, #b8924a 70%, #8c6a2f);
+      transform-origin: top;
+      animation-name: how-path;
+    }
+
+    /* the light at the head of the path */
+    :global(.motion) .how__steps::after {
+      width: 10px;
+      height: 10px;
+      margin: -5px 0 0 -4px;
+      border-radius: 50%;
+      background: #f4e3b5;
+      box-shadow:
+        0 0 0 4px rgba(217, 188, 120, 0.25),
+        0 0 18px rgba(184, 146, 74, 0.8);
+      animation-name: how-head;
+    }
+
+    :global(.motion) .quote__lines dt,
+    :global(.motion) .quote__lines dd {
+      animation: quote-line linear both;
+      animation-timeline: view();
+      animation-range: entry 20% entry 100%;
+    }
+
+    :global(.motion) .quote__lines dd {
+      animation-range: entry 45% cover 30%;
+    }
+  }
+
+  @keyframes how-path {
+    from {
+      transform: scaleY(0);
+    }
+    to {
+      transform: scaleY(1);
+    }
+  }
+
+  @keyframes how-head {
+    from {
+      top: 26px;
+    }
+    to {
+      top: calc(100% - 26px);
+    }
+  }
+
+  @keyframes quote-line {
+    from {
+      opacity: 0;
+      transform: translate3d(-12px, 0, 0);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
 </style>

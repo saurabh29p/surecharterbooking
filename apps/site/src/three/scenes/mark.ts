@@ -80,7 +80,7 @@ const CLOSED: Record<Part, Pose> = {
 const create: StageFactory = async (el) => {
   const mode = el.dataset.mode === 'bloom' ? 'bloom' : 'checks';
   const scene = new Scene();
-  const camera = new PerspectiveCamera(24, 1, 10, 2000);
+  const camera = new PerspectiveCamera(24, 1, 0.1, 100);
   const root = await model('mark');
   const group = new Group();
   const parts = {} as Record<Part, { holder: Group; mat: ShaderMaterial; pivot: [number, number] }>;
@@ -160,7 +160,7 @@ const create: StageFactory = async (el) => {
       group.rotation.y = lerp(-0.18, 0.18, p) + ctx.pointer.x * 0.1;
       group.rotation.x = -0.05 + ctx.pointer.y * 0.05;
       const fit = ctx.aspect < 1 ? 1 / ctx.aspect : 1;
-      const d = 6.4 * fit * (mode === 'bloom' ? 1.05 : 1.25);
+      const d = 6.4 * fit * (mode === 'bloom' ? 1.22 : 1.25);
       camera.position.set(0, 0.05, d);
       camera.lookAt(0, 0.05, 0);
       camera.updateProjectionMatrix();

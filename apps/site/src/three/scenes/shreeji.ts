@@ -82,12 +82,12 @@ function lawn() {
         // downwash: rings running out across the grass
         float ring = .5 + .5 * sin(r * 2.2 - uPhase);
         grass *= 1. + uWash * ring * .55 * exp(-r / 9.);
-        // fade into the night toward the palace and the edges
-        float far = smoothstep(150., 40., length(vW.xz - vec2(-10., -40.)));
-        gl_FragColor = vec4(grass * far, 1.);
+        // fade into the night sky's own colour toward the horizon, so there is no edge
+        float far = smoothstep(260., 60., length(vW.xz - vec2(0., -30.)));
+        gl_FragColor = vec4(mix(vec3(.051, .071, .145), grass, far), 1.);
       }`,
   });
-  const m = new Mesh(new PlaneGeometry(400, 400, 1, 1), mat);
+  const m = new Mesh(new PlaneGeometry(1400, 1400, 1, 1), mat);
   m.rotation.x = -Math.PI / 2;
   return { mesh: m, mat };
 }
@@ -112,7 +112,7 @@ function palaceMaterials(root: Object3D) {
         sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying float vY;').replace('#include <begin_vertex>', '#include <begin_vertex>\nvY = position.y;');
         sh.fragmentShader = sh.fragmentShader
           .replace('#include <common>', '#include <common>\nvarying float vY; uniform vec3 uFlood;')
-          .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\ntotalEmissiveRadiance += uFlood * diffuseColor.rgb * (.05 + .55 * exp(-max(vY - 2.6, 0.) / 7.));');
+          .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\ntotalEmissiveRadiance += uFlood * diffuseColor.rgb * (.03 + .38 * exp(-max(vY - 2.6, 0.) / 7.));');
       };
       sm.customProgramCacheKey = () => 'palaceflood';
       out = sm;
@@ -179,13 +179,15 @@ function petals(count: number) {
 const create: StageFactory = async (el, engine) => {
   const mode = el.dataset.mode === 'hover' ? 'hover' : 'arrival';
   const scene = new Scene();
-  const camera = new PerspectiveCamera(32, 1, 0.5, 600);
+  const camera = new PerspectiveCamera(32, 1, 0.5, 1500);
   const env = environment(engine.renderer);
   const [heli, palace] = await Promise.all([model('helicopter'), model('palace')]);
   dressAircraft(heli, env, engine.tier, { cabinGlow: 0.6 });
   palaceMaterials(palace);
-  palace.position.set(-26, 0, -112);
-  palace.rotation.y = 0.2;
+  // across the lawn, behind and to the right of the landing spot (the text sits on the left)
+  palace.position.set(52, 0, -215);
+  palace.rotation.y = -0.22;
+  palace.scale.setScalar(0.62);
   scene.add(palace);
   const ground = lawn();
   scene.add(ground.mesh);
@@ -232,8 +234,8 @@ const create: StageFactory = async (el, engine) => {
       // camera: low over the lawn, the landing spot right of centre on wide screens (text on the left)
       const wide = ctx.aspect >= 1;
       const fit = wide ? 1 : Math.pow(1 / ctx.aspect, 0.6);
-      const look = wide ? new Vector3(-9, 6.5, -14) : new Vector3(-1, 7.5, -8);
-      const pos = wide ? new Vector3(-14 + ctx.pointer.x * 1.5, 6 - ctx.pointer.y * 0.6, 30) : new Vector3(-3, 7, 30);
+      const look = wide ? new Vector3(-2, 6.5, -14) : new Vector3(2, 7.5, -8);
+      const pos = wide ? new Vector3(-12 + ctx.pointer.x * 1.5, 6 - ctx.pointer.y * 0.6, 30) : new Vector3(-2, 7, 30);
       camera.position.copy(look).add(pos.clone().sub(look).multiplyScalar(fit));
       camera.position.y += lerp(1.5, 0, ease.inOut(p));
       camera.fov = wide ? 30 : 38;

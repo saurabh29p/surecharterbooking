@@ -41,8 +41,8 @@ const MOMENTS = [
       </h2>
     </div>
     <div class="moments__grid">
-      {MOMENTS.map((m, i) => (
-        <article class="moment card-lift reveal" style={`--c: ${i / (MOMENTS.length - 1)}`}>
+      {MOMENTS.map((m) => (
+        <article class="moment card-lift reveal">
           <figure class="moment__photo photo-zoom">
             <Picture
               src={m.img}
@@ -158,6 +158,11 @@ const MOMENTS = [
     justify-content: center;
   }
 
+  /* the container keeps the window's width (as a flex item it would grow to fit the track) */
+  :global(.motion-ready) .moments__pin > .container {
+    width: 100%;
+  }
+
   /* gold dust drifting in front, faster than the panels */
   :global(.motion-ready) .moments__pin::after {
     content: '';
@@ -181,6 +186,19 @@ const MOMENTS = [
     margin-top: 4.5vh;
     transform: translate3d(calc(var(--p, 0) * var(--shift, 0px) * -1), 0, 0);
     will-change: transform;
+  }
+
+  /* each panel's place on the journey (0, 0.5, 1): no inline styles under the security policy */
+  .moment {
+    --c: 0;
+  }
+
+  .moment:nth-child(2) {
+    --c: 0.5;
+  }
+
+  .moment:nth-child(3) {
+    --c: 1;
   }
 
   :global(.motion-ready) .moments .moment {

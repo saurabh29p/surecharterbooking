@@ -59,7 +59,7 @@ export function createSky(tier: Tier): Sky {
     uDpr: { value: 1 },
     uTime: { value: 0 },
     uPointer: { value: [0, 0] as [number, number] },
-    uMoon: { value: [0.8, 0.22] as [number, number] },
+    uMoon: { value: [0.86, 0.2] as [number, number] },
   };
 
   const bg = new Mesh(
@@ -80,12 +80,13 @@ export function createSky(tier: Tier): Sky {
           vec2 m = vec2(uMoon.x, 1. - uMoon.y) * uRes;
           float rad = min(uRes.x, uRes.y) * 0.032;
           float d = length(px - m);
-          col += vec3(0.11, 0.1, 0.12) * exp(-d / (rad * 9.));
-          col += vec3(0.2, 0.17, 0.12) * exp(-d / (rad * 2.6)) * 0.5;
+          // (faint on purpose: text often sits in front of it and must keep its contrast)
+          col += vec3(0.06, 0.055, 0.065) * exp(-d / (rad * 9.));
+          col += vec3(0.1, 0.085, 0.06) * exp(-d / (rad * 2.6)) * 0.5;
           float disc = smoothstep(rad, rad - 1.5, d);
           vec2 q = (px - m) / rad;
           float shade = 0.82 + 0.18 * smoothstep(-1., 1., -q.x * 0.6 + q.y * 0.4);
-          col = mix(col, vec3(0.95, 0.91, 0.82) * shade, disc * 0.92);
+          col = mix(col, vec3(0.95, 0.91, 0.82) * shade, disc * 0.2);
           // dither, so the gradient never bands
           col += (hash(px) - 0.5) / 255.;
           gl_FragColor = vec4(col, 1.);
@@ -151,7 +152,7 @@ export function createSky(tier: Tier): Sky {
       lastS = s;
       uniforms.uPointer.value = [pointer.x, pointer.y];
       const f = s / docH;
-      uniforms.uMoon.value = [0.8, 0.24 - 0.1 * f];
+      uniforms.uMoon.value = [0.86, 0.2 - 0.08 * f];
       return false;
     },
   };

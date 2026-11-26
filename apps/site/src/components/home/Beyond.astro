@@ -173,4 +173,21 @@ const POINTS = [
       grid-template-columns: 1fr;
     }
   }
+  /* with motion: the photo drifts slower than the page (CSS scroll-driven, no JavaScript) */
+  @supports (animation-timeline: view()) {
+    :global(.motion) .beyond__photo :global(img) {
+      animation: beyond-depth linear both;
+      animation-timeline: view();
+      animation-range: cover;
+    }
+  }
+
+  @keyframes beyond-depth {
+    from {
+      transform: translate3d(0, -5%, 0) scale(1.12);
+    }
+    to {
+      transform: translate3d(0, 5%, 0) scale(1.12);
+    }
+  }
 </style>
