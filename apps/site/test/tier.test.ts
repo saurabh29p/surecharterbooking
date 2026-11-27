@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { decideTier, forcedTier, lower, type TierInput } from '../src/motion/tier';
+import { decideTier, explainTier, forcedTier, lower, type TierInput } from '../src/motion/tier';
 
 const base: TierInput = { reducedMotion: false, saveData: false, webgl: true, mobile: false };
 
@@ -46,6 +46,11 @@ describe('device tier', () => {
     expect(forcedTier('?a=1&tier=low')).toBe('low');
     expect(forcedTier('?tier=ultra')).toBeNull();
     expect(decideTier({ ...base, reducedMotion: true, forced: 'high' })).toBe('high');
+  });
+
+  it('says why (for ?debug=3d)', () => {
+    expect(explainTier({ ...base, reducedMotion: true }).reason).toBe('reduced motion is on');
+    expect(explainTier({ ...base, renderer: 'Mali-G57 MC2', mobile: true, cores: 8 })).toEqual({ tier: 'mid', reason: 'mid-range mobile GPU' });
   });
 
   it('steps down one tier at a time', () => {

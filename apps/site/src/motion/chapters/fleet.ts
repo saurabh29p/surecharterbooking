@@ -27,7 +27,7 @@ export default function fleet(track: HTMLElement) {
       cards.forEach((c, i) => c.classList.toggle('is-active', i === a));
       for (const m of marks) m.classList.toggle('is-active', Number(m.dataset.step) === a);
       stills.forEach((st, i) => st.classList.toggle('is-active', i === a));
-      if (!first) countUp(cards[a]?.querySelector('.fleet__seats'));
+      if (!first) countUp(cards[a]?.querySelector('.fleet__seats') ?? null);
     },
   });
   track.addEventListener('focusin', (e) => {

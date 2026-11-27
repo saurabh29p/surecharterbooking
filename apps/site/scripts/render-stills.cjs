@@ -2,12 +2,12 @@
 //   pnpm build && npx astro preview --port 4321 &
 //   node scripts/render-stills.cjs src/assets/3d/stills [names, comma-separated]
 // Uses the machine's Playwright with a software renderer; the CSP is bypassed only to hide the page
-// text while capturing the canvas.
+// text while capturing the canvas. Afterwards, re-run scripts/still-placeholders.py.
 const { chromium } = require('playwright');
 const S = [
   // [file, page, track selector, progress, stage selector, viewport]
   ...[0, 1, 2, 3, 4].map((i) => [`fleet-${i}`, '', '.fleet__track', i / 4, '.fleet__stage', [1440, 900]]),
-  ['standard', '', '.standard__checks', 0.93, '.standard__stage', [1440, 900], 'read'],
+  // (the Standard section's lotus is transparent: scripts/render-lotus-still.cjs)
   ['map', '', '.dest__track', 1, '.dest__stage', [1440, 900]],
   ['shreeji', '', '.shreeji', 0.9, '.shreeji__stage', [1440, 900]],
   ['bloom', '', '.name', 1, '.name__stage', [1440, 900]],

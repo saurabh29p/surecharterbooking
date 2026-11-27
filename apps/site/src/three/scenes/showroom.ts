@@ -113,7 +113,7 @@ const create: StageFactory = async (_el, engine) => {
     camera,
     update(p, _dt, ctx) {
       const { k, t } = stepAt(p, CLASSES.length);
-      const a = CLASSES[k], b = CLASSES[k + 1];
+      const a = CLASSES[k]!, b = CLASSES[k + 1]!;
       const len = lerp(a.length, b.length, t);
       // presence of each model: 1 shown, 0 sunk below the floor
       const w = { helicopter: 0, jet: 0, airliner: 0 } as Record<string, number>;
@@ -124,7 +124,7 @@ const create: StageFactory = async (_el, engine) => {
       }
       const jetScale = a.model === 'jet' && b.model === 'jet' ? lerp(a.scale, b.scale, t) : a.model === 'jet' ? a.scale : b.scale;
       for (const [name, h] of Object.entries(holders)) {
-        const v = w[name];
+        const v = w[name] ?? 0;
         h.visible = v > 0.001;
         const cls = name === 'jet' ? { scale: jetScale, lift: 2.25 * jetScale } : CLASSES.find((c) => c.model === name)!;
         const sc = cls.scale * (0.9 + 0.1 * ease.out(v));
@@ -138,12 +138,12 @@ const create: StageFactory = async (_el, engine) => {
       if (rotor && lastP >= 0) rotorAngle += (p - lastP) * 60;
       if (rotor) rotor.rotation.y = rotorAngle;
       lastP = p;
-      f.mat.uniforms.uRing.value = len * 0.58;
-      f.mat.uniforms.uLen.value = len;
-      f.mat.uniforms.uYaw.value = yaw;
+      f.mat.uniforms.uRing!.value = len * 0.58;
+      f.mat.uniforms.uLen!.value = len;
+      f.mat.uniforms.uYaw!.value = yaw;
       // camera: framed for a size between this aircraft's and the largest, so the bigger ones fill
       // more of the frame (relative size shows) and every one fits, ring included
-      const frameSize = Math.pow(len, 0.72) * Math.pow(CLASSES[CLASSES.length - 1].length, 0.28);
+      const frameSize = Math.pow(len, 0.72) * Math.pow(CLASSES[CLASSES.length - 1]!.length, 0.28);
       camera.fov = ctx.aspect < 1 ? 32 : 24;
       const vHalf = (camera.fov * Math.PI) / 360;
       const half = Math.min(vHalf, Math.atan(Math.tan(vHalf) * ctx.aspect));

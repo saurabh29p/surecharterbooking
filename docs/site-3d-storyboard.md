@@ -2,7 +2,7 @@
 
 Branch `site-3d` (from `claude/new-session-ox4tcm`). Preview only; it goes live only when the owner says "put it live".
 
-**The idea.** Scrolling is the flight: the night palace, wheels up, across India, the helicopter landing before the palace, the lotus opening. One midnight sky (stars, gold dust, a soft moon) sits behind every page, and each chapter has one 3D moment that the scroll drives. Quiet luxury: slow, eased, never bouncy; gold light on midnight blue.
+**The idea.** Scrolling is the flight: the night palace, wheels up, across India, the helicopter landing before the palace, the lotus opening. One midnight sky (stars and gold dust) sits behind every page, and each chapter has one 3D moment that the scroll drives. Quiet luxury: slow, eased, never bouncy; gold light on midnight blue.
 
 ## How it is built
 
@@ -16,6 +16,8 @@ Branch `site-3d` (from `claude/new-session-ox4tcm`). Preview only; it goes live 
 | Stills | `src/assets/3d/stills/` | A rendered still of every 3D moment. Shown under reduced motion, without WebGL, on low-end devices, and as the placeholder until the 3D is ready. |
 
 **Device tiers.** High: full 3D. Mid: the same scenes with simpler materials, fewer particles and a lower pixel ratio. Low (no WebGL, software rendering, very little memory, or a frame-time check that fails): stills and CSS reveals only. Reduced motion: stills, no scroll-driven motion, no parallax, no autoplay. No JavaScript: the normal page with stills.
+
+**Never an empty frame.** Every 3D moment shows a tiny blurred placeholder (written into the page) and then its still; the 3D replaces the still only after its first frame has been checked to contain something. If the 3D is not ready 1.5 s after the moment comes into view, or WebGL fails or runs slow, the still stays. `?debug=3d` shows the device's tier and what each moment is doing.
 
 **Nothing moves by itself for more than 5 seconds.** All 3D motion follows the scroll and settles within about a second after the visitor stops. The two things that do move on their own (the hero film and the trust strip) each have a pause control.
 
@@ -41,14 +43,17 @@ Positions are the share of each chapter's scroll range: 0% is when the chapter s
 
 ### 3. The Vaanika Standard: the four checks and the four parts of the mark
 
+Each card has its part of the lotus: 01 Operator permit → Saraswati (ivory), 02 The aircraft → Lakshmi (gold), 03 Insurance → Kali (shyama blue), 04 Landing permissions → the chandra.
+
 | Scroll | What the visitor sees |
 |---|---|
-| 0% | Intro on the left; beside it the lotus mark floats in 3D, its three petals and crescent slightly apart, dim. |
-| 15% | Check 01 (operator permit) arrives: the Saraswati petal (ivory) turns toward you and catches the light. |
-| 40% | Check 02 (the aircraft itself): the Lakshmi petal (gold, centre) turns and lights; the first settles back. |
-| 65% | Check 03 (insurance): the Kali petal (shyama blue) turns and lights. |
-| 90% | Check 04 (landing permissions): the crescent lights. |
-| 100% | All four parts come together into the whole mark, softly lit. |
+| Arriving | The heading, then the whole lotus (a still from the first moment; the 3D takes over only after its first frame has been checked), then the cards. Nothing is pinned on phones. |
+| Card 01 in the middle | Its border glows softly, and so does the ivory Saraswati petal. |
+| Card 02 | The gold Lakshmi petal. |
+| Card 03 | The blue Kali petal. |
+| Card 04 | The chandra. |
+
+Wider screens: heading and lotus on the left (sticky), the cards on the right, starting beside the lotus so the whole lotus is in view while card 01 is in the middle. Under reduced motion nothing glows. The section is at most about 1.3 screens tall on desktop and 2 on phones.
 
 ### 4. Three moments: a pinned horizontal journey
 
@@ -141,7 +146,7 @@ fallbacks under reduced motion, without WebGL and on low-end devices.
 
 | Chapter | Key moment |
 |---|---|
-| The Vaanika Standard: the parts come together | ![The mark's parts together](../apps/site/src/assets/3d/stills/standard.jpg) |
+| The Vaanika Standard: the lotus (transparent still) | ![The lotus](../apps/site/src/assets/3d/stills/standard.png) |
 | Destinations: all six routes drawn | ![India's coast in gold with six contrails](../apps/site/src/assets/3d/stills/map.jpg) |
 | Showroom: helicopter | ![Helicopter on the studio floor](../apps/site/src/assets/3d/stills/fleet-0.jpg) |
 | Showroom: light jet | ![Light jet](../apps/site/src/assets/3d/stills/fleet-1.jpg) |

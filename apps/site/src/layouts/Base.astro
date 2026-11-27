@@ -150,6 +150,8 @@ const ogUrl = new URL(ogImage, SITE_URL).href;
       // scroll choreography and 3D: a separate chunk, only when motion is welcome
       if (document.documentElement.classList.contains('motion'))
         void import('../motion/index').then((m) => m.startMotion());
+      // ?debug=3d: which tier this device got and what each 3D stage is doing (for testing on phones)
+      if (/[?&]debug=3d\b/.test(location.search)) void import('../motion/debug').then((m) => m.showDebug());
     </script>
   </body>
 </html>

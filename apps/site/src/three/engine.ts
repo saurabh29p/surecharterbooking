@@ -4,8 +4,13 @@
  * rectangle (scissor), with that stage's camera. It renders only while something changes (scroll,
  * pointer, a stage still settling), never while the tab is hidden, and caps the pixel ratio.
  * If frames are slow it lowers the pixel ratio; if they stay slow it hands back to the stills.
+ *
+ * Never an empty frame: every stage shows its still until its scene has drawn a first frame that is
+ * checked to contain something (rendered once into a small target and read back). A stage whose
+ * still has been on screen for 1.5 s without the 3D taking over keeps its still for good
+ * (data-three="off", set by motion/index.ts). Each stage's state is in data-three, for ?debug=3d.
  */
-import { ACESFilmicToneMapping, NoToneMapping, PerspectiveCamera, Scene, SRGBColorSpace, WebGLRenderer } from 'three';
+import { ACESFilmicToneMapping, NoToneMapping, PerspectiveCamera, Scene, SRGBColorSpace, WebGLRenderer, WebGLRenderTarget } from 'three';
 import { kick, onFrame, progressOf } from '../motion/loop';
 import { forcedTier, type Tier } from '../motion/tier';
 import { createSky, type Sky } from './sky';
@@ -64,6 +69,10 @@ export class Engine {
   private slow = 0;
   private frames = 0;
   private stopped = false;
+  private probe: WebGLRenderTarget | null = null;
+  private probeBuf = new Uint8Array(48 * 48 * 4);
+  /** ?still=clear: no sky and a transparent canvas, for rendering stills with an alpha channel */
+  private clear = /[?&]still=clear\b/.test(location.search);
   private io: IntersectionObserver;
   private unhook: () => void;
 
@@ -76,18 +85,25 @@ export class Engine {
     this.canvas.setAttribute('aria-hidden', 'true');
     this.canvas.tabIndex = -1;
     document.body.prepend(this.canvas);
-    this.renderer = new WebGLRenderer({
-      canvas: this.canvas,
-      antialias: tier === 'high' && devicePixelRatio < 2,
-      alpha: false,
-      stencil: false,
-      powerPreference: 'high-performance',
-    });
+    try {
+      this.renderer = new WebGLRenderer({
+        canvas: this.canvas,
+        antialias: tier === 'high' && devicePixelRatio < 2,
+        alpha: this.clear,
+        stencil: false,
+        powerPreference: 'high-performance',
+      });
+    } catch (err) {
+      // no WebGL context after all: leave nothing behind, the stills stay
+      this.canvas.remove();
+      throw err;
+    }
     this.renderer.outputColorSpace = SRGBColorSpace;
     this.renderer.toneMapping = ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1;
     this.renderer.autoClear = false;
     this.renderer.localClippingEnabled = true;
+    if (this.clear) this.renderer.setClearColor(0x000000, 0);
     this.sky = createSky(tier);
     this.resize();
 
@@ -122,27 +138,37 @@ export class Engine {
       );
     this.canvas.addEventListener('webglcontextlost', (e) => {
       e.preventDefault();
-      this.stop();
+      this.stop('the WebGL context was lost');
     });
     document.documentElement.classList.add('gl');
+    document.documentElement.dataset.engine = 'running';
     this.unhook = onFrame((dt) => this.frame(dt));
   }
 
   addStage(el: HTMLElement, factory: StageFactory) {
     const entry: StageEntry = { el, factory, chapter: el.closest('[data-chapter]'), near: false, lastP: -1, lastW: 0, lastH: 0, live: false };
     this.stages.push(entry);
+    if (el.dataset.three !== 'off') el.dataset.three = 'waiting';
     this.io.observe(el);
   }
 
   private async load(s: StageEntry) {
-    if (s.scene || s.loading || this.stopped) return;
+    if (s.scene || s.loading || this.stopped || s.el.dataset.three === 'off') return;
     s.loading = true;
+    const t0 = performance.now();
+    if (s.el.dataset.three !== 'off') s.el.dataset.three = 'loading';
     try {
-      s.scene = await s.factory(s.el, this);
-      // compile before the first frame that shows it, off the critical moment where possible
-      await this.renderer.compileAsync(s.scene.scene, s.scene.camera).catch(() => {});
+      const scene = await s.factory(s.el, this);
+      // compile before the first frame that shows it, off the critical moment where possible;
+      // the scene joins the frame loop only once compiled
+      await this.renderer.compileAsync(scene.scene, scene.camera).catch(() => {});
+      s.scene = scene;
+      if (s.el.dataset.three !== 'off') s.el.dataset.three = 'ready';
+      s.el.dataset.threeMs = String(Math.round(performance.now() - t0));
     } catch (err) {
       console.warn('3D stage could not load; keeping the still', err);
+      s.el.dataset.three = 'off';
+      s.el.dataset.threeWhy = 'the scene failed to load';
     }
     s.loading = false;
     this.dirty = true;
@@ -167,7 +193,7 @@ export class Engine {
     const scroll = window.scrollY;
     let needed = this.dirty || pointerMoving || scroll !== this.lastScroll;
     const rects: (DOMRect | null)[] = this.stages.map((s) => {
-      if (!s.scene || !s.near) return null;
+      if (!s.scene || !s.near || (s.el.dataset.three === 'off' && !s.live)) return null;
       const r = s.el.getBoundingClientRect();
       if (r.bottom < 0 || r.top > this.h || r.width < 2 || r.height < 2) return null;
       const prog = s.chapter ? (progressOf.get(s.chapter) ?? 0) : 0;
@@ -187,7 +213,7 @@ export class Engine {
     r.toneMapping = NoToneMapping;
     r.clear(true, true, false);
     if (this.sky.update(scroll, dt, p)) more = true;
-    r.render(this.sky.scene, this.sky.camera);
+    if (!this.clear) r.render(this.sky.scene, this.sky.camera);
 
     this.stages.forEach((s, i) => {
       const rect = rects[i];
@@ -205,6 +231,8 @@ export class Engine {
       s.lastP = prog;
       s.lastW = rect.width;
       s.lastH = rect.height;
+      // the first frame is checked before it is shown: drawn once into a small target and read back
+      if (!s.live && !this.drawsSomething(s.scene)) return;
       const y = this.h - rect.bottom;
       r.setViewport(rect.left, y, rect.width, rect.height);
       r.setScissor(Math.max(0, rect.left), Math.max(0, y), Math.min(this.w, rect.right) - Math.max(0, rect.left), Math.min(this.h, rect.bottom) - Math.max(0, rect.top));
@@ -214,11 +242,33 @@ export class Engine {
       r.render(s.scene.scene, cam);
       if (!s.live) {
         s.live = true;
+        s.el.dataset.three = 'live';
         // let the first frame reach the screen, then fade the still away
         requestAnimationFrame(() => s.el.classList.add('is-live'));
       }
     });
     return more;
+  }
+
+  /**
+   * Does the scene put anything on screen? Rendered into a 48 x 48 target cleared to transparent,
+   * then read back: at least a few covered pixels are needed before the still gives way.
+   */
+  private drawsSomething(st: StageScene) {
+    const r = this.renderer;
+    this.probe ??= new WebGLRenderTarget(48, 48);
+    const prevAlpha = r.getClearAlpha();
+    r.setRenderTarget(this.probe);
+    r.setClearColor(0x000000, 0);
+    r.clear(true, true, false);
+    r.toneMapping = st.flat ? NoToneMapping : ACESFilmicToneMapping;
+    r.render(st.scene, st.camera);
+    r.readRenderTargetPixels(this.probe, 0, 0, 48, 48, this.probeBuf);
+    r.setRenderTarget(null);
+    r.setClearColor(0x000000, prevAlpha);
+    let covered = 0;
+    for (let i = 3; i < this.probeBuf.length; i += 4) if ((this.probeBuf[i] ?? 0) > 24) covered++;
+    return covered >= 12;
   }
 
   /** Adaptive quality: a lower pixel ratio when frames are slow; stills if they stay slow. */
@@ -234,18 +284,21 @@ export class Engine {
       this.frames = 0;
     } else if (this.slow > 0.85 && !forcedTier()) {
       // (a tier forced with ?tier= for testing keeps going, so software renderers can be checked)
-      this.stop();
+      this.stop('frames stayed slow');
     }
   }
 
   /** Hand back to the stills for good (context lost, or too slow). */
-  stop() {
+  stop(why = 'stopped') {
     if (this.stopped) return;
     this.stopped = true;
+    document.documentElement.dataset.engine = `stopped: ${why}`;
     this.unhook();
     this.io.disconnect();
     for (const s of this.stages) {
       s.el.classList.remove('is-live');
+      s.el.dataset.three = 'off';
+      s.el.dataset.threeWhy = why;
       s.scene?.dispose?.();
     }
     document.documentElement.classList.remove('gl');

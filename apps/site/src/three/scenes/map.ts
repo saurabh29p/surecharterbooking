@@ -48,13 +48,18 @@ export const CITIES: Record<string, Vector3> = {
   goa: xy(15.38, 73.83),
 };
 const ORIGINS = ['delhi', 'mumbai', 'bengaluru', 'kolkata'];
+const city = (id: string): Vector3 => {
+  const c = CITIES[id];
+  if (!c) throw new Error(`unknown city ${id}`);
+  return c;
+};
 
 const hashGlsl = /* glsl */ `float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }`;
 
 function land() {
   // the coast, closed far to the north (beyond the fade), so the peninsula and the plains are land
   const c = coast.coast.map(([x, z]) => new Vector2(x, z));
-  const first = c[0], last = c[c.length - 1];
+  const first = c[0]!, last = c[c.length - 1]!;
   const shape = new Shape([...c, new Vector2(last.x + 6, last.y), new Vector2(last.x + 6, -26), new Vector2(first.x - 6, -26), new Vector2(first.x - 6, first.y)]);
   const g = new ShapeGeometry(shape, 1);
   g.rotateX(Math.PI / 2); // shape y -> world z (south positive)
@@ -89,11 +94,11 @@ function ribbon(pts: number[][], width: number, fadeEnds: boolean) {
   const pos: number[] = [], along: number[] = [];
   const n = pts.length;
   for (let i = 0; i < n; i++) {
-    const a = pts[Math.max(0, i - 1)], b = pts[Math.min(n - 1, i + 1)];
-    const dx = b[0] - a[0], dz = b[1] - a[1];
+    const a = pts[Math.max(0, i - 1)]!, b = pts[Math.min(n - 1, i + 1)]!, q = pts[i]!;
+    const dx = b[0]! - a[0]!, dz = b[1]! - a[1]!;
     const l = Math.hypot(dx, dz) || 1;
     const nx = (-dz / l) * width, nz = (dx / l) * width;
-    pos.push(pts[i][0] + nx, 0.01, pts[i][1] + nz, pts[i][0] - nx, 0.01, pts[i][1] - nz);
+    pos.push(q[0]! + nx, 0.01, q[1]! + nz, q[0]! - nx, 0.01, q[1]! - nz);
     const t = i / (n - 1);
     along.push(t, t);
   }
@@ -195,7 +200,7 @@ const create: StageFactory = async (el) => {
 
   // the contrails
   const arcs = routes.map((r) => {
-    const a = CITIES[r.from], b = CITIES[r.to];
+    const a = city(r.from), b = city(r.to);
     const d = a.distanceTo(b);
     const mid = a.clone().add(b).multiplyScalar(0.5);
     mid.y = 0.18 + d * 0.22;
@@ -206,13 +211,13 @@ const create: StageFactory = async (el) => {
     return { ...r, mat };
   });
 
-  const originPts = ORIGINS.map((o) => CITIES[o]);
+  const originPts = ORIGINS.map(city);
   world.add(dots(originPts, originPts.map(() => [0.95, 0.9, 0.82]), originPts.map(() => 9)));
-  const destDots = dots(dests.map((d) => CITIES[d]), dests.map(() => [1, 0.78, 0.4]), dests.map(() => 0));
+  const destDots = dots(dests.map(city), dests.map(() => [1, 0.78, 0.4]), dests.map(() => 0));
   world.add(destDots);
   // a thin gold beam rises from each destination once its first contrail lands
   const beams = dests.map((d) => {
-    const curve = new CatmullRomCurve3([CITIES[d].clone().setY(0), CITIES[d].clone().setY(1)]);
+    const curve = new CatmullRomCurve3([city(d).clone().setY(0), city(d).clone().setY(1)]);
     const mat = arcMaterial();
     const m = new Mesh(new TubeGeometry(curve, 8, 0.012, 5, false), mat);
     world.add(m);
@@ -229,12 +234,12 @@ const create: StageFactory = async (el) => {
     scene,
     camera,
     update(p, _dt, ctx) {
-      for (const a of arcs) a.mat.uniforms.uDraw.value = ease.inOut(ramp(p, a.at[0], a.at[1]));
+      for (const a of arcs) a.mat.uniforms.uDraw!.value = ease.inOut(ramp(p, a.at[0], a.at[1]));
       const sizes = destDots.geometry.getAttribute('aSize');
       dests.forEach((d, i) => {
         const b = beams.find((x) => x.id === d)!;
         const rise = ease.out(ramp(p, b.at - 0.02, b.at + 0.08));
-        b.mat.uniforms.uDraw.value = rise;
+        b.mat.uniforms.uDraw!.value = rise;
         sizes.setX(i, rise * 16);
         const pin = pins.get(d);
         if (pin) pin.classList.toggle('is-up', rise > 0.5);

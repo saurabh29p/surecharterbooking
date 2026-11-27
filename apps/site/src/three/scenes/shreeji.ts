@@ -158,7 +158,7 @@ function petals(count: number) {
     return { a: lerp(-1.9, 1.2, rnd(1)), r: lerp(3, 9.5, rnd(2)), h: rnd(3), s: rnd(4), c: rnd(5) };
   });
   const colors = [new Color('#f2a33a'), new Color('#f6c445'), new Color('#e9782c')];
-  seeds.forEach((s, i) => mesh.setColorAt(i, colors[Math.floor(s.c * 3)].clone().multiplyScalar(0.7)));
+  seeds.forEach((s, i) => mesh.setColorAt(i, colors[Math.floor(s.c * 3)]!.clone().multiplyScalar(0.7)));
   const dummy = new Object3D();
   const update = (lift: number, spin: number) => {
     seeds.forEach((s, i) => {
@@ -226,8 +226,8 @@ const create: StageFactory = async (el, engine) => {
       heli.rotation.set(pose.roll, 0, pose.pitch);
       if (rotor) rotor.rotation.y = mode === 'hover' ? p * 120 : rotorAngle(p);
       const wash = Math.exp(-pose.height / 3.2) * (mode === 'hover' ? 0.5 : 1 - ramp(p, TOUCH, 1));
-      ground.mat.uniforms.uWash.value = wash;
-      ground.mat.uniforms.uPhase.value = p * 90;
+      ground.mat.uniforms.uWash!.value = wash;
+      ground.mat.uniforms.uPhase!.value = p * 90;
       fl.update(mode === 'hover' ? 0 : wash * 1.1, p * 30);
       fl.mesh.visible = mode !== 'hover';
 

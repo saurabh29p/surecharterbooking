@@ -7,6 +7,8 @@
  */
 import { Picture } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
+// tiny blurred copies of the stills, written into the page (scripts/still-placeholders.py)
+import placeholders from '../assets/3d/stills/placeholders.json';
 
 interface Props {
   name: string;
@@ -16,12 +18,21 @@ interface Props {
   caption?: string;
   /** scene variant, read by the scene module (data-mode) */
   mode?: string;
+  /** how the stills fill the stage: cover (default) or contain (a transparent still, e.g. the lotus) */
+  fit?: 'cover' | 'contain';
+  /** eager for a still that must be there the moment its section arrives */
+  loading?: 'lazy' | 'eager';
 }
 
-const { name, stills = [], class: cls, sizes = '(max-width: 767px) 100vw, 60vw', caption = 'Illustrative 3D', mode } = Astro.props;
+const { name, stills = [], class: cls, sizes = '(max-width: 767px) 100vw, 60vw', caption = 'Illustrative 3D', mode, fit = 'cover', loading = 'lazy' } = Astro.props;
+// the first still's own placeholder: there from the first frame, under the still while it loads
+// (not for a transparent still, which would show it around its edges; that one loads eagerly)
+const first = stills[0]?.src.split('/').pop()?.split('.')[0] ?? '';
+const placeholder = fit === 'contain' ? undefined : (placeholders as Record<string, string>)[first];
 ---
 
-<div class:list={['stage', cls]} data-stage={name} data-mode={mode} aria-hidden="true">
+<div class:list={['stage', cls, { 'stage--contain': fit === 'contain' }]} data-stage={name} data-mode={mode} aria-hidden="true">
+  {placeholder && <img class="stage__ph" src={placeholder} alt="" width="40" height="40" decoding="async" />}
   {
     stills.map((src, i) => (
       <Picture
@@ -30,7 +41,8 @@ const { name, stills = [], class: cls, sizes = '(max-width: 767px) 100vw, 60vw',
         formats={['avif', 'webp']}
         widths={[480, 800, 1200, 1600].filter((w) => w <= src.width)}
         sizes={sizes}
-        loading="lazy"
+        loading={loading}
+        fetchpriority={loading === 'eager' ? 'low' : undefined}
         class:list={['stage__still', { 'is-active': i === 0 }]}
         data-still={i}
       />
@@ -44,6 +56,8 @@ const { name, stills = [], class: cls, sizes = '(max-width: 767px) 100vw, 60vw',
   .stage {
     position: relative;
     min-height: 0;
+    /* the softened placeholder is drawn slightly larger than the stage; never past its edges */
+    overflow: hidden;
   }
 
   .stage :global(.stage__still) {
@@ -54,6 +68,27 @@ const { name, stills = [], class: cls, sizes = '(max-width: 767px) 100vw, 60vw',
     object-fit: cover;
     opacity: 0;
     transition: opacity var(--dur-panel) var(--ease-in-out);
+  }
+
+  .stage--contain :global(.stage__still),
+  .stage--contain .stage__ph {
+    object-fit: contain;
+  }
+
+  /* the placeholder: the still in miniature, softened; covered by the still once it loads */
+  .stage__ph {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: blur(10px);
+    transform: scale(1.04);
+    transition: opacity var(--dur-fade) ease;
+  }
+
+  :global(.gl) .stage:global(.is-live) .stage__ph {
+    opacity: 0;
   }
 
   .stage :global(.stage__still.is-active) {

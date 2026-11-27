@@ -1,5 +1,5 @@
 /**
- * The sky behind every page: midnight, two depths of stars, drifting gold dust and a soft moon.
+ * The sky behind every page: midnight, two depths of stars and drifting gold dust.
  * Drawn in screen space (cheap): each layer slides with the scroll at its own speed, so the sky has
  * depth. Nothing moves unless the page scrolls or the pointer moves, and the sky stops altogether
  * from the first [data-calm] section (FAQ, form, footer) onwards.
@@ -59,7 +59,6 @@ export function createSky(tier: Tier): Sky {
     uDpr: { value: 1 },
     uTime: { value: 0 },
     uPointer: { value: [0, 0] as [number, number] },
-    uMoon: { value: [0.86, 0.2] as [number, number] },
   };
 
   const bg = new Mesh(
@@ -70,23 +69,12 @@ export function createSky(tier: Tier): Sky {
       uniforms,
       vertexShader: /* glsl */ `varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0., 1.); }`,
       fragmentShader: /* glsl */ `
-        uniform vec2 uRes, uMoon; varying vec2 vUv;
+        uniform vec2 uRes; varying vec2 vUv;
         float hash(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
         void main(){
           vec2 px = vUv * uRes;
           vec3 top = vec3(0.043, 0.063, 0.125), low = vec3(0.051, 0.071, 0.145);
           vec3 col = mix(low, top, smoothstep(0., 1., vUv.y));
-          // the moon: a soft ivory disc with a warm halo
-          vec2 m = vec2(uMoon.x, 1. - uMoon.y) * uRes;
-          float rad = min(uRes.x, uRes.y) * 0.032;
-          float d = length(px - m);
-          // (faint on purpose: text often sits in front of it and must keep its contrast)
-          col += vec3(0.06, 0.055, 0.065) * exp(-d / (rad * 9.));
-          col += vec3(0.1, 0.085, 0.06) * exp(-d / (rad * 2.6)) * 0.5;
-          float disc = smoothstep(rad, rad - 1.5, d);
-          vec2 q = (px - m) / rad;
-          float shade = 0.82 + 0.18 * smoothstep(-1., 1., -q.x * 0.6 + q.y * 0.4);
-          col = mix(col, vec3(0.95, 0.91, 0.82) * shade, disc * 0.2);
           // dither, so the gradient never bands
           col += (hash(px) - 0.5) / 255.;
           gl_FragColor = vec4(col, 1.);
@@ -126,13 +114,10 @@ export function createSky(tier: Tier): Sky {
     scene.add(p);
   }
 
-  const noMoon = /[?&]still\b/.test(location.search);
   let calmY = Infinity;
-  let docH = 1;
   const measure = () => {
     const calm = document.querySelector('[data-calm]');
     calmY = calm ? calm.getBoundingClientRect().top + window.scrollY : Infinity;
-    docH = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
   };
   measure();
   addEventListener('load', measure);
@@ -152,9 +137,6 @@ export function createSky(tier: Tier): Sky {
       uniforms.uTime.value += (Math.abs(s - lastS) > 0.5 ? dt : 0) / 1000;
       lastS = s;
       uniforms.uPointer.value = [pointer.x, pointer.y];
-      const f = s / docH;
-      // (?still: no moon, for rendering the fallback stills)
-      uniforms.uMoon.value = noMoon ? [-1, -1] : [0.86, 0.2 - 0.08 * f];
       return false;
     },
   };

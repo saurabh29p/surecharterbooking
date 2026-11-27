@@ -37,18 +37,27 @@ const WEAK = /mali-[2-4]\d\d|mali-t[6-8]\d\d|adreno[^0-9]*[2-4]\d\d|powervr sgx|
 const MID = /adreno[^0-9]*(5\d\d|6[0-4]\d)|mali-g(3\d|5\d|6\d|7[0-6])\b|powervr|xclipse 5|immortalis-g7[0-1]/i;
 
 export function decideTier(i: TierInput): Tier {
-  if (i.forced) return i.forced;
-  if (i.reducedMotion || i.saveData || !i.webgl) return 'low';
+  return explainTier(i).tier;
+}
+
+/** The tier and the reason for it (shown by ?debug=3d). */
+export function explainTier(i: TierInput): { tier: Tier; reason: string } {
   const r = i.renderer ?? '';
-  if (SOFTWARE.test(r) || WEAK.test(r)) return 'low';
-  if (i.memory !== undefined && i.memory < 2) return 'low';
-  if (i.cores !== undefined && i.cores < 4) return 'low';
-  if (i.frameMs !== undefined && i.frameMs > 34) return 'low';
-  if (MID.test(r)) return 'mid';
-  if (i.mobile && i.memory !== undefined && i.memory <= 4) return 'mid';
-  if (i.cores !== undefined && i.cores <= 4) return 'mid';
-  if (i.frameMs !== undefined && i.frameMs > 20) return 'mid';
-  return 'high';
+  const t = (tier: Tier, reason: string) => ({ tier, reason });
+  if (i.forced) return t(i.forced, 'forced with ?tier=');
+  if (i.reducedMotion) return t('low', 'reduced motion is on');
+  if (i.saveData) return t('low', 'Save-Data is on');
+  if (!i.webgl) return t('low', 'no WebGL 2 (or a major performance caveat)');
+  if (SOFTWARE.test(r)) return t('low', 'software renderer');
+  if (WEAK.test(r)) return t('low', 'older GPU');
+  if (i.memory !== undefined && i.memory < 2) return t('low', `${i.memory} GB memory`);
+  if (i.cores !== undefined && i.cores < 4) return t('low', `${i.cores} CPU cores`);
+  if (i.frameMs !== undefined && i.frameMs > 34) return t('low', `slow frames (${Math.round(i.frameMs)} ms)`);
+  if (MID.test(r)) return t('mid', 'mid-range mobile GPU');
+  if (i.mobile && i.memory !== undefined && i.memory <= 4) return t('mid', `phone with ${i.memory} GB memory`);
+  if (i.cores !== undefined && i.cores <= 4) return t('mid', `${i.cores} CPU cores`);
+  if (i.frameMs !== undefined && i.frameMs > 20) return t('mid', `frames at ${Math.round(i.frameMs)} ms`);
+  return t('high', 'capable device');
 }
 
 /** One step down (used when the frame-time check fails at run time). */
@@ -77,12 +86,17 @@ export function forcedTier(search = location.search): Tier | null {
 }
 
 export function detectTier(): Tier {
+  return detectTierInfo().tier;
+}
+
+/** Everything the tier was decided from, and the decision (for ?debug=3d). */
+export function detectTierInfo() {
   const nav = navigator as Nav;
   const forced = forcedTier();
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const saveData = !!nav.connection?.saveData;
   const probe = forced || reducedMotion || saveData ? { webgl: !!forced } : probeWebgl();
-  return decideTier({
+  const input: TierInput = {
     ...probe,
     reducedMotion,
     saveData,
@@ -90,5 +104,6 @@ export function detectTier(): Tier {
     cores: nav.hardwareConcurrency || undefined,
     mobile: matchMedia('(pointer: coarse)').matches && Math.min(screen.width, screen.height) < 820,
     forced,
-  });
+  };
+  return { ...explainTier(input), input };
 }

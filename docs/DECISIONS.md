@@ -376,3 +376,13 @@ design (`noindex`); on a launched build (local) SEO is **100** on home, weddings
   devices get the rendered stills and the normal page; the fleet keeps its photo cards.
 - **Testing switches** (not linked anywhere): `?tier=high|mid|low` forces a device tier,
   `?motion=off` turns the scroll choreography off, `?still` hides the moon for rendering stills.
+- **The Vaanika Standard (27 Nov 2026):** the lotus is no longer pinned under the header on phones
+  (the cards covered it); it sits between the heading and the cards, and on wider screens in the
+  sticky left column, with the cards starting beside it. Each card lights its own part of the mark.
+- **Never an empty 3D frame:** every 3D moment shows an inline blurred placeholder, then its still;
+  the 3D swaps in only after its first frame is checked (rendered into a small target and read
+  back). Not ready 1.5 s after coming into view, WebGL failing or running slow: the still stays.
+  `?debug=3d` shows the tier, the GPU and each moment's state, for testing on phones.
+- **No moon:** the soft moon in the sky read as a stray grey circle beside the content; removed.
+- **The mark's colours:** the 3D mark's shader now converts its colours for the screen, so the faces
+  match the logo file exactly (the Kali petal had come out dark navy instead of the brand blue).
