@@ -53,7 +53,7 @@ Each card has its part of the lotus: 01 Operator permit → Saraswati (ivory), 0
 | Card 03 | The blue Kali petal. |
 | Card 04 | The chandra. |
 
-Wider screens: heading and lotus on the left (sticky), the cards on the right, starting beside the lotus so the whole lotus is in view while card 01 is in the middle. Under reduced motion nothing glows. The section is at most about 1.3 screens tall on desktop and 2 on phones.
+Wider screens: heading and lotus on the left (sticky); on the right, a short gold label "Four checks, every quote" level with the heading's top, then the cards, starting beside the lotus so the whole lotus is in view while card 01 is in the middle. (Phones keep the label for screen readers only.) Under reduced motion nothing glows. The section is at most about 1.3 screens tall on desktop and 2 on phones.
 
 ### 4. Three moments: a pinned horizontal journey
 

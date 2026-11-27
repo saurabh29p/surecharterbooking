@@ -77,7 +77,9 @@ const PARTS = [
         </svg>
       </div>
     </div>
-    <ol class="standard__checks">
+    <div class="standard__cards">
+    <p id="standard-checks-h" class="standard__label reveal">Four checks, every quote</p>
+    <ol class="standard__checks" aria-labelledby="standard-checks-h">
       {CHECKS.map((c, i) => (
         <li class="standard__check reveal" data-check={i}>
           <p class="standard__num num display">{String(i + 1).padStart(2, '0')}</p>
@@ -86,6 +88,7 @@ const PARTS = [
         </li>
       ))}
     </ol>
+    </div>
   </div>
 </section>
 
@@ -134,14 +137,41 @@ const PARTS = [
     inset: 0;
   }
 
-  /* the cards start lower than the heading, beside the lotus: with card 01 in the middle of the
-     window, the heading and the whole lotus are in view on the left */
+  /* The right column: a short gold label level with the heading's top, then the cards. The cards
+     start 150 px down, beside the lotus: with card 01 in the middle of the window the whole lotus
+     is still in view on the left (measured at 1024 to 1920 px wide). */
+  .standard__cards {
+    position: relative;
+  }
+
+  .standard__label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 0;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .standard__label::before {
+    content: '';
+    width: 36px;
+    height: 1px;
+    background: linear-gradient(90deg, var(--gold-dark), var(--gold));
+  }
+
   .standard__checks {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     gap: 24px;
     margin: 0;
-    padding: max(160px, 24vh) 0 0;
+    padding: 150px 0 0;
     list-style: none;
   }
 
@@ -282,6 +312,16 @@ const PARTS = [
     .standard__checks {
       gap: 16px;
       padding-top: 0;
+    }
+
+    /* phones: the cards follow the lotus; the label stays for screen readers */
+    .standard__label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
     }
 
     .standard__check {
